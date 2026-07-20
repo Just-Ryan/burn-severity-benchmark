@@ -1,0 +1,21 @@
+{
+  "id": "justryantl/skinburncnnonly",
+  "id_no": 71344688,
+  "title": "SkinBurnCNNOnly",
+  "code_file": "skinburncnnonly.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [
+    "justryantl/cnndataset2"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": []
+}

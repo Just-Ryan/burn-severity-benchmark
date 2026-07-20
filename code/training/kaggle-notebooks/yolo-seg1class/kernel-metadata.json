@@ -1,0 +1,23 @@
+{
+  "id": "justryantl/yolo-seg1class",
+  "id_no": 76290987,
+  "title": "Yolo-Seg1Class",
+  "code_file": "yolo-seg1class.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [
+    "justryantl/yolo-seg1c-dt"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [
+    "justryantl/yolo-seg1c_dt/PyTorch/default/1"
+  ]
+}

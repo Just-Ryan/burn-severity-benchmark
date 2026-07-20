@@ -1,0 +1,19 @@
+{
+  "n": 143,
+  "n_seg_failed": 15,
+  "acc_unmasked_raw": 0.9090909090909091,
+  "acc_masked_pipeline": 0.8881118881118881,
+  "mcnemar_b_unmasked_only": 14,
+  "mcnemar_c_masked_only": 11,
+  "mcnemar_table": [
+    [
+      116,
+      14
+    ],
+    [
+      11,
+      2
+    ]
+  ],
+  "mcnemar_p_exact": 0.6900379657745361
+}

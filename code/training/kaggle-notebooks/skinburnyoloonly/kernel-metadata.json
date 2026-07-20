@@ -1,0 +1,19 @@
+{
+  "id": "justryantl/skinburnyoloonly",
+  "id_no": 69574983,
+  "title": "SkinBurnYOLOOnly",
+  "code_file": "skinburnyoloonly.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "keywords": [],
+  "dataset_sources": [
+    "justryantl/yoloonlyds"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": []
+}

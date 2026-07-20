@@ -1,0 +1,762 @@
+{
+  "dataset": "BIP_US (Univ. Seville, external clinical)",
+  "n": 94,
+  "seg_success_rate": 0.8723404255319149,
+  "note": "2nd-vs-3rd probe; no 1st-degree images; deep dermal mapped to Second",
+  "acc_pipeline_2v3": 0.39361702127659576,
+  "acc_unmasked_2v3": 0.35106382978723405,
+  "rows": [
+    {
+      "num": 1,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 2,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 3,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 4,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 5,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Third",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 6,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": false
+    },
+    {
+      "num": 7,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Third",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 8,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": false
+    },
+    {
+      "num": 9,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": false
+    },
+    {
+      "num": 10,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 11,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 12,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 13,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": false
+    },
+    {
+      "num": 14,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 15,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 16,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 17,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 18,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 19,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 20,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "Third",
+      "pred_unmasked": "Third",
+      "seg_ok": true
+    },
+    {
+      "num": 21,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "Third",
+      "pred_unmasked": "Third",
+      "seg_ok": true
+    },
+    {
+      "num": 22,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 23,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 24,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 25,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 26,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 27,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 28,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 29,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 30,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 31,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 32,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 33,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 34,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 35,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 36,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 37,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 38,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 39,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 40,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "Third",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 41,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 42,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 43,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 44,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 45,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": false
+    },
+    {
+      "num": 46,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 47,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 48,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 49,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 50,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 51,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 52,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": false
+    },
+    {
+      "num": 53,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 54,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 55,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 56,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": false
+    },
+    {
+      "num": 57,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 58,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 59,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": false
+    },
+    {
+      "num": 60,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": false
+    },
+    {
+      "num": 61,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": false
+    },
+    {
+      "num": 62,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 63,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 64,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 65,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 66,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 67,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 68,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 69,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 70,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 71,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 72,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 73,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 74,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 75,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 76,
+      "depth": "Full-thickness",
+      "degree_gt": "Third",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": false
+    },
+    {
+      "num": 77,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 78,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 79,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 80,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 81,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 82,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 83,
+      "depth": "Deep dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 84,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 85,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 86,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 87,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": false
+    },
+    {
+      "num": 88,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 89,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 90,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 91,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 92,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "Second",
+      "pred_unmasked": "Second",
+      "seg_ok": true
+    },
+    {
+      "num": 93,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    },
+    {
+      "num": 94,
+      "depth": "Superficial dermal",
+      "degree_gt": "Second",
+      "pred_pipeline": "First",
+      "pred_unmasked": "First",
+      "seg_ok": true
+    }
+  ]
+}

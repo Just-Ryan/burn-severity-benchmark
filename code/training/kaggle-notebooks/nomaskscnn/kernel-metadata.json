@@ -1,0 +1,21 @@
+{
+  "id": "justryantl/nomaskscnn",
+  "id_no": 76145928,
+  "title": "NoMasksCNN",
+  "code_file": "nomaskscnn.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [
+    "justryantl/cnn-nmask-dt"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": []
+}
