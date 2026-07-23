@@ -1,6 +1,31 @@
 # Training code and notebooks
 
-## Where the results actually live
+## Start here: `colab-benchmark2.ipynb`
+
+**This is the main experimental record**, and it is committed **with its execution outputs
+intact** (14 of 15 code cells). Everything the article reports as Benchmark 2 was produced by
+this one notebook on a Google Colab **A100**:
+
+| § | What it does |
+|---|---|
+| 1–2 | Setup; mount and unzip the leak-free dataset |
+| 3 | Train **Model 1** — single-class YOLOv8x-seg localiser (the pipeline front-end) |
+| 4 | Train **Model 2** — three-class standalone YOLOv8x-seg |
+| 5 | Evaluate segmentation; export results |
+| 6–7 | Classifier data + **retrain and save** the two winning classifiers |
+| 8 | **True end-to-end pipeline** (real localiser → predicted mask → Swin) |
+| 9 | Head-to-head chart + YOLO figures |
+| 10 | **External generalisation** on the clean 319-image set |
+| 11 | **Robust pipeline** — low threshold + full-frame fallback |
+| 12 | **Multi-seed robustness** (3 seeds) — the key comparison |
+| 13 | Efficiency / timing table (per stage, A100) |
+| 14 | Paired **McNemar** significance + export proof |
+| 15 | Fairness fix — standalone YOLO at the same low threshold |
+
+Sections 3 and 4 are **idempotent**: they skip training if a checkpoint already exists, so a
+disconnected runtime can simply be re-run.
+
+## Where the rest of the results live
 
 **The notebooks in `kaggle-notebooks/` contain source only — no stored cell outputs.** They
 were retrieved with the Kaggle API (`kaggle kernels pull`), which returns the kernel source
@@ -30,8 +55,10 @@ from, and they let anyone recompute a reported statistic without a GPU.
 
 ```
 training/
+├── colab-benchmark2.ipynb      # ⭐ Benchmark 2, WITH outputs (A100) — see table above
 ├── build_clean_split.py        # first source-grouped, leak-free split
 ├── build_clean_split_v2.py     # split used for the final benchmarks (4 input conditions)
+├── build_clean_yolo_seg.py     # builds the leak-free YOLO segmentation dataset
 ├── kaggle-notebooks/           # kernels pulled from Kaggle (source only, see above)
 │   ├── yolo-seg1class/         # single-class localiser (pipeline front-end)
 │   ├── yolo-seg3class/         # three-class standalone segmenter
@@ -53,13 +80,18 @@ Running it reproduces the exact split behind every leak-free number in the paper
 python build_clean_split_v2.py
 ```
 
-## Google Colab (Benchmark 2)
+## Running the Colab notebook yourself
 
-Benchmark 2 — segmentation training, the classifier retraining, the true end-to-end pipeline,
-the external evaluations, and the timing table — was run on a **Google Colab A100** in a single
-notebook, and is not yet mirrored here. Its outputs *are* archived in
-[`../../benchmark2-proof/`](../../benchmark2-proof). To add the notebook itself:
-**Colab → File → Download → Download .ipynb**, then drop it in as `colab-benchmark2.ipynb`.
+Open `colab-benchmark2.ipynb` in Google Colab and select an **A100** runtime (Runtime →
+Change runtime type → GPU). Two operational notes, learned the hard way:
+
+- **Mount Drive by running the Setup cell yourself.** `drive.mount` opens an authorisation
+  pop-up that has to be clicked; it cannot complete headlessly.
+- **Keep the Colab tab in the foreground while training.** Colab disconnects backgrounded
+  tabs, which killed one YOLO run at epoch 12. Because sections 3–4 are idempotent, a
+  re-run resumes rather than retraining from scratch.
+
+The dataset is read from Drive, so no Kaggle credentials are needed inside the notebook.
 
 ## Compute environments
 

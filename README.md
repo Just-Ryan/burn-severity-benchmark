@@ -92,8 +92,10 @@ apps/                            # the deployed system (source only) — see app
   ios-native/                    #   SwiftUI client running the models on-device
 code/
   training/                      # see code/training/README.md
+    colab-benchmark2.ipynb       #   ⭐ the main experiment (A100), committed WITH outputs
     build_clean_split.py         #   original leak-free, source-grouped split
     build_clean_split_v2.py      #   split used for the final benchmarks (4 conditions)
+    build_clean_yolo_seg.py      #   leak-free YOLO segmentation dataset builder
     kaggle-notebooks/            #   kernels pulled from Kaggle (source only — outputs live
                                  #   in benchmark2-proof/results/)
     newway-seqcode/              #   segmentation/masking preprocessing
