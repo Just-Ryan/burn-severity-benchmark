@@ -1,9 +1,41 @@
-__pycache__/
-*.pyc
+# --- model weights and datasets (hosted on Kaggle; archived on Zenodo at publication) ---
 *.pt
 *.pth
 *.onnx
-.DS_Store
-.ipynb_checkpoints/
+*.tflite
+*.mlmodel
+*.mlpackage
 data/
 datasets/
+
+# --- Python ---
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# --- Flutter / Dart build artifacts ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+**/build/
+**/*.dill
+**/ios/Pods/
+**/ios/.symlinks/
+**/android/.gradle/
+**/android/local.properties
+
+# --- Xcode / iOS ---
+**/xcuserdata/
+DerivedData/
+*.xcuserstate
+
+# --- runtime upload/result folders from the Flask demos ---
+**/static/uploads/
+**/static/results/
+
+# --- OS / editor ---
+.DS_Store
+.vscode/
+*.swp

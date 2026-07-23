@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Burn Classification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .upload-form {
+            margin: 20px;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+        }
+        .submit-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Burn Classification System</h1>
+    <div class="upload-form">
+        <h2>Upload an image for classification</h2>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".png,.jpg,.jpeg">
+            <br>
+            <input type="submit" value="Upload and Classify" class="submit-btn">
+        </form>
+    </div>
+</body>
+</html>

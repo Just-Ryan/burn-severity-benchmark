@@ -86,12 +86,17 @@ by source image, or reported gains may be illusory.
 ## Repository structure
 
 ```
+apps/                            # the deployed system (source only) — see apps/README.md
+  flask-server/                  #   POST /analyze — YOLOv8x-seg → mask → Swin
+  flutter-app/                   #   cross-platform mobile client (Dart)
+  ios-native/                    #   SwiftUI client running the models on-device
 code/
-  training/
-    build_clean_split.py         # original leak-free, source-grouped split
-    build_clean_split_v2.py      # split used for the final benchmarks (4 input conditions)
-    kaggle-notebooks/            # training notebooks (segmentation + classifiers), .ipynb + .py
-    newway-seqcode/              # segmentation/masking preprocessing
+  training/                      # see code/training/README.md
+    build_clean_split.py         #   original leak-free, source-grouped split
+    build_clean_split_v2.py      #   split used for the final benchmarks (4 conditions)
+    kaggle-notebooks/            #   kernels pulled from Kaggle (source only — outputs live
+                                 #   in benchmark2-proof/results/)
+    newway-seqcode/              #   segmentation/masking preprocessing
   pipeline/
     train_yolov8_seg.py          # segmentation training
     train_cnn_classifier.py      # classifier training
@@ -99,16 +104,26 @@ code/
   evaluation/
     external_validation_bipus.py # external (BIP_US) evaluation
     *__evaluate_models.py        # per-stage evaluation
+  benchmark-webapps/             # the Flask demos used to compare approaches side by side
 benchmark2-proof/
   results/                       # raw JSON for every reported number (multi-seed, external,
                                  #   McNemar, timing, robust/strict pipeline, predictions)
   figures/                       # confusion matrices, PR/F1 curves, head-to-head chart
 statistics/                      # Wilson CIs, McNemar, sign/Wilcoxon, power, raw JSON/CSV
-figures/                         # the four figures used in the paper (PDF)
+figures/                         # the four figures used in the article (vector PDF)
 docs/
   DATASET.md                     # datasheet + leakage correction
   MODEL_CARD.md                  # model card
+CITATION.cff                     # citation metadata (DOIs completed on publication)
 ```
+
+**Model weights and datasets are not in git.** Checkpoints are hosted on Kaggle and will be
+archived on Zenodo at publication; the datasets are linked under *Data availability* below.
+See [`.gitignore`](.gitignore) for what is deliberately excluded.
+
+> ⚠️ The applications in `apps/` are **research and demonstration artifacts, not clinically
+> validated devices**. The external validation below shows the model does not transfer to
+> independent clinical images and under-grades severity.
 
 ## Reproducing the results
 

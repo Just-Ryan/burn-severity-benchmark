@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Burn Analysis System - Upload{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-upload me-2"></i>Upload Burn Image</h3>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Upload an image of a burn for assessment. The system will analyze the image,
+                    segment the burn area, and classify the burn severity.
+                </p>
+                
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="file-upload">
+                        <div class="file-upload-btn">
+                            <i class="fas fa-cloud-upload-alt me-2"></i>Select Image or Take Photo
+                        </div>
+                        <input type="file" class="file-upload-input" id="imageInput" accept="image/*" capture>
+                    </div>
+                    
+                    <img id="imagePreview" class="mb-3" src="#" alt="Preview">
+                    
+                    <div class="text-center">
+                        <button type="submit" id="submitBtn" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Analyze Image
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="loader" class="loader mt-3"></div>
+            </div>
+        </div>
+
+        <!-- Results Section (Initially Hidden) -->
+        <div id="resultContainer" class="result-container">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Analysis Results</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <h5 class="text-center mb-2">Original Image</h5>
+                            <img id="originalImage" class="result-image" src="#" alt="Original Image">
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-center mb-2">Segmented Burn</h5>
+                            <img id="maskedImage" class="result-image" src="#" alt="Segmented Burn">
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="text-center mb-2">Burn Detection</h5>
+                            <img id="visualizationImage" class="result-image" src="#" alt="Visualization">
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div id="burnClassCard" class="card text-white mb-3">
+                                <div class="card-header" id="burnClassHeader">
+                                    <h5 class="mb-0" id="burnClassTitle">
+                                        <i class="fas fa-fire me-2"></i>
+                                        <span id="burnClass">First-Degree Burn</span>
+                                    </h5>
+                                </div>
+                                <div class="card-body bg-white text-dark">
+                                    <p id="burnDescription" class="card-text"></p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">Classification Confidence:</span>
+                                        <span id="classConfidence">95%</span>
+                                    </div>
+                                    <div class="progress mt-2">
+                                        <div id="classConfidenceBar" class="progress-bar" role="progressbar" style="width: 95%"></div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <span class="fw-bold">Segmentation Confidence:</span>
+                                        <span id="segConfidence">90%</span>
+                                    </div>
+                                    <div class="progress mt-2">
+                                        <div id="segConfidenceBar" class="progress-bar bg-success" role="progressbar" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Probability Analysis</h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <img id="probabilityChart" class="img-fluid" src="#" alt="Probability Chart">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="emergencyAlert" class="emergency-alert" style="display: none;">
+                        <h4><i class="fas fa-exclamation-triangle me-2"></i>Emergency Medical Attention Required</h4>
+                        <p>This appears to be a severe burn that requires immediate professional medical care.</p>
+                    </div>
+                    
+                    <div class="card treatment-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-first-aid me-2"></i>Treatment Advice</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2 fw-bold">Recommended actions for this burn type:</p>
+                            <ul id="treatmentList" class="treatment-list">
+                                <!-- Treatment advice will be added here -->
+                            </ul>
+                            
+                            <div class="alert alert-warning mt-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Disclaimer:</strong> This is an automated analysis and should not replace professional medical assessment. 
+                                When in doubt, always consult a healthcare professional.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Handle image preview when file is selected
+        $("#imageInput").change(function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $("#imagePreview").attr('src', e.target.result).show();
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Handle form submission
+        $("#uploadForm").submit(function(e) {
+            e.preventDefault();
+            
+            const fileInput = $("#imageInput")[0];
+            if (fileInput.files.length === 0) {
+                alert("Please select an image first");
+                return;
+            }
+            
+            // Show loading spinner
+            showLoading();
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            
+            // Submit to server
+            $.ajax({
+                url: '/analyze',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    hideLoading();
+                    
+                    if (response.success) {
+                        displayResults(response);
+                    } else {
+                        alert("Error: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    hideLoading();
+                    alert("Server error: " + error);
+                }
+            });
+        });
+        
+        function displayResults(result) {
+            // Update images
+            $("#originalImage").attr('src', result.original_image);
+            $("#maskedImage").attr('src', result.masked_image);
+            $("#visualizationImage").attr('src', result.visualization);
+            $("#probabilityChart").attr('src', result.probability_chart);
+            
+            // Update burn class and description
+            $("#burnClass").text(result.predicted_class + "-Degree Burn");
+            $("#burnDescription").text(result.description);
+            
+            // Update confidence values
+            $("#classConfidence").text(result.class_confidence.toFixed(1) + "%");
+            $("#classConfidenceBar").css('width', result.class_confidence + "%");
+            
+            $("#segConfidence").text(result.seg_confidence.toFixed(1) + "%");
+            $("#segConfidenceBar").css('width', result.seg_confidence + "%");
+            
+            // Set color scheme based on severity
+            let headerClass, iconClass;
+            
+            switch(result.predicted_class) {
+                case "First":
+                    headerClass = "bg-primary";
+                    iconClass = "fa-thermometer-quarter";
+                    $("#burnClassHeader").removeClass().addClass("card-header " + headerClass);
+                    $("#emergencyAlert").hide();
+                    break;
+                case "Second":
+                    headerClass = "bg-warning";
+                    iconClass = "fa-thermometer-half";
+                    $("#burnClassHeader").removeClass().addClass("card-header " + headerClass);
+                    $("#emergencyAlert").hide();
+                    break;
+                case "Third":
+                    headerClass = "bg-danger";
+                    iconClass = "fa-thermometer-full";
+                    $("#burnClassHeader").removeClass().addClass("card-header " + headerClass);
+                    $("#emergencyAlert").show();
+                    break;
+            }
+            
+            // Update treatment advice
+            $("#treatmentList").empty();
+            result.treatment_advice.forEach(function(advice) {
+                $("#treatmentList").append(`<li>${advice}</li>`);
+            });
+            
+            // Show results container
+            $("#resultContainer").show();
+            
+            // Scroll to results
+            $('html, body').animate({
+                scrollTop: $("#resultContainer").offset().top - 20
+            }, 500);
+        }
+    });
+</script>
+{% endblock %}

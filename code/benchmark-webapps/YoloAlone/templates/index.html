@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Burn Detection System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .upload-form {
+            margin: 20px;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+        }
+        .upload-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .upload-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Burn Detection System</h1>
+    <div class="upload-form">
+        <h2>Upload Image</h2>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".png,.jpg,.jpeg">
+            <br>
+            <input type="submit" value="Upload and Analyze" class="upload-button">
+        </form>
+    </div>
+</body>
+</html>
