@@ -1,0 +1,20 @@
+{
+  "1class": {
+    "val_mask_map50": 0.711938496077539,
+    "val_mask_map": 0.4199379289867088,
+    "test_mask_map50": 0.7262540929551761,
+    "test_mask_map": 0.41694065620019305
+  },
+  "3class": {
+    "val_mask_map50": 0.5948190138260219,
+    "val_mask_map": 0.3521864559664328,
+    "test_mask_map50": 0.602845963933915,
+    "test_mask_map": 0.34942444995642147
+  },
+  "3class_standalone_test_accuracy": {
+    "acc": 78.53658536585365,
+    "correct": 161,
+    "n": 205,
+    "no_detection": 10
+  }
+}

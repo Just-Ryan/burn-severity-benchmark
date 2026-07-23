@@ -1,0 +1,6 @@
+{
+  "true_pipeline_test_acc": 79.02439024390245,
+  "n": 205,
+  "correct": 162,
+  "no_detection": 10
+}

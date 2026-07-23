@@ -1,0 +1,34 @@
+{
+  "N": 319,
+  "per_degree": {
+    "1st": 139,
+    "2nd": 157,
+    "3rd": 23
+  },
+  "models": {
+    "cnx": {
+      "name": "Standalone ConvNeXt-L",
+      "acc": 74.29467084639498,
+      "balanced_acc": 78.68662699306078,
+      "n": 319,
+      "correct": 237,
+      "no_detection": 0
+    },
+    "pipe": {
+      "name": "Pipeline loc->Swin",
+      "acc": 54.2319749216301,
+      "balanced_acc": 54.707936779903136,
+      "n": 319,
+      "correct": 173,
+      "no_detection": 66
+    },
+    "yolo": {
+      "name": "Standalone YOLOv8-seg",
+      "acc": 57.993730407523515,
+      "balanced_acc": 65.47479822843471,
+      "n": 319,
+      "correct": 185,
+      "no_detection": 55
+    }
+  }
+}

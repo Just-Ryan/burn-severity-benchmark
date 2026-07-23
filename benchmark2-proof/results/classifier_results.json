@@ -1,0 +1,46 @@
+{
+  "convnext_large_unmasked": {
+    "arch": "convnext_large",
+    "cond": "unmasked",
+    "test_acc": 82.4390243902439,
+    "cm": [
+      [
+        65,
+        21,
+        0
+      ],
+      [
+        5,
+        56,
+        2
+      ],
+      [
+        1,
+        7,
+        48
+      ]
+    ]
+  },
+  "swin_tiny_masked": {
+    "arch": "swin_tiny_patch4_window7_224",
+    "cond": "masked",
+    "test_acc": 83.90243902439025,
+    "cm": [
+      [
+        77,
+        9,
+        0
+      ],
+      [
+        12,
+        49,
+        2
+      ],
+      [
+        0,
+        10,
+        46
+      ]
+    ]
+  }
+}

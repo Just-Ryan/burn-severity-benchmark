@@ -1,0 +1,14 @@
+{
+  "internal": {
+    "classifier_only_correct": 20,
+    "pipeline_only_correct": 18,
+    "exact_p": 0.8714146793645341,
+    "n_discordant": 38
+  },
+  "external": {
+    "classifier_only_correct": 54,
+    "pipeline_only_correct": 40,
+    "exact_p": 0.17966501480803004,
+    "n_discordant": 94
+  }
+}

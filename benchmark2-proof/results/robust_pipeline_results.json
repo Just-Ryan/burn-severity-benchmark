@@ -1,0 +1,14 @@
+{
+  "internal": {
+    "robust_pipeline_acc": 81.46341463414633,
+    "balanced_acc": 80.9400762889135,
+    "n": 205,
+    "fallback_used": 0
+  },
+  "external": {
+    "robust_pipeline_acc": 69.90595611285266,
+    "balanced_acc": 66.28593552740195,
+    "n": 319,
+    "fallback_used": 1
+  }
+}
