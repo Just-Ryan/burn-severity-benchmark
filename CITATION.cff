@@ -1,0 +1,78 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, its results, or the leak-free split it produces,
+  please cite the accompanying article.
+title: >-
+  Code, statistics, and models for "A comparative study of deep learning
+  approaches for automated burn injury segmentation and severity classification"
+abstract: >-
+  Reproducibility materials for a leak-free, externally validated benchmark of
+  deep learning for burn severity classification. Includes the source-grouped
+  split builder that removes an augmentation-induced data-leakage artifact, the
+  masking ablation, the head-to-head comparison of a standalone classifier
+  against a two-stage segmentation pipeline, two external validations, and the
+  raw JSON behind every reported number.
+type: software
+authors:
+  - family-names: Altayeb
+    given-names: Ryan
+    orcid: "https://orcid.org/0009-0006-0031-9531"
+    affiliation: >-
+      Faculty of Computer and Information Systems, Islamic University of
+      Madinah, Madinah, Saudi Arabia
+  - family-names: Alraddadi
+    given-names: Abdulrahman
+    orcid: "https://orcid.org/0009-0000-2325-5063"
+    affiliation: >-
+      Faculty of Computer and Information Systems, Islamic University of
+      Madinah, Madinah, Saudi Arabia
+  - family-names: Alrehaili
+    given-names: Mohannad
+    orcid: "https://orcid.org/0009-0008-2491-185X"
+    affiliation: >-
+      Faculty of Computer and Information Systems, Islamic University of
+      Madinah, Madinah, Saudi Arabia
+license: AGPL-3.0-or-later
+repository-code: "https://github.com/Just-Ryan/burn-severity-benchmark"
+keywords:
+  - burn severity assessment
+  - deep learning
+  - data leakage
+  - external validation
+  - image segmentation
+  - reproducibility
+
+# ---------------------------------------------------------------------------
+# TO COMPLETE ON ACCEPTANCE (do not fill in before the article is accepted):
+#   1. Uncomment the preferred-citation block below.
+#   2. Insert the article DOI, volume, issue, page range, and year.
+#   3. Add the Zenodo concept DOI on the line below `identifiers:`.
+#   4. Then create the GitHub release so Zenodo archives this exact state.
+# ---------------------------------------------------------------------------
+# identifiers:
+#   - type: doi
+#     value: "10.5281/zenodo.XXXXXXX"      # Zenodo CONCEPT DOI (always newest)
+#     description: Archived release of this repository
+#
+# preferred-citation:
+#   type: article
+#   title: >-
+#     A comparative study of deep learning approaches for automated burn injury
+#     segmentation and severity classification
+#   authors:
+#     - family-names: Altayeb
+#       given-names: Ryan
+#       orcid: "https://orcid.org/0009-0006-0031-9531"
+#     - family-names: Alraddadi
+#       given-names: Abdulrahman
+#       orcid: "https://orcid.org/0009-0000-2325-5063"
+#     - family-names: Alrehaili
+#       given-names: Mohannad
+#       orcid: "https://orcid.org/0009-0008-2491-185X"
+#   journal: "Turkish Journal of Electrical Engineering and Computer Sciences"
+#   year: 20XX
+#   volume: XX
+#   issue: X
+#   start: XXX
+#   end: XXX
+#   doi: "10.55730/1300-0632.XXXX"
