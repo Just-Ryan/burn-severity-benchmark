@@ -41,6 +41,14 @@ The classifier wins on both sets in all three seeds. Paired McNemar on the seed-
 gives *p* = 0.87 internally and *p* = 0.18 externally — so we describe the advantage as
 **consistent across seeds rather than statistically significant in a single run**.
 
+<p align="center">
+  <img src="benchmark2-proof/figures/head_to_head.png" alt="Head-to-head accuracy on the internal and external test sets" width="720">
+</p>
+
+<sub><b>Head-to-head accuracy.</b> Error bars are the standard deviation across seeds 0, 1, 2
+for the classifier and the pipeline; the standalone YOLOv8-seg model is single-seed and shown
+without error bars. Differences fall within the cross-seed spread.</sub>
+
 **4. The model does not transfer to clinical images.**
 On the BIP_US clinical database (94 photographs) balanced accuracy is 30.5% / 35.0%
 (depending on the deep-dermal mapping) against a 50% chance level for that two-class probe,
@@ -48,6 +56,22 @@ with systematic **under-grading** — the dangerous direction. On the web-source
 external set the decline is milder and the plain classifier remains most robust. A
 perceptual-hash check removed 118 training-identical images and 28% of sources (56/199)
 before that evaluation.
+
+<table>
+<tr>
+<td align="center"><img src="benchmark2-proof/figures/cm_true_pipeline.png" alt="Internal confusion matrix" width="380"></td>
+<td align="center"><img src="benchmark2-proof/figures/ext_cm_pipe.png" alt="External confusion matrix" width="380"></td>
+</tr>
+<tr>
+<td align="center"><sub>Internal test (N = 205)</sub></td>
+<td align="center"><sub>Clean external test (N = 319)</sub></td>
+</tr>
+</table>
+
+<sub><b>Confusion matrices for the robust two-stage pipeline</b> (representative seed). Internally,
+errors fall mainly between neighbouring degrees, with second degree the hardest class.
+Externally, accuracy drops and the more severe burns are frequently <b>under-graded</b> — the
+dangerous direction.</sub>
 
 **Segmentation quality:** single-class localiser test mask mAP50 **0.726** (mAP50-95 0.417);
 three-class standalone **0.603** (0.349).
