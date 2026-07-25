@@ -174,6 +174,43 @@ for r in rowsb:
 bal = 100 * sum(c / n for c, n in per.values()) / len(per)
 check("balanced accuracy, deep-dermal->2nd (%)", bal, 30.5, tol=0.2)
 
+
+# ---------------------------------------------------------------- v2 additions
+print("\n=== 8. STATISTICS ADDED IN THE REVISED MANUSCRIPT (v2) ===")
+ms2 = load(os.path.join(RES, "multiseed_results.json"))
+for key, name in [("clf_int", "classifier internal"), ("pipe_int", "pipeline internal"),
+                  ("clf_ext", "classifier external"), ("pipe_ext", "pipeline external")]:
+    v = np.array(ms2[key]["seeds"])
+    print(f"         {name:<22} sample SD (n-1) = {v.std(ddof=1):.2f}   "
+          f"[the archived JSON stores the population SD {v.std(ddof=0):.2f}]")
+print("         v2 reports the sample SD; the originally submitted version reported the population SD.")
+
+for a, b, nm, wm, wlo, whi in [
+    ("clf_int", "pipe_int", "internal", 3.74, 3.04, 4.44),
+    ("clf_ext", "pipe_ext", "external", 3.24, -3.83, 10.31),
+]:
+    d = np.array(ms2[a]["seeds"]) - np.array(ms2[b]["seeds"])
+    ci = stats.t.interval(0.95, len(d) - 1, loc=d.mean(), scale=stats.sem(d))
+    check(f"paired classifier-minus-pipeline, {nm} (pp)", float(d.mean()), wm, tol=0.02)
+    check(f"  its 95% CI lower bound, {nm}", float(ci[0]), wlo, tol=0.02)
+    check(f"  its 95% CI upper bound, {nm}", float(ci[1]), whi, tol=0.02)
+
+pooled = [r["delta_pp"] for r in load(os.path.join(STA, "benchmark1_masking_pooled_analysis.json"))["per_run"]]
+ci = stats.t.interval(0.95, len(pooled) - 1, loc=np.mean(pooled), scale=stats.sem(pooled))
+check("masking effect 95% CI lower bound (pp)", float(ci[0]), -0.37, tol=0.02)
+check("masking effect 95% CI upper bound (pp)", float(ci[1]), 1.47, tol=0.02)
+
+print("\n=== 9. CLASS-CONDITIONED GRADING BIAS (v2 Section 4.7) ===")
+for fn, nm, wu, wo in [("preds_internal.json", "internal", 19.3, 10.1),
+                       ("preds_external.json", "external", 28.3, 15.2)]:
+    rows = load(os.path.join(RES, fn))
+    ug = sum(1 for r in rows if r["true"] > 0)
+    og = sum(1 for r in rows if r["true"] < 2)
+    u = 100 * sum(1 for r in rows if r["pipe"] < r["true"]) / ug
+    o = 100 * sum(1 for r in rows if r["pipe"] > r["true"]) / og
+    check(f"{nm}: under-graded, of images that could be (%)", u, wu, tol=0.1)
+    check(f"{nm}: over-graded, of images that could be (%)", o, wo, tol=0.1)
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)

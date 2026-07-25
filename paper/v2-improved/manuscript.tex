@@ -1,0 +1,456 @@
+\documentclass{elektr}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=black, citecolor=blue}
+\usepackage[all]{xy,xypic}
+\usepackage{amsfonts,amssymb,amsmath,amsgen,amsopn,amsbsy,theorem,graphicx,epsfig}
+\usepackage{eufrak,amscd,bezier,latexsym,mathrsfs,eurosym,enumerate}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{cleveref,multirow}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[pagewise]{lineno}
+\linenumbers
+
+\yil{}
+\vol{}
+\fpage{}
+\lpage{}
+\doi{}
+
+% ==== DOUBLE-BLIND: author names/affiliations/ORCIDs go ONLY on the separate title page (titlepage_reframed.tex) ====
+
+% Title chosen by the authors (neutral, does not foreground the leak-free/benchmark angle). Alternatives considered:
+%  - A: A deployed two-stage burn-severity system and a leak-free benchmark of whether segmentation-first helps
+%  - B: When in-distribution accuracy misleads: a leak-free, externally validated benchmark of a two-stage burn-severity pipeline
+\title{A comparative study of deep learning approaches for automated burn injury segmentation and severity classification}
+
+\author[ANONYMISED]{
+	\textbf{Anonymised for double-blind review}\\
+	\rec{...}
+	\acc{...}
+	\finv{...}
+}
+
+% --- minimal preamble macro (only the vspace shortcut is used; the journal's elksty.tex
+% was inlined then trimmed to remove unused macros/theorem styles and their warnings) ---
+\newcommand{\vs}{\vspace}
+
+% allow long URLs in the reference list to break across lines
+\def\UrlBreaks{\do\/\do\-\do\.\do\_\do\?\do\=\do\&\do\#}
+\Urlmuskip=0mu plus 1mu\relax
+
+\setcounter{page}{1}
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Accurate assessment of burn depth guides clinical management, yet visual assessment is subjective and varies between clinicians. Deep learning is attractive as an assessment aid, but the burn literature reports mostly single-dataset accuracy, with little external validation and little scrutiny of data hygiene. Our central argument is that in-distribution accuracy is not evidence of clinical usefulness, whereas leak-free external evaluation is. We describe a deployed two-stage system, a YOLOv8x-seg localiser feeding a masked Swin transformer classifier served through a mobile application, framed as a research artifact rather than a clinically validated device. We then build a leak-free benchmark giving every approach its best honest chance: a plain classifier, an all-in-one YOLOv8-seg model, and the two-stage pipeline, on a source-grouped split of 1,370 photographs with a 205-image internal test, multi-seed repeats, and two external sets. Splitting an augmented dataset at the file level leaked 80.5 percent of the masked test set while the unmasked split leaked none, manufacturing an apparent masking benefit of 3.06 percentage points across 20 of 21 architectures. After a source-grouped split this benefit fell to 0.55 percentage points, with a 95 percent confidence interval of $-0.37$ to $+1.47$ that is consistent with no effect and rules out any benefit larger than about 1.5 points. A plain classifier was the most accurate single system (internal 82.6 percent, external 76.6 percent); the pipeline neither beat it nor collapsed (internal 78.9 percent, external 73.4 percent), and the classifier led on both sets in all three seeds, by 3.74 percentage points internally (paired 95 percent confidence interval $+3.04$ to $+4.44$). On independent clinical images the model did not transfer and systematically under-graded severity; a perceptual-hash check removed 118 contaminated images before the second external test. Segmentation-first is not justified on accuracy grounds; its value is localisation and interpretability.
+\keywords{Burn severity assessment, deep learning, data leakage, external validation, image segmentation, reproducibility}
+\end{abstract}
+
+\section{Introduction}
+\label{Int}
+Burns are common and serious injuries. About 11 million people need medical attention for burns each year, and the World Health Organization estimates that burns cause roughly 180{,}000 deaths annually, most of them in low- and middle-income countries where specialist care is scarce \cite{who,peck}. Survivors often face long hospital stays, scarring, and disability \cite{brusselaers}. Deciding how to treat a burn depends first on assessing its depth, which separates injuries that heal with conservative care from those that need surgery \cite{jackson}. Burns are graded as first degree (epidermis only), second degree (partial thickness, into the dermis), or third degree (full thickness) \cite{heimbach}.
+
+Depth assessment is difficult. Agreement between experienced burn surgeons on burn depth ranges from only about 60 to 80 percent \cite{jaskille}, and it is affected by lighting, wound evolution, blistering, and skin pigmentation \cite{monstrey}. Instruments such as laser Doppler imaging and infrared thermography reach high accuracy but are expensive and rarely available \cite{dang}. An automated, reproducible assessment aid could therefore be useful, particularly where specialists are absent.
+
+Deep learning has reached expert-level performance on several medical imaging tasks \cite{esteva,litjens}, and it has been applied to burns for two coupled subproblems, segmenting the burn region and classifying its severity \cite{boissin}. Progress is real, but the burn literature has three recurring gaps. First, most studies train and report a single architecture, which makes it hard to know whether a reported number reflects the method or the particular network. Second, few studies report confidence intervals, significance tests, or evaluation on data from a source other than the training set. Third, and rarely examined, is data hygiene: whether the split procedure itself inflates the reported numbers. These gaps matter because high in-distribution accuracy has repeatedly failed to predict external performance in medical imaging. Our central thesis, threaded throughout this paper, is that in-distribution accuracy is not evidence of clinical usefulness, whereas leak-free external evaluation is.
+
+We study a concrete burn-severity system and a benchmark built around it, and we frame our contribution as the combination rather than as method novelty. We make four contributions. First, we describe a deployed two-stage system: a YOLOv8x-seg localiser feeding a masked Swin classifier, served through a Flutter and Flask mobile application. Second, we discover and correct a data-leakage artifact that had inflated an original ``masking helps'' result, in which the masked classifier dataset shared a source photograph between test and training for 80.5 percent of its test images while the unmasked dataset shared none. Third, we build a leak-free, fair benchmark that gives every approach its best honest chance, with multi-seed robustness, internal and two external tests, and statistical care. Fourth, we report the honest finding that segmentation-first does not improve accuracy, that a plain classifier is the most accurate single system, and that the pipeline's value is localisation and interpretability rather than a demonstrated accuracy gain.
+
+We state plainly what this work is not. It is not a state-of-the-art architecture, and it is not a clinically validated tool. The deployed system is a research and demonstration artifact, and, as our external results show, it is not ready for any clinical role. The value of the paper is the honest, reproducible combination and its negative and nuanced findings.
+
+The remainder of the paper is organised as follows. Section~\ref{Rel} reviews related work. Section~\ref{Mat} describes the dataset, the leak-free split and its correction, the deployed system, the benchmark design, the training protocol, and the evaluation and statistical methods. Section~\ref{Res} reports the results in the order segmentation quality, the leakage artifact and the masking null, the head-to-head comparison, external failure, and efficiency. Section~\ref{Dis} interprets these results and states the limitations, and Section~\ref{Con} concludes.
+
+\section{Related work}
+\label{Rel}
+\textbf{Automated burn assessment and the high single-dataset pattern.} Computer-aided burn assessment predates deep learning: early systems on the Seville BIP\_US database combined hand-crafted colour and texture features with classical classifiers to separate burn depths \cite{acha}. Deep learning has since become dominant and is typically applied to two coupled subproblems, delineating the burn region and grading its severity \cite{boissin}. Recent work spans convolutional classifiers \cite{suha}, attention-augmented residual networks \cite{yadav2023}, YOLO-family detectors adapted to burn severity \cite{ferdinand,yildiz}, and transformer-based frameworks that perform segmentation and severity assessment jointly \cite{nadeem}. Several report high single-dataset accuracy, for example 95.6 percent with a transfer-learning classifier \cite{suha}, and a recent five-year systematic review finds that most burn studies report strong single-dataset numbers yet very few evaluate on an independent source and dataset details are often under-reported \cite{fu2026review}. A recurring qualitative finding, which our results reproduce, is that partial-thickness (second-degree) burns are the hardest class \cite{nadeem,yildiz}.
+
+\textbf{Comparative studies on a single split.} Comparative burn studies exist \cite{rahman,chang2023}, but they evaluate several backbones on a single split and rarely report confidence intervals, significance tests, or external evaluation. Without these, apparent improvements may not be reliable and out-of-distribution behaviour is unknown. Our work targets exactly these gaps: we compare approaches under one fixed protocol, report Wilson confidence intervals, apply paired significance tests, and add explicit external tests.
+
+\textbf{Segment-then-classify as an established design, and whether masking helps.} Cascading a segmentation stage into a downstream classifier is well established in medical imaging: dual-stage frameworks localise a region of interest and then classify it in breast ultrasound \cite{bruno} and in dermoscopy \cite{almasni2020}, and the same cascade appears in burns for wound measurement and surface-area estimation \cite{chang2021}. This grounds our two-stage design as a standard template, not a novelty. The usual motivation is that masking to the lesion suppresses background shortcuts and focuses the classifier on relevant tissue. The evidence that this helps is mixed: models trained on full images can match or exceed models restricted to the region of interest because networks exploit background and spurious cues, so masking is not a universally beneficial preprocessing step \cite{sourget}. This is consistent with our central negative result.
+
+\textbf{Mobile and point-of-care deployment and its validation gap.} Because our contribution is a deployed system, the most relevant comparators are fielded tools. The most clinically validated is the DeepView multispectral device, whose artificial-intelligence ensemble predicts burn healing potential with high specificity in a prospective study \cite{thatcher2023}, albeit with dedicated multispectral hardware rather than a consumer camera. Smartphone-only wound tools are more common but less validated: a deep-learning pressure-injury staging app reported only 63.2 percent real-world accuracy \cite{lau2022}, and a review of mobile ulcer-segmentation apps concluded that most disclose neither their training data nor adequate clinical validation \cite{griffa2024}. Against this backdrop, a consumer-phone burn system such as ours, like the mobile burn app of Yildiz et al.\ \cite{yildiz}, is valuable precisely when it is reported honestly, including where it underperforms.
+
+\textbf{Data leakage, external validation, and the central theme.} Leakage, information about the test set contaminating training, is a long-recognised cause of inflated, irreproducible results \cite{kaufman}, and it has been identified as a systemic driver of the reproducibility crisis across machine-learning-based science \cite{kapoor}. In medical imaging, a systematic review of COVID-19 models found that none of hundreds of published models were of clinical use, with leakage, biased curation, and inadequate reporting among the leading causes \cite{roberts}, and community responses include consensus reporting standards such as the REFORMS checklist \cite{reforms}. A large body of evidence shows that in-distribution accuracy is a poor predictor of external accuracy: a pneumonia network that scored an internal area under the curve of 0.931 fell to 0.815 at an external hospital and was found to exploit site-specific artifacts \cite{zech2018}; a systematic review of externally validated radiology models found external performance routinely lower and frequently unreported \cite{yu2022}; and reliable in-distribution magnetic-resonance models degraded sharply on out-of-distribution cohorts \cite{martensson2020}. A concrete and easily reproduced form of leakage in image work is splitting after augmentation, so that augmented copies of one source image land in both folds. Our study places burn classification within this pattern and closes on the theme: in-distribution accuracy is not evidence of clinical usefulness; leak-free external evaluation is.
+
+\section{Materials and methods}
+\label{Mat}
+\subsection{Dataset}
+\label{Mat:data}
+The primary dataset was the publicly available ``skin burn wound classification'' dataset on Roboflow Universe (version 31) \cite{roboflow}, released under a Creative Commons Attribution 4.0 licence and exported in COCO segmentation format. It comprises \textbf{1{,}370 unique burn photographs} in three severity classes; the export augments these into about 3{,}424 annotated files with distinct file names (about 2.5 copies per source). Table~\ref{tab:data} summarises the dataset, the leak-free split, and the two external sets. We map the numeric source labels to first, second, and third degree. Class shares are approximately 42 percent first degree, 31 percent second, and 27 percent third. The labels are community-provided and were not independently verified by clinicians.
+
+From the split we derive a segmentation dataset (polygon annotations, either a single ``burn'' class or three severity classes) and a classification dataset in four input forms: unmasked full images; masked images, in which the ground-truth polygon annotation is rasterised to a binary mask and multiplied into the image so that non-burn pixels are zero; images cropped to the annotation bounding box; and masked and cropped. We emphasise that the masked form uses ground-truth annotations rather than predicted masks, so any benchmark result on it is an oracle upper bound, a distinction we return to when interpreting the pipeline.
+
+\subsection{Leak-free split and the leakage correction}
+\label{Mat:leak}
+The naive split follows common practice and partitions the augmented image files at random. Because the source dataset augments each photograph into several copies with distinct file names, a file-level split scatters copies of one photograph across training and test. In the masked classification set built this way, \textbf{80.5 percent of test images shared a source photograph with training}, whereas the separately partitioned unmasked set leaked none. This asymmetry, together with memorisation of near-duplicate training images, manufactured an apparent masking benefit of 3.06 percentage points across 20 of 21 architectures. We report that leaky result only to document the artifact, not as performance, and we never use it as a headline result.
+
+The correction is a source-grouped split. We partition the 1{,}370 source photographs 70/15/15, stratified by class and seeded at 42, keep all augmented copies only in the training fold, and deduplicate validation and test to one image per source (206 and 205 images). All downstream leak-free numbers use this split. The internal test set thus contains \textbf{205} images, distributed 86 first degree, 63 second degree, and 56 third degree.
+
+Source grouping removes leakage between augmented copies of the same file, but it cannot remove what the file names do not encode. Auditing the corrected split with the same perceptual-hash procedure we later apply to the external set (Section~\ref{Mat:eval}), we find \textbf{2 of the 205 test images (1.0 percent) are perceptually identical to a training image carrying a different source identifier}, that is, the same photograph was contributed to the collection twice under different names. One of the two pairs is additionally annotated with conflicting labels in the two folds. We report this rather than suppress it, for three reasons. First, the effect is bounded: even if both images were counted as errors, every reported accuracy moves by at most 1.0 percentage point, which is within the cross-seed standard deviation and reverses no comparison in this paper. Second, it is a concrete instance of the paper's own argument, namely that leakage is easy to introduce and hard to see, and that a single grouping heuristic is not a proof of independence. Third, it yields a practical recommendation we now follow ourselves: \emph{grouping by identifier should be verified with a content-based check}, because identifiers describe provenance only as well as the upstream collection was curated.
+
+\subsection{Deployed two-stage system}
+\label{Mat:system}
+The deployed system processes an image in two stages (Figure~\ref{fig:system}). A single-class YOLOv8x-seg localiser predicts a burn mask; the mask is binarised and multiplied into the image so that the background is black; the masked image is passed to a Swin transformer classifier (Swin-Tiny), which outputs the severity grade. The system is served through a Flask backend and a Flutter mobile front-end. The mobile demonstration currently ships a Swin-Small classifier, whereas all pipeline numbers reported in this paper use the benchmarked Swin-Tiny weights. We stress that the application is a research and demonstration artifact, not a clinically validated device, and Section~\ref{Res:ext} shows that it does not transfer to independent clinical images.
+
+
+\subsection{Benchmark design}
+\label{Mat:bench}
+We run two benchmarks that answer two distinct questions.
+
+Benchmark 1 asks whether focusing the classifier on the burn helps. We train 11 ImageNet-pretrained architectures, a representative subset of the 21 used in the naive-split experiment chosen to span convolutional and transformer families within the compute budget, on the leak-free split: ConvNeXt-Tiny, ConvNeXt-Large, DenseNet201, EfficientNet-B0, MobileNetV3-Large, ResNet50, Swin-Tiny, Swin-Small, Swin-Base, Swin-Large, and ViT-Base \cite{convnext,densenet,efficientnet,mobilenet,resnet,swin,vit}. Coverage of the four input conditions of Section~\ref{Mat:data} is not uniform, and we state it explicitly: all 11 architectures were trained under the unmasked and masked conditions, whereas the two cropping conditions were run on 8 of the 11, omitting ConvNeXt-Tiny, Swin-Base, and Swin-Large for compute reasons. Because the masked condition uses ground-truth masks, its result is an oracle upper bound on any masking benefit that a real segmenter could achieve.
+
+Benchmark 2 asks whether segmentation-first helps end to end, through a fair head-to-head on the shared 205-image internal test set and on the external sets. Every approach gets its best honest chance. The standalone classifier is evaluated in its best condition (ConvNeXt-Large on unmasked images). The robust pipeline runs the localiser at a low confidence threshold of 0.05, masks the image, and classifies it with Swin-Tiny, falling back to the full image when the localiser returns no region, which matches the deployed application. The all-in-one YOLOv8-seg model is evaluated at the same low confidence threshold of 0.05 for fairness. We report accuracy and, on the imbalanced external sets, balanced accuracy.
+
+For robustness, the Benchmark 2 classifiers were trained and evaluated over seeds 0, 1, and 2 and are reported as mean and sample standard deviation (denominator $n-1$), while the Benchmark 1 masking ablation was confirmed over seeds 0, 1, and 42 for the masked-versus-unmasked comparison on 8 of the architectures; the cropping conditions were evaluated at seed 42 only. These are separate experiments, run at different times, and we report each seed set as it stands rather than merging them.
+
+\subsection{Training protocol}
+\label{Mat:train}
+Classifiers used ImageNet-pretrained backbones \cite{imagenet} from the timm library \cite{timm}, each with the classification head resized to three outputs and trained under one fixed recipe: the AdamW optimiser, class-weighted cross-entropy using inverse class frequencies, a cosine schedule with early stopping, mixed precision, and input resized to $224\times224$. Training-time augmentation (horizontal flip, colour jitter, small rotation) was enabled and evaluation-time augmentation disabled, with an identical transform for every architecture so that differences reflect the network rather than the setup.
+
+Both YOLOv8x-seg models (the single-class localiser and the three-class standalone model) used the same configuration: 100 epochs at $640\times640$ input, batch size 8, the AdamW optimiser at an initial learning rate of $10^{-3}$, seed 42, and early stopping with patience 20, initialised from the public \texttt{yolov8x-seg.pt} weights \cite{ultralytics}.
+
+The Benchmark 1 masking ablation was run on a Kaggle NVIDIA P100 (PyTorch 2.5.1, CUDA 12.1) \cite{pytorch}. The Benchmark 2 segmentation training, the head-to-head classifier retraining, the external evaluation, and the efficiency measurements were run on a Google Colab NVIDIA A100 (PyTorch 2.11, CUDA 12.8). This environment difference likely accounts for the retrained classifier accuracies being about two percentage points lower than the earlier seed-42 Kaggle run.
+
+\subsection{Evaluation, robust pipeline, and statistics}
+\label{Mat:eval}
+For a like-for-like comparison, the three-class standalone YOLOv8-seg detections are reduced to a per-image majority-degree label, directly comparable to the classifier and the pipeline on the same 205 images. Images for which the localiser returns no region are never dropped; they are counted as errors in a fixed denominator. To make the effect of this choice transparent, we report both a strict pipeline (default confidence 0.25, no-detection counted as an error) and the robust pipeline (confidence 0.05 with full-image fallback) as an ablation.
+
+We report accuracy with Wilson 95 percent confidence intervals \cite{wilson} and compare systems on the same images with the paired exact McNemar test \cite{mcnemar}. Two distinct questions require two distinct tests, and we keep them separate throughout. Whether one system beats another \emph{on a particular test set} is an image-level question, answered by McNemar on paired predictions. Whether one system beats another \emph{on average across training runs} is a run-level question, answered by a paired test over per-seed accuracies. Overlapping error bars are not used as evidence of absence, since the comparisons are paired.
+
+The masking effect was tested with the Wilcoxon signed-rank test over architecture-seed pairs, and we report it as an effect size with a confidence interval rather than against a single detectability threshold. The difference between transformer and convolutional architectures was tested with a one-sided Mann-Whitney test (the directional hypothesis being that transformers benefit more); the two-sided value is also reported in Section~\ref{Res:mask} for transparency. Following the honesty rule of this study, we prefer interval estimates to accept/reject statements wherever the data allow.
+
+Two external protocols probe generalisation. The first uses the BIP\_US clinical database of the Biomedical Image Processing Group at the University of Seville (94 photographs) \cite{acha,rostami}, which predates and is independent of the web-sourced training data. BIP\_US labels depth as superficial dermal, deep dermal, or full thickness; because the mapping onto our three classes is not exact, we report both plausible mappings of deep dermal (to second degree and to third degree), giving a second-versus-third-degree probe with no first-degree cases. The second external set is a clean set of 319 images that we built from a second public Roboflow burn collection by removing every image that overlapped our training data. We screened for overlap with a perceptual-hash method: pHash and dHash computed with the \texttt{imagehash} library \cite{zauner}, compared by Hamming distance against all primary training images and made horizontal-flip-aware. This check removed 118 images that were perceptual-hash identical to training and flagged 56 of 199 sources (28 percent) as contaminated; all were removed. We also dropped the fourth-degree class and remapped the remainder to first, second, and third degree, leaving 319 images distributed 139, 157, and 23. These 319 images derive from \textbf{175 distinct source photographs} (mean 1.8 images per source, maximum 4); they are external to the training data, but they are not 319 statistically independent observations, so interval estimates computed on $N=319$ should be read as optimistic. We report the image-level figures for comparability with the internal test set and note this caveat wherever the external intervals are used. The perceptual-hash check is reported as a method, not an afterthought, because it reinforces the leakage and reproducibility theme.
+
+\section{Results}
+\label{Res}
+\subsection{Segmentation quality}
+\label{Res:seg}
+On the held-out test set the single-class localiser, which is the pipeline front-end, reached a mask mean average precision at intersection-over-union 0.50 (mask mAP50) of \textbf{0.726} and a mask mAP50-95 of 0.417, while the three-class standalone model reached a mask mAP50 of \textbf{0.603} and a mask mAP50-95 of 0.349 (Table~\ref{tab:seg}). The single-class model scores higher because it need not separate severity classes. Second degree is the hardest class to segment, consistent with the classifiers' weakest per-class performance on partial-thickness burns. Segmentation is therefore only moderate, a point that matters for the pipeline below.
+
+
+\subsection{The apparent masking benefit was leakage}
+\label{Res:leak}
+Under the naive file-level split, masking appeared to raise accuracy for 20 of 21 architectures by a mean of 3.06 percentage points (Figure~\ref{fig:leak}). This benefit does not survive scrutiny: it is a data-leakage artifact, driven by the 80.5 percent versus 0 percent source overlap between the masked and unmasked test sets (Table~\ref{tab:data}), where the masked accuracies were inflated by memorisation of near-duplicate training images. We document this only to explain the artifact, and every conclusion below rests on the leak-free split.
+
+
+\subsection{On a leak-free split, masking gives no reliable benefit}
+\label{Res:mask}
+On the leak-free split the masking benefit disappears (Table~\ref{tab:mask}). For seed 42 alone, background masking raised accuracy by 1.5 percentage points overall, concentrated in the transformer architectures (3.1 percentage points, in all five of five) with roughly no change for the convolutional networks. That pattern did not replicate. Adding the fresh seeds 0 and 1 to seed 42, over the 24 architecture-seed pairs available in all three runs, collapses the effect to \textbf{$+0.55$ percentage points with a 95 percent confidence interval of $-0.37$ to $+1.47$} (Wilcoxon signed-rank $p=0.32$; 13 of 24 pairs improved). The interval is the informative quantity: it is consistent with no effect, and it rules out any benefit larger than about 1.5 percentage points. The apparent transformer advantage also failed to replicate (one-sided Mann-Whitney $p=0.33$; two-sided $p=0.66$), with transformers at $+0.77$ and convolutional networks at $+0.33$ percentage points pooled. Cropping to the burn produced essentially no change at seed 42, and masking with cropping likewise; the two cropping conditions were run on 8 of the 11 architectures and were not repeated across seeds, so we treat them as a weaker, single-seed check. We read this symmetrically: not that masking is exactly zero, but that any benefit it confers is smaller than the run-to-run variation of the training procedure itself, and that the seed-42 signal was noise. This matches the wider finding that region-of-interest masking is not reliably beneficial \cite{sourget}.
+
+
+\subsection{Head-to-head: a plain classifier is the most accurate single system}
+\label{Res:h2h}
+Table~\ref{tab:h2h} and Figure~\ref{fig:h2h} report the core comparison. Across seeds 0, 1, and 2, the standalone classifier (ConvNeXt-Large) reached \textbf{82.6 $\pm$ 0.7} percent internally and \textbf{76.6 $\pm$ 1.6} percent on the clean external set (balanced 80.1 $\pm$ 1.8), while the robust pipeline reached \textbf{78.9 $\pm$ 1.0} percent internally and \textbf{73.4 $\pm$ 2.5} percent externally (balanced 77.9 $\pm$ 3.4). The classifier won on both sets in all three seeds. The all-in-one YOLOv8-seg model, evaluated at the fair confidence threshold of 0.05 but trained with a single seed, reached 79.5 percent internally and 68.7 percent externally (balanced 74.6); we treat its point estimate cautiously because it is a single seed.
+
+
+\subsection{Statistical honesty on the head-to-head}
+\label{Res:stat}
+The two questions of Section~\ref{Mat:eval} give different answers, and separating them matters. At the level of \emph{these particular images}, the advantage is not resolved: on the seed-42 models McNemar's exact test gave 20 versus 18 discordant pairs internally ($p=0.87$, effectively a tie, because seed 42 happened to be the pipeline's most favourable run) and 54 versus 40 externally ($p=0.18$). At the level of \emph{training runs}, the picture is clearer: the paired per-seed difference is $+3.74$ percentage points internally (95 percent CI $+3.04$ to $+4.44$, paired $t$ $p=0.002$) and $+3.24$ percentage points externally (95 percent CI $-3.83$ to $+10.31$, $p=0.19$), with the classifier ahead in three of three seeds on both sets.
+
+We therefore state the finding precisely: internally, the classifier reliably outperforms the pipeline across training runs, by roughly three to four percentage points; externally the direction is the same but the interval is wide and includes zero; and on any single test set of this size the difference is not detectable image by image. We deliberately do not infer absence of an effect from overlapping error bars, because the comparison is paired and overlapping intervals are uninformative in that setting.
+
+\subsection{Oracle versus real masks, and strict versus robust pipeline}
+\label{Res:oracle}
+Table~\ref{tab:h2h} also separates two effects that are easy to conflate. Swin-Tiny on ground-truth (oracle) masks reached 83.9 percent internally, an upper bound; the robust pipeline with real predicted masks reached 81.5 percent at the same seed and 78.9 $\pm$ 1.0 percent across seeds, so at matched seeds imperfect segmentation costs about two points. The choice of confidence threshold matters at the tail: the strict pipeline (confidence 0.25, no-detection counted as an error) reached 79.0 percent internally but only 54.2 percent externally, whereas the robust pipeline reached 69.9 percent externally at seed 42. We report both, and we never present the 83.9 percent oracle number as the accuracy of the deployed pipeline.
+
+\subsection{External generalisation fails}
+\label{Res:ext}
+On genuinely clinical images the model does not transfer, and it fails in the dangerous direction. On the 94 BIP\_US images (Table~\ref{tab:ext}), the deployed pipeline graded about 55 of 94 images below their true severity and classified about half of the full-thickness burns as first degree; balanced accuracy was 30.5 percent under the deep-dermal-to-second-degree mapping and 35.0 percent under the deep-dermal-to-third-degree mapping, against a chance level of 50 percent for this two-class probe. On the clean external set of 319 images, the classifier was the most robust approach, with no undetected images, while the segmentation-dependent approaches degraded more (Table~\ref{tab:h2h}; Figure~\ref{fig:cm} shows the pipeline confusion matrices for both sets). Under-grading must be quantified conditionally, because a first-degree burn cannot be under-graded and a third-degree burn cannot be over-graded, so raw error counts are confounded by class balance. Among images that \emph{could} be under-graded, the pipeline under-graded 19.3 percent internally (23 of 119) and \textbf{28.3 percent externally (51 of 180)}; among images that could be over-graded it over-graded 10.1 percent internally (15 of 149) and 15.2 percent externally (45 of 296). The bias toward lower severity is therefore present on both sets and is markedly stronger externally, and it is not an artifact of the external class distribution. The perceptual-hash check that produced this set had already removed 118 training-identical images and 28 percent of sources before evaluation, so these numbers are measured on genuinely unseen data. Figure~\ref{fig:qual} shows what these errors look like in practice. The message is that the model does not generalise to clinical data, and that under-grading, directing a severe burn toward conservative care, is the more dangerous error.
+
+
+\subsection{Efficiency}
+\label{Res:eff}
+The pipeline is slower and no more accurate than the standalone classifier (Table~\ref{tab:eff}). On the A100, the localiser took 15.4 ms per image and the standalone classifiers 25.8 ms (ConvNeXt-Large) and 23.7 ms (Swin-Tiny), while the full pipeline took 42.3 ms, about 1.6 times slower than the standalone classifier because it runs two models. The pipeline's return for this cost is localisation, not accuracy.
+
+
+\section{Discussion}
+\label{Dis}
+Three cautionary findings define this study, and each is an instance of the central theme. First, leakage manufactured the masking benefit: augmenting a dataset before splitting it, and then partitioning at the file level, produced a several-point improvement that does not exist. The failure is easy to make and hard to see, because the leaked copies are augmentations rather than exact duplicates. Second, on a leak-free split, masking gives no benefit resolvable at this sample size. Third, the two-stage pipeline does not beat a plain classifier and does not generalise to independent clinical images.
+
+We nonetheless keep the segmentation-first design, and it is important to say why. Its justification is not accuracy, which we are careful not to claim, but localisation and interpretability: the system returns where the burn is and a clean masked region a clinician can inspect, which suits the mobile use-case and follows an established two-stage template \cite{bruno,yildiz}. The honest reading is that segmentation cannot improve grading here; it can only localise and occasionally exclude an image it fails to find.
+
+The oracle-mask design strengthens rather than weakens this reading. Because the masking ablation used ground-truth masks, an upper bound, and still showed no benefit, poor segmentation cannot be blamed for the null: a better segmenter could not have rescued a masking gain that is absent even with perfect masks. The like-for-like gap at the same seed, 83.9 percent with oracle masks against 81.5 percent with real predicted masks, about two points, is the cost of imperfect masks, not a hidden pipeline accuracy.
+
+Our leaked in-distribution numbers sit in the range of the high single-dataset accuracies reported in the burn literature \cite{suha,nadeem,yildiz,ferdinand,fu2026review}, which is exactly why such numbers deserve caution when the dataset is augmented and the split procedure is not described. The mirror image is instructive: multi-source training improves robustness \cite{elsarta2025}, whereas our single-source model fails to transfer. Our external failure is consistent with a wide medical-imaging pattern in which strong internal scores collapse on external data \cite{zech2018,yu2022,martensson2020,roberts}.
+
+External behaviour is at once the strongest limitation and the strongest message, and it differs by set. On the genuinely clinical Seville images the model collapses toward chance and under-grades severely. On the second, web-sourced external set the decline is more modest and the plain classifier remains the most robust approach, consistent with a smaller distribution shift for web images than for clinical photographs. In neither case is the system ready for a clinical role. The clinical collapse most likely reflects a narrow, web-sourced training distribution and a labelling protocol that differs from clinical depth staging. Multi-source, clinically labelled data and domain-adaptation methods are needed before generalisation can be claimed.
+
+\subsection{Limitations}
+\label{Dis:lim}
+Several limitations qualify these results. The training data come from a single web source with community labels that were not clinically verified. The internal test set is small ($N=205$, one image per source), so confidence intervals are wide. The head-to-head standalone YOLOv8-seg model is single-seed, so its point estimate should not be compared to the multi-seed means without that caveat. The masking delta is not stable to the architecture pool and run-to-run noise at a magnitude below the minimum detectable effect, so we make no claim that masking is exactly zero. The BIP\_US external set is small and lacks first-degree cases, so it probes second versus third degree only. We also conducted no user study or prospective clinical evaluation of the mobile application, so its usability and clinical value remain untested. Finally, we performed no analysis of fairness across skin tones, which matters for any clinical imaging tool but is unsupported by our data.
+
+\section{Conclusion}
+\label{Con}
+We studied a deployed two-stage burn-severity system through a leak-free, fair benchmark, and three findings recur. Splitting an augmented dataset at the file level manufactured a masking benefit that vanished under a source-grouped split. A plain classifier was the most accurate single system and beat the two-stage pipeline consistently across seeds, so segmentation-first is justified here by localisation and interpretability rather than by accuracy. The model did not transfer to clinical images and under-graded severity. The procedural lessons transfer beyond burns: datasets augmented before splitting must be partitioned by source image, or reported gains may be illusory, and in-distribution accuracy must not be read as clinical usefulness. Future work needs multi-source, clinically labelled data with patient-level splits and domain adaptation, and should keep segmentation for localisation rather than as an accuracy lever.
+
+\section*{Acknowledgment}
+The authors thank the Biomedical Image Processing Group of the University of Seville for making the BIP\_US database available for research, and the computing platforms used for this work.
+
+\section*{Declaration of generative AI and AI-assisted technologies}
+During the preparation of this work the authors used Anthropic Claude (Claude Code, Opus 4.8 model) in order to organise the project materials, reproduce and check the reported results, run the statistical, benchmarking, and external-validation analyses (including the leak-free re-runs and the perceptual-hash leakage check), and draft and edit the manuscript. The research itself, comprising the system design, model training, dataset preparation, and the mobile application, was conceived and carried out by the authors. The prompt(s) employed are given below:
+
+[Audit the training and evaluation code for data leakage and verify the split; rebuild a leak-free, source-grouped split and re-run the masking ablation over architectures and seeds; compute Wilson intervals, McNemar, sign, Wilcoxon and Mann-Whitney tests and the minimum detectable effect; run the external validation and build a perceptual-hash-verified clean external set; draft and edit the manuscript to the journal template and check it against the author guidelines.]
+
+After using this tool/service, the authors reviewed and edited the content as needed and take full responsibility for the content of the publication.
+
+\section*{Data and code availability statement}
+The primary burn dataset is available on Roboflow Universe \cite{roboflow} under a Creative Commons Attribution 4.0 licence. The BIP\_US external validation database is available for research from the Biomedical Image Processing Group of the University of Seville. A public code and model repository and an archived release including model checkpoints will be made available upon acceptance; the links are withheld here to preserve double-blind review.
+
+\section*{Funding}
+This research received no external funding.
+
+\section*{Conflict of interest}
+The authors declare no conflict of interest.
+
+\section*{Informed consent}
+This study used only publicly available, de-identified burn images and an independent research database, and did not involve new data collection from human participants. Institutional review board approval was therefore not required.
+
+\begin{thebibliography}{99}
+\bibitem{who} World Health Organization. Burns. Geneva, Switzerland: WHO, 2023. Available at \url{https://www.who.int/news-room/fact-sheets/detail/burns}
+\bibitem{peck} Peck MD. Epidemiology of burns throughout the world. Part I: distribution and risk factors. Burns 2011; 37 (7): 1087-1100. doi: 10.1016/j.burns.2011.06.005
+\bibitem{brusselaers} Brusselaers N, Monstrey S, Vogelaers D, Hoste E, Blot SI. Severe burn injury in Europe: a systematic review of the incidence, etiology, morbidity, and mortality. Critical Care 2010; 14 (5): R188. doi: 10.1186/cc9300
+\bibitem{jackson} Jackson DM. The diagnosis of the depth of burning. British Journal of Surgery 1953; 40 (164): 588-596. doi: 10.1002/bjs.18004016413
+\bibitem{heimbach} Heimbach DM, Afromowitz MA, Engrav LH, Marvin JA, Perry B. Burn depth estimation: man or machine. Journal of Trauma 1984; 24 (5): 373-378. doi: 10.1097/00005373-198405000-00001
+\bibitem{jaskille} Jaskille AD, Shupp JW, Jordan MH, Jeng JC. Critical review of burn depth assessment techniques: part I, historical review. Journal of Burn Care and Research 2009; 30 (6): 937-947. doi: 10.1097/BCR.0b013e3181c07f21
+\bibitem{monstrey} Monstrey S, Hoeksema H, Verbelen J, Pirayesh A, Blondeel P. Assessment of burn depth and burn wound healing potential. Burns 2008; 34 (6): 761-769. doi: 10.1016/j.burns.2008.01.009
+\bibitem{dang} Dang J, Lin M, Tan C, Pham CH, Huang S et al. Use of infrared thermography for assessment of burn depth and healing potential: a systematic review. Journal of Burn Care and Research 2021; 42 (6): 1120-1127. doi: 10.1093/jbcr/irab108
+\bibitem{esteva} Esteva A, Kuprel B, Novoa RA, Ko J, Swetter SM et al. Dermatologist-level classification of skin cancer with deep neural networks. Nature 2017; 542 (7639): 115-118. doi: 10.1038/nature21056
+\bibitem{litjens} Litjens G, Kooi T, Bejnordi BE, Setio AAA, Ciompi F et al. A survey on deep learning in medical image analysis. Medical Image Analysis 2017; 42: 60-88. doi: 10.1016/j.media.2017.07.005
+\bibitem{boissin} Boissin C, Laflamme L, Fransen J, Lundin M, Huss F et al. Development and evaluation of deep learning algorithms for assessment of acute burns and the need for surgery. Scientific Reports 2023; 13: 1794. doi: 10.1038/s41598-023-28164-4
+\bibitem{acha} Acha B, Serrano C, Acha JI, Roa LM. Segmentation and classification of burn images by color and texture information. Journal of Biomedical Optics 2005; 10 (3): 034014. doi: 10.1117/1.1921227
+\bibitem{rostami} Rostami B, Niezgoda J, Gopalakrishnan S, Yu Z. Multiclass burn wound image classification using deep convolutional neural networks. arXiv preprint 2021; arXiv:2103.01361.
+\bibitem{suha} Suha SA, Sanam TF. A deep convolutional neural network-based approach for detecting burn severity from skin burn images. Machine Learning with Applications 2022; 9: 100371. doi: 10.1016/j.mlwa.2022.100371
+\bibitem{nadeem} Nadeem A, Bashir B, Khalid S, Matloob I, Sajid A et al. A transformer-based computational framework for automated burn injury segmentation and severity assessment. IEEE Access 2026; 14: 27793-27811. doi: 10.1109/ACCESS.2026.3663629
+\bibitem{yildiz} Yildiz M, Sarpdagi Y, Okuyar M, Yildiz M, Ciftci N et al. Segmentation and classification of skin burn images with artificial intelligence: development of a mobile application. Burns 2024; 50 (4): 966-979. doi: 10.1016/j.burns.2024.01.007
+\bibitem{ferdinand} Ferdinand J, Chow DV, Prasetyo SY. Automated skin burn detection and severity classification using YOLO convolutional neural network pretrained model. E3S Web of Conferences 2023; 426: 01076. doi: 10.1051/e3sconf/202342601076
+\bibitem{rahman} Rahman S, Rahman MM, Faezipour M, Rastgaar M, Ridelman E. Enhancing burn severity assessment with deep learning: a comparative analysis and computational efficiency evaluation. IEEE Access 2024; 12: 147249-147268. doi: 10.1109/ACCESS.2024.3476110
+\bibitem{fu2026review} Fu YT. Convolutional neural networks for burn segmentation and classification tasks using RGB photographs: a five-year systematic review. Burns Open 2026; 14: 100452. doi: 10.1016/j.burnso.2026.100452
+\bibitem{yadav2023} Yadav DP, Aljrees T, Kumar D, Kumar A, Singh KU et al. Spatial attention-based residual network for human burn identification and classification. Scientific Reports 2023; 13: 12516. doi: 10.1038/s41598-023-39618-0
+\bibitem{chang2023} Chang CW, Ho CY, Lai F, Christian M, Huang SC et al. Application of multiple deep learning models for automatic burn wound assessment. Burns 2023; 49 (5): 1039-1051. doi: 10.1016/j.burns.2022.07.006
+\bibitem{chang2021} Chang CW, Lai F, Christian M, Chen YC, Hsu C et al. Deep learning-assisted burn wound diagnosis: diagnostic model development study. JMIR Medical Informatics 2021; 9 (12): e22798. doi: 10.2196/22798
+\bibitem{elsarta2025} Elsarta A, Fathalla H, Nasser M, Elwatany S, Fekry R et al. Integrating multi-source data for skin burn classification using deep learning. Computers in Biology and Medicine 2025; 195: 110556. doi: 10.1016/j.compbiomed.2025.110556
+\bibitem{thatcher2023} Thatcher JE, Yi F, Nussbaum AE, DiMaio JM, Dwight J et al. Clinical investigation of a rapid non-invasive multispectral imaging device utilizing an artificial intelligence algorithm for improved burn assessment. Journal of Burn Care and Research 2023; 44 (4): 969-981. doi: 10.1093/jbcr/irad051
+\bibitem{lau2022} Lau CH, Yu KHO, Yip TF, Luk LYF, Wai AKC et al. An artificial intelligence-enabled smartphone app for real-time pressure injury assessment. Frontiers in Medical Technology 2022; 4: 905074. doi: 10.3389/fmedt.2022.905074
+\bibitem{griffa2024} Griffa D, Natale A, Merli Y, Starace M, Curti N et al. Artificial intelligence in wound care: a narrative review of the currently available mobile apps for automatic ulcer segmentation. BioMedInformatics 2024; 4 (4): 2321-2337. doi: 10.3390/biomedinformatics4040126
+\bibitem{bruno} Bruno P, Macri M, Dodaro C. A dual-stage deep learning framework for breast ultrasound image segmentation and classification. Journal of Medical Systems 2025; 49 (1): 162. doi: 10.1007/s10916-025-02298-6
+\bibitem{almasni2020} Al-masni MA, Kim DH, Kim TS. Multiple skin lesions diagnostics via integrated deep convolutional networks for segmentation and classification. Computer Methods and Programs in Biomedicine 2020; 190: 105351. doi: 10.1016/j.cmpb.2020.105351
+\bibitem{sourget} Sourget T, Hestbek-Moller M, Jimenez-Sanchez A, Xu JJ, Cheplygina V. Mask of truth: model sensitivity to unexpected regions of medical images. Journal of Imaging Informatics in Medicine 2025; 39: 767-784. doi: 10.1007/s10278-025-01531-5
+\bibitem{kaufman} Kaufman S, Rosset S, Perlich C, Stitelman O. Leakage in data mining: formulation, detection, and avoidance. ACM Transactions on Knowledge Discovery from Data 2012; 6 (4): 1-21. doi: 10.1145/2382577.2382579
+\bibitem{kapoor} Kapoor S, Narayanan A. Leakage and the reproducibility crisis in machine-learning-based science. Patterns 2023; 4 (9): 100804. doi: 10.1016/j.patter.2023.100804
+\bibitem{roberts} Roberts M, Driggs D, Thorpe M, Gilbey J, Yeung M et al. Common pitfalls and recommendations for using machine learning to detect and prognosticate for COVID-19 using chest radiographs and CT scans. Nature Machine Intelligence 2021; 3: 199-217. doi: 10.1038/s42256-021-00307-0
+\bibitem{reforms} Kapoor S, Cantrell EM, Peng K, Pham TH, Bail CA et al. REFORMS: consensus-based recommendations for machine-learning-based science. Science Advances 2024; 10 (18): eadk3452. doi: 10.1126/sciadv.adk3452
+\bibitem{zech2018} Zech JR, Badgeley MA, Liu M, Costa AB, Titano JJ et al. Variable generalization performance of a deep learning model to detect pneumonia in chest radiographs: a cross-sectional study. PLOS Medicine 2018; 15 (11): e1002683. doi: 10.1371/journal.pmed.1002683
+\bibitem{yu2022} Yu AC, Mohajer B, Eng J. External validation of deep learning algorithms for radiologic diagnosis: a systematic review. Radiology: Artificial Intelligence 2022; 4 (3): e210064. doi: 10.1148/ryai.210064
+\bibitem{martensson2020} Martensson G, Ferreira D, Granberg T, Cavallin L, Oppedal K et al. The reliability of a deep learning model in clinical out-of-distribution MRI data: a multicohort study. Medical Image Analysis 2020; 66: 101714. doi: 10.1016/j.media.2020.101714
+\bibitem{roboflow} Binus. Skin burn wound classification dataset. Roboflow Universe 2023. Available at \url{https://universe.roboflow.com/binus-if3z9/skin-burn-wound-classification} (cited 2026 July 20).
+\bibitem{zauner} Zauner C. Implementation and benchmarking of perceptual image hash functions. MSc, Upper Austria University of Applied Sciences, Hagenberg, Austria, 2010.
+\bibitem{ultralytics} Jocher G, Chaurasia A, Qiu J. Ultralytics YOLOv8. Software 2023. Available at \url{https://github.com/ultralytics/ultralytics}
+\bibitem{swin} Liu Z, Lin Y, Cao Y, Hu H, Wei Y et al. Swin transformer: hierarchical vision transformer using shifted windows. In: IEEE/CVF International Conference on Computer Vision; Montreal, Canada; 2021. pp. 10012-10022.
+\bibitem{convnext} Liu Z, Mao H, Wu CY, Feichtenhofer C, Darrell T et al. A ConvNet for the 2020s. In: IEEE/CVF Conference on Computer Vision and Pattern Recognition; New Orleans, LA, USA; 2022. pp. 11976-11986.
+\bibitem{vit} Dosovitskiy A, Beyer L, Kolesnikov A, Weissenborn D, Zhai X et al. An image is worth 16x16 words: transformers for image recognition at scale. In: International Conference on Learning Representations; Vienna, Austria; 2021.
+\bibitem{resnet} He K, Zhang X, Ren S, Sun J. Deep residual learning for image recognition. In: IEEE Conference on Computer Vision and Pattern Recognition; Las Vegas, NV, USA; 2016. pp. 770-778.
+\bibitem{densenet} Huang G, Liu Z, van der Maaten L, Weinberger KQ. Densely connected convolutional networks. In: IEEE Conference on Computer Vision and Pattern Recognition; Honolulu, HI, USA; 2017. pp. 4700-4708.
+\bibitem{efficientnet} Tan M, Le QV. EfficientNet: rethinking model scaling for convolutional neural networks. In: International Conference on Machine Learning; Long Beach, CA, USA; 2019. pp. 6105-6114.
+\bibitem{mobilenet} Howard A, Sandler M, Chu G, Chen LC, Chen B et al. Searching for MobileNetV3. In: IEEE/CVF International Conference on Computer Vision; Seoul, Korea; 2019. pp. 1314-1324.
+\bibitem{imagenet} Deng J, Dong W, Socher R, Li LJ, Li K et al. ImageNet: a large-scale hierarchical image database. In: IEEE Conference on Computer Vision and Pattern Recognition; Miami, FL, USA; 2009. pp. 248-255.
+\bibitem{pytorch} Paszke A, Gross S, Massa F, Lerer A, Bradbury J et al. PyTorch: an imperative style, high-performance deep learning library. In: Advances in Neural Information Processing Systems; Vancouver, Canada; 2019. pp. 8024-8035.
+\bibitem{timm} Wightman R. PyTorch image models. Software 2019. Available at \url{https://github.com/huggingface/pytorch-image-models}
+\bibitem{wilson} Wilson EB. Probable inference, the law of succession, and statistical inference. Journal of the American Statistical Association 1927; 22 (158): 209-212. doi: 10.1080/01621459.1927.10502953
+\bibitem{mcnemar} McNemar Q. Note on the sampling error of the difference between correlated proportions or percentages. Psychometrika 1947; 12 (2): 153-157. doi: 10.1007/BF02295996
+\end{thebibliography}
+
+% ==================== TABLES ====================
+
+
+\begin{table}[!ht]
+\caption{Dataset, leak-free split, and external sets. The naive file-level split (documented only to explain the leakage artifact) shared a source photograph between test and training for 80.5 percent of masked test images and none of the unmasked test images.}
+\begin{center}
+\small
+\begin{tabular}{|l|c|}
+\hline
+Item & Value \\
+\hline
+\multicolumn{2}{|l|}{\textbf{Primary set (Roboflow ``skin burn wound classification'', version 31, CC BY 4.0)}} \\
+\hline
+Unique source photographs & 1{,}370 \\
+Augmented files & $\approx$ 3{,}424 \\
+Split (by source, stratified by class, seed 42) & 70 / 15 / 15 \\
+Validation / test (deduplicated to one image per source) & 206 / 205 \\
+Internal test distribution (first / second / third) & 86 / 63 / 56 \\
+Naive-split source overlap into training (masked / unmasked) & 80.5\% / 0\% \\
+\hline
+\multicolumn{2}{|l|}{\textbf{External sets}} \\
+\hline
+BIP\_US clinical database (Seville; second-vs-third probe) & 94 \\
+Clean external set (second Roboflow collection, pHash-verified) & 319 \\
+\quad distribution (first / second / third) & 139 / 157 / 23 \\
+\quad images removed as perceptual-hash identical to training & 118 \\
+\quad contaminated sources removed & 56 / 199 (28\%) \\
+\hline
+\end{tabular}
+\label{tab:data}
+\end{center}\vs{-4mm}
+\end{table}
+
+
+\begin{table}[!ht]
+\caption{Segmentation quality on the held-out test set (Benchmark 2, YOLOv8x-seg). Both models used the identical configuration (100 epochs, $640\times640$, batch 8, AdamW at $10^{-3}$, seed 42, patience 20). Second degree is the hardest class.}
+\begin{center}
+\small
+\begin{tabular}{|l|c|c|c|}
+\hline
+Model & Classes & Test mask mAP50 & Test mask mAP50-95 \\
+\hline
+Single-class localiser (pipeline front-end) & 1 & 0.726 & 0.417 \\
+Standalone YOLOv8-seg & 3 & 0.603 & 0.349 \\
+\hline
+\end{tabular}
+\label{tab:seg}
+\end{center}\vs{-4mm}
+\end{table}
+
+
+\begin{table}[!ht]
+\caption{Masking ablation (Benchmark 1) on the leak-free split. Each condition is compared to unmasked full images on the same architectures. The masked condition uses ground-truth polygon masks, so it is an oracle upper bound. Changes are means in percentage points; the architecture count for each condition is given explicitly.}
+\begin{center}
+\small
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+Condition & Architectures & Seed 42 & Seeds 0, 1, 42 & Significance \\
+\hline
+Masked (background zeroed) & 11 & $+1.5$ & $+0.55$ & Wilcoxon $p=0.32$; CI $[-0.37,+1.47]$ \\
+Cropped to bounding box & 8 & $\approx +0.0$ & not run & not significant \\
+Masked and cropped & 8 & $\approx +0.0$ & not run & not significant \\
+\hline
+\multicolumn{5}{|p{0.92\textwidth}|}{The seed-42 sweep covered all 11 architectures under the masked and unmasked conditions, but only 8 of the 11 under the two cropping conditions (ConvNeXt-Tiny, Swin-Base, and Swin-Large were not run with cropping, for compute reasons). The multi-seed confirmation over seeds 0, 1, and 42 was run for the masked condition only, across 8 architectures and 24 architecture-seed pairs; the cropping conditions were evaluated at seed 42 only. The seed-42 masking effect was concentrated in transformers ($+3.1$, five of five) with roughly no change for convolutional networks ($+0.2$); the transformer-versus-convolutional difference was not significant (one-sided Mann-Whitney $p=0.33$, two-sided $p=0.66$). The pooled masking effect is $+0.55$ percentage points with a 95 percent confidence interval of $-0.37$ to $+1.47$; the interval, not a detectability threshold, is the quantity we rely on. For contrast, the naive file-level split had appeared to show $+3.06$ percentage points across 20 of 21 architectures, a leakage artifact.} \\
+\hline
+\end{tabular}
+\label{tab:mask}
+\end{center}\vs{-4mm}
+\end{table}
+
+
+\begin{table}[!ht]
+\caption{Head-to-head accuracy (percent). Multi-seed rows are mean $\pm$ sample standard deviation (denominator $n-1$) over seeds 0, 1, and 2, with the Wilson 95 percent interval for the seed-42 run given beneath each. Balanced accuracy is given for the imbalanced external set. Reference rows below the rule isolate the oracle-mask upper bound and the threshold-sensitivity ablation and are not the deployed system.}
+\begin{center}
+\small
+\begin{tabular}{|l|c|c|}
+\hline
+System & Internal ($N=205$) & External ($N=319$) \\
+\hline
+Standalone classifier (ConvNeXt-Large) & $82.6 \pm 0.7$ & $76.6 \pm 1.6$ (bal.\ $80.1 \pm 1.8$) \\
+\quad Wilson 95\% CI (seed 42) & [76.6, 87.0] & [69.2, 78.8] \\
+Robust pipeline (localiser to Swin-Tiny) & $78.9 \pm 1.0$ & $73.4 \pm 2.5$ (bal.\ $77.9 \pm 3.4$) \\
+\quad Wilson 95\% CI (seed 42) & [75.6, 86.2] & [64.7, 74.7] \\
+Standalone YOLOv8-seg (single seed, conf.\ 0.05) & $79.5$ & $68.7$ (bal.\ $74.6$) \\
+\hline
+Oracle Swin-Tiny (ground-truth masks) & $83.9$ & n/a \\
+Strict pipeline (conf.\ 0.25, no-detection = error) & $79.0$ & $54.2$ \\
+Robust pipeline (seed 42) & $81.5$ & $69.9$ \\
+\hline
+\multicolumn{3}{|p{0.92\textwidth}|}{\textbf{Two questions, two tests.} \emph{Does the classifier beat the pipeline on these particular images?} Paired exact McNemar on the seed-42 models: internal 20 versus 18 discordant pairs, $p=0.87$ (a tie; seed 42 was the pipeline's most favourable run); external 54 versus 40, $p=0.18$. \emph{Does the classifier beat the pipeline on average across training runs?} The paired per-seed difference is $+3.74$ pp internally (95\% CI $+3.04$ to $+4.44$, paired $t$ $p=0.002$) and $+3.24$ pp externally (95\% CI $-3.83$ to $+10.31$, $p=0.19$), with the classifier ahead in three of three seeds on both sets. The internal advantage is therefore statistically supported at the level of training runs, while the single-run image-level comparison is not resolved at $N=205$. We note the paired tests use only three seeds and are correspondingly imprecise.} \\
+\hline
+\end{tabular}
+\label{tab:h2h}
+\end{center}\vs{-4mm}
+\end{table}
+
+
+\begin{table}[!ht]
+\caption{External validation of the deployed two-stage pipeline on the BIP\_US clinical database (94 images). Values are the number of images the pipeline predicted in each class, grouped by ground-truth burn depth. About 55 of 94 images were under-graded and about half of the full-thickness burns were called first degree.}
+\begin{center}
+\small
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+Ground truth (depth) & Predicted first & Predicted second & Predicted third & $n$ \\
+\hline
+Superficial dermal & 13 & 27 & 2 & 42 \\
+Deep dermal & 25 & 7 & 0 & 32 \\
+Full thickness & 10 & 7 & 3 & 20 \\
+\hline
+\multicolumn{5}{|p{0.9\textwidth}|}{Balanced accuracy 30.5 percent under the deep-dermal-to-second-degree mapping and 35.0 percent under the deep-dermal-to-third-degree mapping, against a chance level of 50 percent for this two-class probe.} \\
+\hline
+\end{tabular}
+\label{tab:ext}
+\end{center}\vs{-4mm}
+\end{table}
+
+
+\begin{table}[!ht]
+\caption{Inference efficiency on an NVIDIA A100 ($640\times640$ input, batch size 1). The full pipeline is about 1.6 times slower than the standalone classifier because it runs two models.}
+\begin{center}
+\small
+\begin{tabular}{|l|c|c|}
+\hline
+Stage or model & Milliseconds per image & Images per second \\
+\hline
+YOLO localiser (single class) & 15.4 & 65 \\
+Standalone YOLOv8-seg (three class) & 15.1 & 66 \\
+Swin-Tiny classifier & 23.7 & 42 \\
+ConvNeXt-Large classifier & 25.8 & 39 \\
+Full pipeline (localiser, mask, Swin) & 42.3 & 24 \\
+\hline
+\end{tabular}
+\label{tab:eff}
+\end{center}\vs{-4mm}
+\end{table}
+
+
+% ==================== FIGURES ====================
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{fig_qualitative.pdf}
+\caption{Qualitative behaviour of the deployed two-stage pipeline on held-out internal test images, one per column: the input photograph, the region the localiser predicts, and the masked image that is passed to the classifier. The first three columns are correctly graded examples spanning the three severity classes. The fourth is a representative failure of the kind that matters clinically: a second-degree burn whose sparse, disconnected lesions are only partly recovered by the localiser, and which is graded first degree. Errors of this direction, toward lower severity, would route a patient toward conservative care and are the failure mode we quantify in Section~\ref{Res:ext}.}
+\label{fig:qual}
+\end{figure}
+
+
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=13.5cm]{fig_leakage.pdf}
+\caption{The data-leakage artifact at the centre of this study. (a) The source collection augments each photograph into about 2.5 near-duplicate copies with distinct file names, so partitioning the augmented files at random places copies of one photograph in both the training and the test fold. (b) The consequence, averaged over architectures: under the naive file-level split the masked condition appears to beat the unmasked one by 3.06 percentage points in 20 of 21 architectures, an artifact of that shared-photograph path. Under the source-grouped split the same comparison gives 1.51 percentage points at seed 42 and only 0.55 percentage points pooled over seeds 0, 1 and 42, with a 95 percent confidence interval spanning zero. The effect that motivated the original design does not survive a leak-free split.}
+\label{fig:leak}
+\end{figure}
+
+
+
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=13.5cm]{fig_system.pdf}
+\caption{The deployed two-stage system. A mobile application sends an image to a Flask backend, where a YOLOv8x-seg localiser predicts a burn mask, the mask is applied so that the background is black, and a Swin classifier grades the masked region as first, second, or third degree. The system is a research and demonstration artifact, not a clinically validated device.}
+\label{fig:system}
+\end{figure}
+
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=11.5cm]{head_to_head.pdf}
+\caption{Head-to-head accuracy of the standalone classifier, the robust two-stage pipeline, and the all-in-one YOLOv8-seg model on the internal test set ($N=205$) and the clean external set ($N=319$). Error bars show the standard deviation across three seeds for the classifier and the pipeline; the standalone YOLOv8-seg model is single-seed and is shown without error bars. The classifier is highest on both sets and leads in every seed. Because the comparison is paired, the correct test is on the per-seed differences rather than on the overlap of these bars: that paired difference is $+3.74$ percentage points internally (95 percent CI $+3.04$ to $+4.44$) and $+3.24$ points externally (95 percent CI $-3.83$ to $+10.31$).}
+\label{fig:h2h}
+\end{figure}
+
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{0.44\textwidth}
+\centering
+\includegraphics[width=\linewidth]{cm_true_pipeline.pdf}\\
+(a)
+\end{minipage}\hfill
+\begin{minipage}{0.44\textwidth}
+\centering
+\includegraphics[width=\linewidth]{ext_cm_pipe.pdf}\\
+(b)
+\end{minipage}
+\caption{Confusion matrices for the robust two-stage pipeline on a representative seed. Internally (a) errors fall mainly between neighbouring degrees, with second degree the hardest class, consistent with the segmentation result. On the clean external set (b) accuracy is lower and the more severe burns are frequently under-graded, for example second degree predicted as first, the dangerous direction discussed in Section~\ref{Res:ext}.}
+\label{fig:cm}
+\end{figure}
+
+
+\end{document}

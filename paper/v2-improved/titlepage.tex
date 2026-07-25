@@ -1,0 +1,65 @@
+\documentclass{elektr}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=black, citecolor=blue}
+\usepackage[all]{xy,xypic}
+\usepackage{amsfonts,amssymb,amsmath,amsgen,amsopn,amsbsy,theorem,graphicx,epsfig}
+\usepackage{eufrak,amscd,bezier,latexsym,mathrsfs,eurosym,enumerate}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{cleveref,multirow}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[pagewise]{lineno}
+\linenumbers
+
+\yil{}
+\vol{}
+\fpage{}
+\lpage{}
+\doi{}
+
+\title{A comparative study of deep learning approaches for automated burn injury segmentation and severity classification}
+
+\author[Altayeb, Alraddadi, and Alrehaili]{
+	\textbf{Ryan ALTAYEB$^{1,*}$\thanks{altayeb.ray@gmail.com}, Abdulrahman ALRADDADI$^{1}$, Mohannad ALREHAILI$^{1}$}\\
+	$^{1}$Faculty of Computer and Information Systems, Islamic University of Madinah, Madinah, Saudi Arabia\\
+	Ryan ALTAYEB: \url{https://orcid.org/0009-0006-0031-9531}\\
+	Abdulrahman ALRADDADI: \url{https://orcid.org/0009-0000-2325-5063}\\
+	Mohannad ALREHAILI: \url{https://orcid.org/0009-0008-2491-185X}\\[1.8em]
+	\rec{...}
+	\acc{...}
+	\finv{...}
+}
+
+% --- minimal preamble macro (only the vspace shortcut is used; the journal's elksty.tex
+% was inlined then trimmed to remove unused macros/theorem styles and their warnings) ---
+\newcommand{\vs}{\vspace}
+
+\setcounter{page}{1}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Accurate assessment of burn depth guides clinical management, yet visual assessment is subjective and varies between clinicians. Deep learning is attractive as an assessment aid, but the burn literature reports mostly single-dataset accuracy, with little external validation and little scrutiny of data hygiene. Our central argument is that in-distribution accuracy is not evidence of clinical usefulness, whereas leak-free external evaluation is. We describe a deployed two-stage system, a YOLOv8x-seg localiser feeding a masked Swin transformer classifier served through a Flutter and Flask mobile application, framed as a research and demonstration artifact rather than a clinically validated device. We then build a leak-free, fair benchmark that gives every approach its best honest chance: a plain classifier, an all-in-one YOLOv8-seg model, and the two-stage pipeline, evaluated on one source-grouped split of 1,370 unique photographs with an internal test of 205 images, multi-seed robustness, and two independent external sets. Splitting an augmented dataset at the file level, a common practice, leaked 80.5 percent of the masked test set while the unmasked split leaked none, and manufactured an apparent masking benefit of 3.06 percentage points across 20 of 21 architectures. After a source-grouped split this benefit fell to 0.55 percentage points and was not statistically significant, below the study's minimum detectable effect. A plain classifier was the most accurate single system (internal 82.6 percent, external 76.6 percent); the pipeline neither beat it nor collapsed (internal 78.9 percent, external 73.4 percent), and the classifier won on both sets across all three seeds, consistently rather than significantly. On independent clinical images the model did not transfer and systematically under-graded severity, whereas on a second web-sourced set the decline was milder; a perceptual-hash check removed 118 contaminated images before that test. Segmentation-first is not justified on accuracy grounds; its value is localisation and interpretability.
+\keywords{Burn severity assessment, deep learning, data leakage, external validation, image segmentation, reproducibility}
+\end{abstract}
+
+\section*{Acknowledgment}
+The authors thank their supervisor Dr. Hani Sayaf Almoamari for guidance throughout this project, the Biomedical Image Processing Group of the University of Seville for making the BIP\_US database available for research, and the Google Colab and Kaggle platforms for computational resources.
+
+\section*{Declaration of generative AI and AI-assisted technologies}
+During the preparation of this work the authors used Anthropic Claude (Claude Code, Opus 4.8 model) in order to organise the project materials, reproduce and check the reported results, run the statistical, benchmarking, and external-validation analyses (including the leak-free re-runs and the perceptual-hash leakage check), and draft and edit the manuscript. The research itself, comprising the system design, model training, dataset preparation, and the mobile application, was conceived and carried out by the authors. The prompt(s) employed are given below:
+
+[Audit the training and evaluation code for data leakage and verify the split; rebuild a leak-free, source-grouped split and re-run the masking ablation over architectures and seeds; compute Wilson intervals, McNemar, sign, Wilcoxon and Mann-Whitney tests and the minimum detectable effect; run the external validation and build a perceptual-hash-verified clean external set; draft and edit the manuscript to the journal template and check it against the author guidelines.]
+
+After using this tool/service, the authors reviewed and edited the content as needed and take full responsibility for the content of the publication.
+
+\section*{Author contributions}
+The author contributions follow the CRediT taxonomy and match the roles entered during submission. \textbf{Ryan Altayeb:} conceptualization (lead), data curation (lead), software (lead), supervision (lead), validation (equal), visualization (lead). \textbf{Abdulrahman Alraddadi:} conceptualization (equal), formal analysis (supporting), methodology (lead), project administration (equal), validation (equal), writing -- original draft (lead), writing -- review and editing (lead). \textbf{Mohannad Alrehaili:} formal analysis (lead), investigation (lead), project administration (equal), resources (lead), supervision (equal). All authors read and approved the final manuscript.
+
+\section*{Pre-print server/online repository}
+This manuscript has not been previously posted to any pre-print server or other online repository.
+
+\section*{Conflict of interest}
+The authors declare no conflict of interest.
+
+\end{document}
