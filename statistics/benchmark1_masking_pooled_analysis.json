@@ -1,0 +1,202 @@
+{
+ "description": "Pooled masking ablation (masked vs unmasked) over seeds 0, 1 and 42, on the 8 architectures common to both runs. This is the analysis behind the paper's headline masking null (Section 4.3 / Table 3).",
+ "sources": {
+  "seeds_0_1": "benchmark1_masking_seeds01_confirmation.json \u2014 recovered from Kaggle kernel justryantl/burn-masking-seed-confirmation",
+  "seed_42": "benchmark1_11arch_4cond_seed42.json"
+ },
+ "n_pairs": 24,
+ "architectures": [
+  "ConvNeXt-Large",
+  "DenseNet201",
+  "EfficientNet-B0",
+  "ResNet50",
+  "SWIN-Base",
+  "SWIN-Small",
+  "SWIN-Tiny",
+  "ViT-Base"
+ ],
+ "seeds": [
+  0,
+  1,
+  42
+ ],
+ "mean_delta_pp": 0.5487804878048745,
+ "positive": 13,
+ "wilcoxon_p_two_sided_pratt": 0.3237543709246967,
+ "wilcoxon_p_two_sided_wilcox": 0.3149941974117292,
+ "mannwhitney_transformer_vs_conv_p_two_sided": 0.6642507560317827,
+ "mannwhitney_transformer_vs_conv_p_one_sided_greater": 0.33212537801589137,
+ "note_on_reported_values": "The manuscript reports Wilcoxon p=0.32 (matches pratt/zsplit 0.3238) and Mann-Whitney p=0.33 (matches the ONE-SIDED 'greater' test, 0.3321; the two-sided value is 0.6643). The manuscript should state the sidedness of the Mann-Whitney test explicitly. Both are null either way, so no conclusion changes.",
+ "transformer_mean_pp": 0.7723577235772296,
+ "conv_mean_pp": 0.32520325203251943,
+ "per_run": [
+  {
+   "arch": "ConvNeXt-Large",
+   "seed": 0,
+   "unmasked": 80.48780487804879,
+   "masked": 82.92682926829268,
+   "delta_pp": 2.439024390243887
+  },
+  {
+   "arch": "ConvNeXt-Large",
+   "seed": 1,
+   "unmasked": 80.0,
+   "masked": 83.90243902439025,
+   "delta_pp": 3.9024390243902474
+  },
+  {
+   "arch": "ConvNeXt-Large",
+   "seed": 42,
+   "unmasked": 84.8780487804878,
+   "masked": 81.95121951219512,
+   "delta_pp": -2.9268292682926784
+  },
+  {
+   "arch": "DenseNet201",
+   "seed": 0,
+   "unmasked": 79.51219512195122,
+   "masked": 77.07317073170732,
+   "delta_pp": -2.439024390243901
+  },
+  {
+   "arch": "DenseNet201",
+   "seed": 1,
+   "unmasked": 81.95121951219512,
+   "masked": 82.4390243902439,
+   "delta_pp": 0.48780487804877737
+  },
+  {
+   "arch": "DenseNet201",
+   "seed": 42,
+   "unmasked": 81.95121951219512,
+   "masked": 80.97560975609757,
+   "delta_pp": -0.9756097560975547
+  },
+  {
+   "arch": "EfficientNet-B0",
+   "seed": 0,
+   "unmasked": 72.1951219512195,
+   "masked": 73.65853658536585,
+   "delta_pp": 1.4634146341463463
+  },
+  {
+   "arch": "EfficientNet-B0",
+   "seed": 1,
+   "unmasked": 76.58536585365854,
+   "masked": 75.60975609756098,
+   "delta_pp": -0.975609756097569
+  },
+  {
+   "arch": "EfficientNet-B0",
+   "seed": 42,
+   "unmasked": 76.09756097560975,
+   "masked": 79.02439024390245,
+   "delta_pp": 2.9268292682926926
+  },
+  {
+   "arch": "ResNet50",
+   "seed": 0,
+   "unmasked": 79.02439024390245,
+   "masked": 77.5609756097561,
+   "delta_pp": -1.4634146341463463
+  },
+  {
+   "arch": "ResNet50",
+   "seed": 1,
+   "unmasked": 79.02439024390245,
+   "masked": 79.51219512195122,
+   "delta_pp": 0.48780487804877737
+  },
+  {
+   "arch": "ResNet50",
+   "seed": 42,
+   "unmasked": 80.97560975609757,
+   "masked": 81.95121951219512,
+   "delta_pp": 0.9756097560975547
+  },
+  {
+   "arch": "SWIN-Base",
+   "seed": 0,
+   "unmasked": 83.90243902439025,
+   "masked": 82.92682926829268,
+   "delta_pp": -0.975609756097569
+  },
+  {
+   "arch": "SWIN-Base",
+   "seed": 1,
+   "unmasked": 82.4390243902439,
+   "masked": 80.0,
+   "delta_pp": -2.439024390243901
+  },
+  {
+   "arch": "SWIN-Base",
+   "seed": 42,
+   "unmasked": 77.07317073170732,
+   "masked": 81.46341463414633,
+   "delta_pp": 4.3902439024390105
+  },
+  {
+   "arch": "SWIN-Small",
+   "seed": 0,
+   "unmasked": 83.41463414634146,
+   "masked": 82.4390243902439,
+   "delta_pp": -0.9756097560975547
+  },
+  {
+   "arch": "SWIN-Small",
+   "seed": 1,
+   "unmasked": 82.4390243902439,
+   "masked": 81.95121951219512,
+   "delta_pp": -0.48780487804877737
+  },
+  {
+   "arch": "SWIN-Small",
+   "seed": 42,
+   "unmasked": 80.48780487804879,
+   "masked": 82.92682926829268,
+   "delta_pp": 2.439024390243887
+  },
+  {
+   "arch": "SWIN-Tiny",
+   "seed": 0,
+   "unmasked": 80.97560975609757,
+   "masked": 82.4390243902439,
+   "delta_pp": 1.463414634146332
+  },
+  {
+   "arch": "SWIN-Tiny",
+   "seed": 1,
+   "unmasked": 83.90243902439025,
+   "masked": 83.90243902439025,
+   "delta_pp": 0.0
+  },
+  {
+   "arch": "SWIN-Tiny",
+   "seed": 42,
+   "unmasked": 82.4390243902439,
+   "masked": 85.36585365853658,
+   "delta_pp": 2.9268292682926784
+  },
+  {
+   "arch": "ViT-Base",
+   "seed": 0,
+   "unmasked": 79.02439024390245,
+   "masked": 81.46341463414633,
+   "delta_pp": 2.439024390243887
+  },
+  {
+   "arch": "ViT-Base",
+   "seed": 1,
+   "unmasked": 81.95121951219512,
+   "masked": 79.51219512195122,
+   "delta_pp": -2.439024390243901
+  },
+  {
+   "arch": "ViT-Base",
+   "seed": 42,
+   "unmasked": 78.53658536585367,
+   "masked": 81.46341463414633,
+   "delta_pp": 2.926829268292664
+  }
+ ]
+}

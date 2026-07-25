@@ -83,6 +83,22 @@ ConvNeXt-Large 25.8 ms, full pipeline 42.3 ms (~1.6× slower than the standalone
 localisation and interpretability. Datasets augmented before splitting must be partitioned
 by source image, or reported gains may be illusory.
 
+## Verify the paper's numbers in one command
+
+Every headline number in the article is recomputed from the raw data committed here — no GPU,
+no dataset download, no model weights required:
+
+```bash
+pip install numpy scipy
+python verify_paper_numbers.py
+```
+
+This checks 37 quantities against what the manuscript prints: the leakage artifact, the masking
+null (including the Wilcoxon and Mann-Whitney tests), the multi-seed head-to-head means and
+standard deviations, the exact McNemar tests recomputed from per-image predictions, segmentation
+mAP, the oracle-mask upper bound, both pipeline variants, the timing table, and the BIP_US
+balanced accuracy. All 37 currently pass.
+
 ## Repository structure
 
 ```

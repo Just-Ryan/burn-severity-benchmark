@@ -1,0 +1,137 @@
+{
+ "description": "LEAKY BENCHMARK \u2014 the naive file-level split of the augmented dataset, 21 architectures, masked vs unmasked. RETAINED ONLY TO DOCUMENT THE DATA-LEAKAGE ARTIFACT. These accuracies are inflated by leakage (80.5% of masked test images shared a source photograph with training) and MUST NOT be quoted as performance.",
+ "source": "01_paper/benchmarking-report/Final-Benchmarking-Report.pdf (Feb 2025), extracted verbatim",
+ "n_architectures": 21,
+ "mean_delta_pp": 3.0571,
+ "positive": 20,
+ "manuscript_claim": "+3.06 pp across 20 of 21 architectures \u2014 REPRODUCED EXACTLY (mean +3.0571, 20/21 positive)",
+ "superseded_headline": "the 93.05% best-masked figure comes from this leaky split and is SUPERSEDED",
+ "per_architecture": [
+  {
+   "arch": "convnext_base",
+   "unmasked": 86.71,
+   "masked": 88.8,
+   "delta_pp": 2.09
+  },
+  {
+   "arch": "convnext_large",
+   "unmasked": 90.61,
+   "masked": 91.7,
+   "delta_pp": 1.09
+  },
+  {
+   "arch": "convnext_tiny",
+   "unmasked": 84.62,
+   "masked": 89.77,
+   "delta_pp": 5.15
+  },
+  {
+   "arch": "convnext_xlarge",
+   "unmasked": 89.51,
+   "masked": 91.12,
+   "delta_pp": 1.61
+  },
+  {
+   "arch": "densenet121",
+   "unmasked": 85.31,
+   "masked": 89.19,
+   "delta_pp": 3.88
+  },
+  {
+   "arch": "densenet169",
+   "unmasked": 88.81,
+   "masked": 89.19,
+   "delta_pp": 0.38
+  },
+  {
+   "arch": "densenet201",
+   "unmasked": 88.81,
+   "masked": 89.19,
+   "delta_pp": 0.38
+  },
+  {
+   "arch": "efficientnet_b0",
+   "unmasked": 87.41,
+   "masked": 87.81,
+   "delta_pp": 0.4
+  },
+  {
+   "arch": "efficientnet_b3",
+   "unmasked": 83.22,
+   "masked": 87.26,
+   "delta_pp": 4.04
+  },
+  {
+   "arch": "efficientnet_b5",
+   "unmasked": 80.42,
+   "masked": 89.38,
+   "delta_pp": 8.96
+  },
+  {
+   "arch": "mobilenetv3_large_100",
+   "unmasked": 84.62,
+   "masked": 88.03,
+   "delta_pp": 3.41
+  },
+  {
+   "arch": "mobilenetv3_small_100",
+   "unmasked": 83.92,
+   "masked": 84.56,
+   "delta_pp": 0.64
+  },
+  {
+   "arch": "regnetx_040",
+   "unmasked": 81.82,
+   "masked": 86.49,
+   "delta_pp": 4.67
+  },
+  {
+   "arch": "resnet101",
+   "unmasked": 81.12,
+   "masked": 86.29,
+   "delta_pp": 5.17
+  },
+  {
+   "arch": "resnet50",
+   "unmasked": 85.31,
+   "masked": 84.94,
+   "delta_pp": -0.37
+  },
+  {
+   "arch": "swin_base_patch4_window7_224",
+   "unmasked": 85.31,
+   "masked": 86.29,
+   "delta_pp": 0.98
+  },
+  {
+   "arch": "swin_large_patch4_window7_224",
+   "unmasked": 82.52,
+   "masked": 89.19,
+   "delta_pp": 6.67
+  },
+  {
+   "arch": "swin_small_patch4_window7_224",
+   "unmasked": 88.81,
+   "masked": 93.05,
+   "delta_pp": 4.24
+  },
+  {
+   "arch": "swin_tiny_patch4_window7_224",
+   "unmasked": 84.62,
+   "masked": 90.15,
+   "delta_pp": 5.53
+  },
+  {
+   "arch": "vgg16",
+   "unmasked": 85.31,
+   "masked": 86.29,
+   "delta_pp": 0.98
+  },
+  {
+   "arch": "vit_base_patch16_224",
+   "unmasked": 74.66,
+   "masked": 78.96,
+   "delta_pp": 4.3
+  }
+ ]
+}
