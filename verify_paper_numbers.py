@@ -211,6 +211,24 @@ for fn, nm, wu, wo in [("preds_internal.json", "internal", 19.3, 10.1),
     check(f"{nm}: under-graded, of images that could be (%)", u, wu, tol=0.1)
     check(f"{nm}: over-graded, of images that could be (%)", o, wo, tol=0.1)
 
+
+print("\n=== 10. SEED-VARIANCE REPLICATION (v2 Section 4.9 / Table 7) ===")
+sv = load(os.path.join(STA, "seed_variance_7seed_replication.json"))
+import itertools
+for key, wsd, wmin, wmax in [
+    ("convnext_large|unmasked", 1.40, 0.28, 2.25),
+    ("swin_tiny_patch4_window7_224|masked", 0.79, 0.00, 1.13),
+]:
+    g = sv["groups"][key]
+    a = np.array(g["acc"])
+    check(f"{key.split('|')[0][:20]}: seeds run", g["n_seeds"], 7, tol=0)
+    check(f"{key.split('|')[0][:20]}: sample SD over 7 seeds", float(a.std(ddof=1)), wsd, tol=0.02)
+    sub = [float(np.array(c).std(ddof=1)) for c in itertools.combinations(a, 3)]
+    check(f"{key.split('|')[0][:20]}: min SD from any 3 seeds", min(sub), wmin, tol=0.02)
+    check(f"{key.split('|')[0][:20]}: max SD from any 3 seeds", max(sub), wmax, tol=0.02)
+print("         The paper reports 0.75 from three seeds; the seven-seed value is 1.40.")
+print("         This is the basis for the claim that a three-seed SD is uninformative.")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)

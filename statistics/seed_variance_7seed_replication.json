@@ -1,0 +1,171 @@
+{
+ "description": "Independent 7-seed replication of the seed-variance question, run on Kaggle (Tesla P100). Purpose: test how reliable a 3-seed standard deviation is. NOTE the training recipe here (12 epochs, AdamW 1e-4, batch 16, cosine schedule) is similar to but NOT identical to the original Colab A100 runs, so absolute accuracies are not directly comparable to the headline table; the quantity of interest is the SPREAD across seeds, not the mean.",
+ "kernel": "justryantl/burn-multi-seed-robustness-10-seeds (version 4)",
+ "note_partial": "10 seeds were requested; the Kaggle session was cancelled after 14 of 20 runs, leaving 7 complete seeds (0-6) for both models. Per-run checkpointing preserved them.",
+ "groups": {
+  "convnext_large|unmasked": {
+   "n_seeds": 7,
+   "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "acc": [
+    84.8780487804878,
+    82.92682926829268,
+    84.39024390243902,
+    82.92682926829268,
+    84.8780487804878,
+    80.97560975609757,
+    83.90243902439025
+   ],
+   "mean": 83.55400696864112,
+   "sd_sample": 1.4001015717463052,
+   "min": 80.97560975609757,
+   "max": 84.8780487804878,
+   "range": 3.902439024390233,
+   "ci95_of_mean": [
+    82.25912898279813,
+    84.8488849544841
+   ],
+   "bal_mean": 82.50716307194713,
+   "bal_sd_sample": 1.576134411208584,
+   "sd_from_all_3seed_subsets": {
+    "n_subsets": 35,
+    "min": 0.28163427765347415,
+    "max": 2.2530742212278017,
+    "median": 1.1265371106139048
+   },
+   "runs": [
+    {
+     "seed": 0,
+     "test_acc": 84.8780487804878,
+     "test_bal": 83.9178048480374,
+     "best_val": 85.43689320388349
+    },
+    {
+     "seed": 1,
+     "test_acc": 82.92682926829268,
+     "test_bal": 82.22591362126246,
+     "best_val": 86.89320388349515
+    },
+    {
+     "seed": 2,
+     "test_acc": 84.39024390243902,
+     "test_bal": 83.38870431893687,
+     "best_val": 85.43689320388349
+    },
+    {
+     "seed": 3,
+     "test_acc": 82.92682926829268,
+     "test_bal": 81.6029900332226,
+     "best_val": 86.40776699029125
+    },
+    {
+     "seed": 4,
+     "test_acc": 84.8780487804878,
+     "test_bal": 83.84243878429926,
+     "best_val": 85.92233009708737
+    },
+    {
+     "seed": 5,
+     "test_acc": 80.97560975609757,
+     "test_bal": 79.48658791682047,
+     "best_val": 84.46601941747572
+    },
+    {
+     "seed": 6,
+     "test_acc": 83.90243902439025,
+     "test_bal": 83.08570198105082,
+     "best_val": 86.40776699029125
+    }
+   ]
+  },
+  "swin_tiny_patch4_window7_224|masked": {
+   "n_seeds": 7,
+   "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "acc": [
+    82.92682926829268,
+    82.4390243902439,
+    82.4390243902439,
+    83.90243902439025,
+    83.41463414634146,
+    84.39024390243902,
+    82.4390243902439
+   ],
+   "mean": 83.13588850174217,
+   "sd_sample": 0.7894376524026225,
+   "min": 82.4390243902439,
+   "max": 84.39024390243902,
+   "range": 1.9512195121951237,
+   "ci95_of_mean": [
+    82.40578044535543,
+    83.86599655812891
+   ],
+   "bal_mean": 82.87718188050414,
+   "bal_sd_sample": 1.1685017109690248,
+   "sd_from_all_3seed_subsets": {
+    "n_subsets": 35,
+    "min": 0.0,
+    "max": 1.1265371106139048,
+    "median": 0.745134259342416
+   },
+   "runs": [
+    {
+     "seed": 0,
+     "test_acc": 82.92682926829268,
+     "test_bal": 82.35818875353759,
+     "best_val": 85.43689320388349
+    },
+    {
+     "seed": 1,
+     "test_acc": 82.4390243902439,
+     "test_bal": 82.53660637381569,
+     "best_val": 83.00970873786407
+    },
+    {
+     "seed": 2,
+     "test_acc": 82.4390243902439,
+     "test_bal": 81.64913252122554,
+     "best_val": 82.52427184466019
+    },
+    {
+     "seed": 3,
+     "test_acc": 83.90243902439025,
+     "test_bal": 84.19927402485541,
+     "best_val": 83.49514563106796
+    },
+    {
+     "seed": 4,
+     "test_acc": 83.41463414634146,
+     "test_bal": 83.03802141011442,
+     "best_val": 84.46601941747572
+    },
+    {
+     "seed": 5,
+     "test_acc": 84.39024390243902,
+     "test_bal": 84.65300849021779,
+     "best_val": 83.00970873786407
+    },
+    {
+     "seed": 6,
+     "test_acc": 82.4390243902439,
+     "test_bal": 81.70604158976252,
+     "best_val": 84.9514563106796
+    }
+   ]
+  }
+ }
+}

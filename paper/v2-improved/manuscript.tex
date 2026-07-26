@@ -57,7 +57,7 @@ Depth assessment is difficult. Agreement between experienced burn surgeons on bu
 
 Deep learning has reached expert-level performance on several medical imaging tasks \cite{esteva,litjens}, and it has been applied to burns for two coupled subproblems, segmenting the burn region and classifying its severity \cite{boissin}. Progress is real, but the burn literature has three recurring gaps. First, most studies train and report a single architecture, which makes it hard to know whether a reported number reflects the method or the particular network. Second, few studies report confidence intervals, significance tests, or evaluation on data from a source other than the training set. Third, and rarely examined, is data hygiene: whether the split procedure itself inflates the reported numbers. These gaps matter because high in-distribution accuracy has repeatedly failed to predict external performance in medical imaging. Our central thesis, threaded throughout this paper, is that in-distribution accuracy is not evidence of clinical usefulness, whereas leak-free external evaluation is.
 
-We study a concrete burn-severity system and a benchmark built around it, and we frame our contribution as the combination rather than as method novelty. We make four contributions. First, we describe a deployed two-stage system: a YOLOv8x-seg localiser feeding a masked Swin classifier, served through a Flutter and Flask mobile application. Second, we discover and correct a data-leakage artifact that had inflated an original ``masking helps'' result, in which the masked classifier dataset shared a source photograph between test and training for 80.5 percent of its test images while the unmasked dataset shared none. Third, we build a leak-free, fair benchmark that gives every approach its best honest chance, with multi-seed robustness, internal and two external tests, and statistical care. Fourth, we report the honest finding that segmentation-first does not improve accuracy, that a plain classifier is the most accurate single system, and that the pipeline's value is localisation and interpretability rather than a demonstrated accuracy gain.
+We study a concrete burn-severity system and a benchmark built around it, and we frame our contribution as the combination rather than as method novelty. We make four contributions. First, we describe a deployed two-stage system: a YOLOv8x-seg localiser feeding a masked Swin classifier, served through a Flutter and Flask mobile application. Second, we discover and correct a data-leakage artifact that had inflated an original ``masking helps'' result, in which the masked classifier dataset shared a source photograph between test and training for 80.5 percent of its test images while the unmasked dataset shared none. Third, we build a leak-free, fair benchmark that gives every approach its best honest chance, with multi-seed robustness, internal and two external tests, and statistical care. Fourth, we report the honest finding that segmentation-first does not improve accuracy, that a plain classifier is the most accurate single system, and that the pipeline's value is localisation and interpretability rather than a demonstrated accuracy gain. Alongside these we audit our own protocol and report two further ways in which routine practice overstates confidence: residual duplicate photographs that survive identifier-based grouping, and the unreliability of a three-seed variance estimate.
 
 We state plainly what this work is not. It is not a state-of-the-art architecture, and it is not a clinically validated tool. The deployed system is a research and demonstration artifact, and, as our external results show, it is not ready for any clinical role. The value of the paper is the honest, reproducible combination and its negative and nuanced findings.
 
@@ -161,6 +161,31 @@ Table~\ref{tab:h2h} also separates two effects that are easy to conflate. Swin-T
 On genuinely clinical images the model does not transfer, and it fails in the dangerous direction. On the 94 BIP\_US images (Table~\ref{tab:ext}), the deployed pipeline graded about 55 of 94 images below their true severity and classified about half of the full-thickness burns as first degree; balanced accuracy was 30.5 percent under the deep-dermal-to-second-degree mapping and 35.0 percent under the deep-dermal-to-third-degree mapping, against a chance level of 50 percent for this two-class probe. On the clean external set of 319 images, the classifier was the most robust approach, with no undetected images, while the segmentation-dependent approaches degraded more (Table~\ref{tab:h2h}; Figure~\ref{fig:cm} shows the pipeline confusion matrices for both sets). Under-grading must be quantified conditionally, because a first-degree burn cannot be under-graded and a third-degree burn cannot be over-graded, so raw error counts are confounded by class balance. Among images that \emph{could} be under-graded, the pipeline under-graded 19.3 percent internally (23 of 119) and \textbf{28.3 percent externally (51 of 180)}; among images that could be over-graded it over-graded 10.1 percent internally (15 of 149) and 15.2 percent externally (45 of 296). The bias toward lower severity is therefore present on both sets and is markedly stronger externally, and it is not an artifact of the external class distribution. The perceptual-hash check that produced this set had already removed 118 training-identical images and 28 percent of sources before evaluation, so these numbers are measured on genuinely unseen data. Figure~\ref{fig:qual} shows what these errors look like in practice. The message is that the model does not generalise to clinical data, and that under-grading, directing a severe burn toward conservative care, is the more dangerous error.
 
 
+\subsection{How reliable is a three-seed standard deviation?}
+\label{Res:seeds}
+Every multi-seed figure in this paper rests on three training runs, which is common practice but a
+thin basis for a variance estimate. To test how much that matters we re-trained the standalone
+classifier (ConvNeXt-Large, unmasked) and the oracle-masked Swin-Tiny over \textbf{seven} seeds on
+a separate machine, under a similar but not identical recipe, so the informative quantity is the
+spread across seeds rather than the absolute level (Table~\ref{tab:seeds}).
+
+The spread is substantially larger than three seeds suggested. Over seven seeds the classifier's
+accuracy has a sample standard deviation of \textbf{1.40} percentage points and a range of 3.90
+points, against the 0.75 points estimated from three seeds, so the three-seed figure understated
+run-to-run variability by roughly a factor of two. The reason is visible directly in the data: across
+all 35 possible three-seed subsets of these seven runs, the estimated standard deviation ranges from
+\textbf{0.28 to 2.25} percentage points. A three-seed standard deviation is therefore close to
+uninformative on its own, and any interval derived from one should be read as optimistic. Notably the
+smaller Swin-Tiny was the more stable of the two (0.79 points over the same seven seeds), so
+architecture choice affects reproducibility as well as accuracy.
+
+We report this against our own results deliberately. It is a third instance of the pattern this paper
+is about: a routine methodological shortcut, here too few seeds, manufactures apparent precision in
+the same way that splitting after augmentation manufactured an apparent effect. The direction of every
+comparison in Section~\ref{Res:h2h} is unchanged, since the classifier led the pipeline in all three
+original seeds and the paired difference was several times the pooled spread, but the intervals around
+those differences should be treated as lower bounds on the true uncertainty.
+
 \subsection{Efficiency}
 \label{Res:eff}
 The pipeline is slower and no more accurate than the standalone classifier (Table~\ref{tab:eff}). On the A100, the localiser took 15.4 ms per image and the standalone classifiers 25.8 ms (ConvNeXt-Large) and 23.7 ms (Swin-Tiny), while the full pipeline took 42.3 ms, about 1.6 times slower than the standalone classifier because it runs two models. The pipeline's return for this cost is localisation, not accuracy.
@@ -180,7 +205,7 @@ External behaviour is at once the strongest limitation and the strongest message
 
 \subsection{Limitations}
 \label{Dis:lim}
-Several limitations qualify these results. The training data come from a single web source with community labels that were not clinically verified. The internal test set is small ($N=205$, one image per source), so confidence intervals are wide. The head-to-head standalone YOLOv8-seg model is single-seed, so its point estimate should not be compared to the multi-seed means without that caveat. The masking delta is not stable to the architecture pool and run-to-run noise at a magnitude below the minimum detectable effect, so we make no claim that masking is exactly zero. The BIP\_US external set is small and lacks first-degree cases, so it probes second versus third degree only. We also conducted no user study or prospective clinical evaluation of the mobile application, so its usability and clinical value remain untested. Finally, we performed no analysis of fairness across skin tones, which matters for any clinical imaging tool but is unsupported by our data.
+Several limitations qualify these results. The training data come from a single web source with community labels that were not clinically verified. The internal test set is small ($N=205$, one image per source), so confidence intervals are wide. The head-to-head standalone YOLOv8-seg model is single-seed, so its point estimate should not be compared to the multi-seed means without that caveat. The masking delta is not stable to the architecture pool or to run-to-run noise, so we make no claim that masking is exactly zero. The headline multi-seed figures rest on three training runs, and Section~\ref{Res:seeds} shows directly that three runs estimate the seed variance poorly: a seven-seed replication of the classifier gave a standard deviation of 1.40 percentage points against 0.75 from three, and any three of those seven would have yielded anywhere from 0.28 to 2.25. The reported intervals should therefore be read as lower bounds on the true uncertainty, and future work of this kind should budget for substantially more seeds than is conventional. The BIP\_US external set is small and lacks first-degree cases, so it probes second versus third degree only. We also conducted no user study or prospective clinical evaluation of the mobile application, so its usability and clinical value remain untested. Finally, we performed no analysis of fairness across skin tones, which matters for any clinical imaging tool but is unsupported by our data.
 
 \section{Conclusion}
 \label{Con}
@@ -263,6 +288,26 @@ This study used only publicly available, de-identified burn images and an indepe
 \end{thebibliography}
 
 % ==================== TABLES ====================
+
+\begin{table}[!ht]
+\caption{Seed variance measured over seven training runs, and how well three runs estimate it. Accuracies come from an independent re-training under a similar but not identical recipe, so the comparable quantity is the spread rather than the level. The final column reports, across all 35 three-seed subsets of the seven runs, the smallest and largest standard deviation such a subset would have produced.}
+\begin{center}
+\small
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+Model and input & Seeds & Mean & Sample SD & SD from any 3 of these seeds \\
+\hline
+ConvNeXt-Large, unmasked & 7 & 83.55 & \textbf{1.40} & 0.28 to 2.25 \\
+Swin-Tiny, masked (oracle) & 7 & 83.14 & 0.79 & 0.00 to 1.13 \\
+\hline
+\multicolumn{5}{|p{0.92\textwidth}|}{For comparison, the three-seed standard deviation reported for the standalone classifier in Table~\ref{tab:h2h} is 0.75 percentage points, about half the seven-seed value. Ten seeds were requested; the compute session ended after seven completed for both models, and all seven are reported.} \\
+\hline
+\end{tabular}
+\label{tab:seeds}
+\end{center}\vs{-4mm}
+\end{table}
+
+
 
 
 \begin{table}[!ht]
