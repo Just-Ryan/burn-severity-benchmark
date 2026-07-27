@@ -45,7 +45,7 @@
 \maketitle
 
 \begin{abstract}
-Accurate assessment of burn depth guides clinical management, yet visual assessment is subjective and varies between clinicians. Deep learning is attractive as an assessment aid, but the burn literature reports mostly single-dataset accuracy, with little external validation and little scrutiny of data hygiene. Our central argument is that in-distribution accuracy is not evidence of clinical usefulness, whereas leak-free external evaluation is. We describe a deployed two-stage system, a YOLOv8x-seg localiser feeding a masked Swin transformer classifier served through a mobile application, framed as a research artifact rather than a clinically validated device. We then build a leak-free benchmark giving every approach its best honest chance: a plain classifier, an all-in-one YOLOv8-seg model, and the two-stage pipeline, on a source-grouped split of 1,370 photographs with a 205-image internal test, multi-seed repeats, and two external sets. Splitting an augmented dataset at the file level leaked 80.5 percent of the masked test set while the unmasked split leaked none, manufacturing an apparent masking benefit of 3.06 percentage points across 20 of 21 architectures. After a source-grouped split this benefit fell to 0.55 percentage points, with a 95 percent confidence interval of $-0.37$ to $+1.47$ that is consistent with no effect and rules out any benefit larger than about 1.5 points. A plain classifier was the most accurate single system (internal 82.6 percent, external 76.6 percent); the pipeline neither beat it nor collapsed (internal 78.9 percent, external 73.4 percent), and the classifier led on both sets in all three seeds, by 3.74 percentage points internally (paired 95 percent confidence interval $+3.04$ to $+4.44$). On independent clinical images the model did not transfer and systematically under-graded severity; a perceptual-hash check removed 118 contaminated images before the second external test. Segmentation-first is not justified on accuracy grounds; its value is localisation and interpretability.
+Accurate assessment of burn depth guides clinical management, yet visual assessment is subjective and varies between clinicians. Deep learning is attractive as an aid, but the burn literature reports mostly single-dataset accuracy, with little external validation or scrutiny of data hygiene. Our central argument is that in-distribution accuracy is not evidence of clinical usefulness, whereas leak-free external evaluation is. We describe a deployed two-stage system, a YOLOv8x-seg localiser feeding a masked Swin classifier served through a mobile application, framed as a research artifact rather than a clinically validated device. We then build a leak-free benchmark giving every approach its best honest chance: a plain classifier, an all-in-one YOLOv8-seg model, and the two-stage pipeline, on a source-grouped split of 1,370 photographs, with multi-seed repeats and two external sets. Splitting an augmented dataset at the file level leaked 80.5 percent of the masked test set while the unmasked split leaked none, manufacturing an apparent masking benefit of 3.06 percentage points across 20 of 21 architectures. After a source-grouped split this benefit fell to 0.55 percentage points, with a 95 percent confidence interval of $-0.37$ to $+1.47$ that is consistent with no effect and rules out any benefit larger than about 1.5 points. A plain classifier was the most accurate single system (internal 82.6, external 76.6 percent); the pipeline neither beat it nor collapsed (internal 78.9, external 73.4 percent), and over seven seeds the classifier led on the external set in every run, by 2.87 percentage points (95 percent confidence interval 1.17 to 4.56), while the internal difference was not separable from run-to-run variation. On independent clinical images the model did not transfer and systematically under-graded severity; a perceptual-hash check removed 118 contaminated images beforehand. Segmentation-first is not justified on accuracy grounds; its value is localisation and interpretability.
 \keywords{Burn severity assessment, deep learning, data leakage, external validation, image segmentation, reproducibility}
 \end{abstract}
 
@@ -148,9 +148,18 @@ Table~\ref{tab:h2h} and Figure~\ref{fig:h2h} report the core comparison. Across 
 
 \subsection{Statistical honesty on the head-to-head}
 \label{Res:stat}
-The two questions of Section~\ref{Mat:eval} give different answers, and separating them matters. At the level of \emph{these particular images}, the advantage is not resolved: on the seed-42 models McNemar's exact test gave 20 versus 18 discordant pairs internally ($p=0.87$, effectively a tie, because seed 42 happened to be the pipeline's most favourable run) and 54 versus 40 externally ($p=0.18$). At the level of \emph{training runs}, the picture is clearer: the paired per-seed difference is $+3.74$ percentage points internally (95 percent CI $+3.04$ to $+4.44$, paired $t$ $p=0.002$) and $+3.24$ percentage points externally (95 percent CI $-3.83$ to $+10.31$, $p=0.19$), with the classifier ahead in three of three seeds on both sets.
+The two questions of Section~\ref{Mat:eval} give different answers, and separating them matters. At the level of \emph{these particular images}, the advantage is not resolved: on the seed-42 models McNemar's exact test gave 20 versus 18 discordant pairs internally ($p=0.87$, effectively a tie, because seed 42 happened to be the pipeline's most favourable run) and 54 versus 40 externally ($p=0.18$).
 
-We therefore state the finding precisely: internally, the classifier reliably outperforms the pipeline across training runs, by roughly three to four percentage points; externally the direction is the same but the interval is wide and includes zero; and on any single test set of this size the difference is not detectable image by image. We deliberately do not infer absence of an effect from overlapping error bars, because the comparison is paired and overlapping intervals are uninformative in that setting.
+At the level of \emph{training runs} the original three-seed protocol suggested a clear internal advantage and an unresolved external one. That conclusion did not survive more seeds, and the way it failed is instructive enough that we report it in full. We repeated the entire head-to-head over \textbf{seven} seeds, training both arms under one fixed recipe and evaluating each on both test sets, with the pipeline arm using \emph{predicted} masks from the localiser rather than ground-truth masks, so that the arm being measured is the deployed system (Table~\ref{tab:paired}). The two conclusions moved in opposite directions:
+
+\begin{itemize}
+\item \textbf{Internally, the apparent advantage weakened.} Three seeds gave $+3.74$ percentage points with a 95 percent interval of $+3.04$ to $+4.44$ and $p=0.002$. Seven seeds give $+2.44$ points with an interval of $\mathbf{-0.28}$ \textbf{to} $\mathbf{+5.16}$ ($p=0.07$), spanning zero, with the classifier ahead in five of seven runs. The three-seed interval was narrower than the seven-seed one by a factor of nearly four, and it excluded zero when the larger sample does not.
+\item \textbf{Externally, the unresolved comparison became the reliable one.} Three seeds gave $+3.24$ points with an interval of $-3.83$ to $+10.31$ ($p=0.19$), too wide to support any claim. Seven seeds give $\mathbf{+2.87}$ \textbf{points, 95 percent CI} $\mathbf{+1.17}$ \textbf{to} $\mathbf{+4.56}$ ($p=0.006$, Wilcoxon $p=0.016$), with the classifier ahead in \textbf{seven of seven} runs. The interval is four times narrower and excludes zero.
+\end{itemize}
+
+We therefore state the head-to-head result as follows. \emph{On external data the standalone classifier reliably outperforms the two-stage pipeline, by roughly one to five percentage points.} \emph{Internally the direction is the same but the effect is not separable from run-to-run variation at this sample size.} That is a weaker internal claim and a stronger external one than three seeds implied, and the external claim is the one that matters for the paper's argument, since it concerns behaviour on data the model was not fitted to.
+
+This is the clearest evidence in the paper for its own central point. A three-seed protocol, which is entirely ordinary in this literature, did not merely add noise: it produced a confidently narrow interval around an internal effect that larger sampling does not support, while hiding an external effect that is real. Both errors are of the kind that survive peer review, because an interval computed from three runs looks exactly like an interval computed from thirty.
 
 \subsection{Oracle versus real masks, and strict versus robust pipeline}
 \label{Res:oracle}
@@ -181,10 +190,10 @@ architecture choice affects reproducibility as well as accuracy.
 
 We report this against our own results deliberately. It is a third instance of the pattern this paper
 is about: a routine methodological shortcut, here too few seeds, manufactures apparent precision in
-the same way that splitting after augmentation manufactured an apparent effect. The direction of every
-comparison in Section~\ref{Res:h2h} is unchanged, since the classifier led the pipeline in all three
-original seeds and the paired difference was several times the pooled spread, but the intervals around
-those differences should be treated as lower bounds on the true uncertainty.
+the same way that splitting after augmentation manufactured an apparent effect. Section~\ref{Res:stat}
+shows what this costs in practice rather than in principle: repeating the head-to-head over seven seeds
+widened the internal interval until it spanned zero and narrowed the external interval until it no
+longer did, changing which of the two comparisons the data actually support.
 
 \subsection{Efficiency}
 \label{Res:eff}
@@ -205,11 +214,11 @@ External behaviour is at once the strongest limitation and the strongest message
 
 \subsection{Limitations}
 \label{Dis:lim}
-Several limitations qualify these results. The training data come from a single web source with community labels that were not clinically verified. The internal test set is small ($N=205$, one image per source), so confidence intervals are wide. The head-to-head standalone YOLOv8-seg model is single-seed, so its point estimate should not be compared to the multi-seed means without that caveat. The masking delta is not stable to the architecture pool or to run-to-run noise, so we make no claim that masking is exactly zero. The headline multi-seed figures rest on three training runs, and Section~\ref{Res:seeds} shows directly that three runs estimate the seed variance poorly: a seven-seed replication of the classifier gave a standard deviation of 1.40 percentage points against 0.75 from three, and any three of those seven would have yielded anywhere from 0.28 to 2.25. The reported intervals should therefore be read as lower bounds on the true uncertainty, and future work of this kind should budget for substantially more seeds than is conventional. The BIP\_US external set is small and lacks first-degree cases, so it probes second versus third degree only. We also conducted no user study or prospective clinical evaluation of the mobile application, so its usability and clinical value remain untested. Finally, we performed no analysis of fairness across skin tones, which matters for any clinical imaging tool but is unsupported by our data.
+Several limitations qualify these results. The training data come from a single web source with community labels that were not clinically verified. The internal test set is small ($N=205$, one image per source), so confidence intervals are wide. The head-to-head standalone YOLOv8-seg model is single-seed, so its point estimate should not be compared to the multi-seed means without that caveat. The masking delta is not stable to the architecture pool or to run-to-run noise, so we make no claim that masking is exactly zero. The headline multi-seed figures rest on three training runs, and Section~\ref{Res:seeds} shows directly that three runs estimate the seed variance poorly: a seven-seed replication of the classifier gave a standard deviation of 1.40 percentage points against 0.75 from three, and any three of those seven would have yielded anywhere from 0.28 to 2.25. Repeating the full head-to-head over seven seeds (Table~\ref{tab:paired}) changed which comparison the data support, so the three-seed intervals in Table~\ref{tab:h2h} should not be read as reliable; we retain them only because they are the original protocol. Future work of this kind should budget for substantially more seeds than is conventional. The BIP\_US external set is small and lacks first-degree cases, so it probes second versus third degree only. We also conducted no user study or prospective clinical evaluation of the mobile application, so its usability and clinical value remain untested. Finally, we performed no analysis of fairness across skin tones, which matters for any clinical imaging tool but is unsupported by our data.
 
 \section{Conclusion}
 \label{Con}
-We studied a deployed two-stage burn-severity system through a leak-free, fair benchmark, and three findings recur. Splitting an augmented dataset at the file level manufactured a masking benefit that vanished under a source-grouped split. A plain classifier was the most accurate single system and beat the two-stage pipeline consistently across seeds, so segmentation-first is justified here by localisation and interpretability rather than by accuracy. The model did not transfer to clinical images and under-graded severity. The procedural lessons transfer beyond burns: datasets augmented before splitting must be partitioned by source image, or reported gains may be illusory, and in-distribution accuracy must not be read as clinical usefulness. Future work needs multi-source, clinically labelled data with patient-level splits and domain adaptation, and should keep segmentation for localisation rather than as an accuracy lever.
+We studied a deployed two-stage burn-severity system through a leak-free, fair benchmark, and three findings recur. Splitting an augmented dataset at the file level manufactured a masking benefit that vanished under a source-grouped split. A plain classifier was the most accurate single system and beat the two-stage pipeline on external data in every one of seven seeds, so segmentation-first is justified here by localisation and interpretability rather than by accuracy. The model did not transfer to clinical images and under-graded severity. The procedural lessons transfer beyond burns: datasets augmented before splitting must be partitioned by source image, or reported gains may be illusory, and in-distribution accuracy must not be read as clinical usefulness. Future work needs multi-source, clinically labelled data with patient-level splits and domain adaptation, and should keep segmentation for localisation rather than as an accuracy lever.
 
 \section*{Acknowledgment}
 The authors thank the Biomedical Image Processing Group of the University of Seville for making the BIP\_US database available for research, and the computing platforms used for this work.
@@ -288,6 +297,33 @@ This study used only publicly available, de-identified burn images and an indepe
 \end{thebibliography}
 
 % ==================== TABLES ====================
+
+\begin{table}[!ht]
+\caption{The head-to-head repeated over seven seeds, both arms trained under one fixed recipe and each evaluated on both test sets. The pipeline arm uses predicted masks from the localiser (confidence 0.05 with full-frame fallback), so it is the deployed system rather than the oracle-mask upper bound. Differences are paired by seed. The three-seed rows are the original protocol, shown for comparison.}
+\begin{center}
+\small
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+ & Classifier & Pipeline & Paired difference (95\% CI) & $p$ \\
+\hline
+\multicolumn{5}{|l|}{\textbf{Internal test ($N=205$)}} \\
+\hline
+Three seeds (original) & $82.6 \pm 0.7$ & $78.9 \pm 1.0$ & $+3.74$ \ \ $[+3.04, +4.44]$ & 0.002 \\
+\textbf{Seven seeds} & $83.6 \pm 1.4$ & $81.1 \pm 2.3$ & $\mathbf{+2.44}$ \ \ $\mathbf{[-0.28, +5.16]}$ & 0.07 \\
+\hline
+\multicolumn{5}{|l|}{\textbf{External test ($N=319$)}} \\
+\hline
+Three seeds (original) & $76.6 \pm 1.6$ & $73.4 \pm 2.5$ & $+3.24$ \ \ $[-3.83, +10.31]$ & 0.19 \\
+\textbf{Seven seeds} & $78.4 \pm 1.3$ & $75.6 \pm 1.2$ & $\mathbf{+2.87}$ \ \ $\mathbf{[+1.17, +4.56]}$ & \textbf{0.006} \\
+\hline
+\multicolumn{5}{|p{0.92\textwidth}|}{With seven seeds the classifier leads on the external set in seven of seven runs (Wilcoxon $p=0.016$) and internally in five of seven. Moving from three seeds to seven widened the internal interval by a factor of about four and narrowed the external interval by a factor of about four; the internal interval now spans zero and the external interval no longer does. Absolute accuracies differ slightly from Table~\ref{tab:h2h} because this replication uses one fixed recipe for both arms rather than the per-arm settings of the original run; the paired differences, not the levels, are the quantity of interest.} \\
+\hline
+\end{tabular}
+\label{tab:paired}
+\end{center}\vs{-4mm}
+\end{table}
+
+
 
 \begin{table}[!ht]
 \caption{Seed variance measured over seven training runs, and how well three runs estimate it. Accuracies come from an independent re-training under a similar but not identical recipe, so the comparable quantity is the spread rather than the level. The final column reports, across all 35 three-seed subsets of the seven runs, the smallest and largest standard deviation such a subset would have produced.}

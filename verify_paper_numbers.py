@@ -229,6 +229,28 @@ for key, wsd, wmin, wmax in [
 print("         The paper reports 0.75 from three seeds; the seven-seed value is 1.40.")
 print("         This is the basis for the claim that a three-seed SD is uninformative.")
 
+
+print("\n=== 11. SEVEN-SEED PAIRED HEAD-TO-HEAD (v2 Section 4.5 / Table 8) ===")
+h = load(os.path.join(STA, "h2h_7seed_paired.json"))
+A = {x["seed"]: x for x in h if x["arm"] == "A_classifier"}
+B = {x["seed"]: x for x in h if x["arm"] == "B_pipeline"}
+common = sorted(set(A) & set(B))
+check("paired seeds completed", len(common), 7, tol=0)
+for nm, k, wd, wlo, whi, wp in [
+    ("internal", "int_acc", 2.44, -0.28, 5.16, 0.0706),
+    ("external", "ext_acc", 2.87, 1.17, 4.56, 0.0061),
+]:
+    a = np.array([A[s][k] for s in common]); b = np.array([B[s][k] for s in common]); d = a - b
+    ci = stats.t.interval(0.95, len(d) - 1, loc=d.mean(), scale=stats.sem(d))
+    check(f"{nm}: paired difference (pp)", float(d.mean()), wd, tol=0.02)
+    check(f"{nm}: CI lower", float(ci[0]), wlo, tol=0.02)
+    check(f"{nm}: CI upper", float(ci[1]), whi, tol=0.02)
+    check(f"{nm}: paired t p", float(stats.ttest_rel(a, b).pvalue), wp, tol=0.002)
+    print(f"         classifier ahead in {int((d>0).sum())}/{len(d)} seeds")
+print("         Three seeds gave internal [+3.04,+4.44] p=0.002 and external [-3.83,+10.31] p=0.19.")
+print("         Seven seeds reverse which comparison is supported. This is the paper's own thesis,")
+print("         demonstrated on its own headline result.")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)
