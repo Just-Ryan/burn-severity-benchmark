@@ -10,15 +10,16 @@
 Dear Editors of the Journal of Machine Learning for Biomedical Imaging,
 
 We submit for your consideration "A leak-free, externally validated benchmark for burn severity
-assessment, and four protocol choices that changed its conclusions."
+assessment, and five protocol choices that changed its conclusions."
 
 The paper reports a deployed two-stage burn-severity system — a YOLOv8x-seg localiser feeding a
 masked Swin classifier, served through a mobile application — together with a leak-free benchmark
 built to test whether that segmentation-first design is justified. Our answer is that it is not, on
 accuracy grounds. What we think makes the paper worth your reviewers' time is not that finding but
-what we hit on the way to it: **four separate times, a conventional protocol and an independent
+what we hit on the way to it: **five separate times, a conventional protocol and an independent
 second look gave different answers, and in every case the conventional protocol was the one we ran
-first.** Table 1 sets all four side by side.
+first.** Table 1 sets all five side by side. The fifth we found in our own pipeline, after every
+other number was final.
 
 **1. A leakage artifact whose structure differs from the published cases.** Our original result was
 that masking the image to the burn improved accuracy by 3.06 percentage points across 20 of 21
@@ -52,7 +53,7 @@ ahead — and the estimated standard deviation ranges from 0.00 to 3.25 percenta
 **3. External validation that fails, reported as such.** On the independent BIP_US clinical
 database the system collapses toward chance and under-grades severity, the dangerous direction. On
 a second external set of 319 images, screened by perceptual hashing that removed 118
-training-identical images and 28 percent of contributing sources, it under-graded 28.3 percent of
+training-identical images, it under-graded 28.3 percent of
 the images that could be under-graded against 19.3 percent internally. Because those 319 images
 come from 175 source photographs, we report source-clustered bootstrap intervals alongside the
 Wilson intervals; they are about a fifth wider, and they are the ones we rely on.
@@ -65,6 +66,20 @@ external set, better powered at 139 images against 81, gives p = 0.35 with the e
 report it in full, as a null with the subgroup signal disclosed, because deleting it would be
 exactly the selective reporting the paper argues against.
 
+**5. A leak we found in our own pipeline, and did not quietly fix.** While packaging the code for
+release we discovered that our source-grouped split had been built for the classifiers and never
+propagated to the segmentation models, which kept the collection's original split. As a result
+179 of the 205 internal test images — 87.3 percent — sit in the segmentation models' training or
+validation folds. We could have retrained quietly and said nothing. Instead we quantified it: the
+standalone segmentation model scores 90.7 percent internally against 48.9 externally, a 41.8-point
+gap that is the signature of being scored on one's own training data. We then established, rather
+than assumed, what it does and does not touch. Segmentation mAP is clean (that split has zero
+source overlap with training), the external set is clean (zero overlap), and Benchmark 1 uses
+ground-truth masks throughout. What it inflates is the internal pipeline arm — the arm that
+loses — so our headline internal margin is a lower bound, not an overstatement. We report it as
+the fifth audit because a paper arguing that leakage is easy to introduce and hard to see should
+say plainly when it introduced some and could not see it.
+
 We are aware that this paper offers no new architecture, and we do not claim one. We submit it to
 MELBA because your stated scope includes empirical comparisons, because your reviewers are asked
 explicitly to assess reproducibility, and because this readership is the one that can act on the
@@ -73,8 +88,8 @@ result.
 Every number in the paper can be recomputed. The repository at
 https://github.com/Just-Ryan/burn-severity-benchmark contains the code, the trained weights, the
 split definition, the raw per-image predictions behind every table and figure, and
-`verify_paper_numbers.py`, a self-contained script that recomputes **114 published quantities** from
-the committed raw data without a GPU, a dataset download, or model weights; all 114 pass. Two of
+`verify_paper_numbers.py`, a self-contained script that recomputes **126 published quantities** from
+the committed raw data without a GPU, a dataset download, or model weights; all 126 pass. Two of
 those checks exist specifically to catch us overstating our own results.
 
 **Use of generative AI.** As required by MELBA's policy, we state how GenAI was used. The authors
@@ -96,7 +111,8 @@ was submitted to the Turkish Journal of Electrical Engineering and Computer Scie
 declined at editorial screening, without external review, on 4 August 2026; we mention it for
 completeness and are happy to supply the correspondence. The present version adds the ten-seed
 replication, the 120-subset analysis, the skin-tone probe, the matched-architecture leakage
-contrast and the source-clustered intervals, none of which were in that submission. The work has
+contrast, the source-clustered intervals and the segmentation-split audit, none of which were in
+that submission. The work has
 not been published previously. All three authors have approved this submission, declare no
 conflicts of interest, and have not recently collaborated with any member of the MELBA editorial
 board.

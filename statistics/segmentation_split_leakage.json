@@ -1,0 +1,12 @@
+{
+ "note": "The YOLOv8x-seg localiser and the 3-class standalone model were trained on the original Roboflow split, NOT the source-grouped leak-free split used for the classifiers. This is how much of the 205-image internal classification test set those segmentation models had already seen.",
+ "internal_test_n": 205,
+ "in_yolo_train": 145,
+ "in_yolo_val": 34,
+ "in_either": 179,
+ "pct_either": 87.3,
+ "unseen": 26,
+ "yolo_test_split_source_overlap_with_train": 0,
+ "external_set_overlap_with_yolo_train": 0,
+ "consequence": "Internal numbers for the standalone YOLO and for the two-stage pipeline (whose localiser front-end leaks) are optimistic. Segmentation mAP is clean (YOLO's own test split has zero source overlap with its train split) and all external numbers are clean (zero overlap). The oracle-mask and Benchmark 1 results use ground-truth masks and are unaffected."
+}

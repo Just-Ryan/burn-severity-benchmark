@@ -372,6 +372,43 @@ for arm, wlo, whi in [("clf", 68.3, 80.1), ("pipe", 63.7, 75.7)]:
     check(f"{arm}: source-clustered CI upper", float(np.percentile(boot, 97.5)), whi, tol=0.6)
 print("         Clustering widens these intervals by roughly a fifth. Seed 42, 20k resamples.")
 
+print("\n=== 18. THE SEGMENTATION-SPLIT LEAK IN OUR OWN PIPELINE (Section 4.11) ===")
+# The source-grouped split was built for the classifiers and never propagated to
+# the segmentation models. This check exists so the defect cannot be quietly
+# dropped from a future revision.
+seg_path = os.path.join(STA, "segmentation_split_leakage.json")
+if os.path.exists(seg_path):
+    sg = load(seg_path)
+    check("internal classification test images", sg["internal_test_n"], 205, tol=0)
+    check("of those, in the YOLO training fold", sg["in_yolo_train"], 145, tol=0)
+    check("of those, in the YOLO validation fold", sg["in_yolo_val"], 34, tol=0)
+    check("seen by the segmentation models at all", sg["in_either"], 179, tol=0)
+    check("percent of the internal test set contaminated", sg["pct_either"], 87.3, tol=0.1)
+    check("images the segmentation models never saw", sg["unseen"], 26, tol=0)
+    check("YOLO test split overlap with YOLO train (mAP is clean)",
+          sg["yolo_test_split_source_overlap_with_train"], 0, tol=0)
+    check("external set overlap with YOLO train (external is clean)",
+          sg["external_set_overlap_with_yolo_train"], 0, tol=0)
+    print("         The arm this inflates is the arm that LOSES, so the internal")
+    print("         classifier margin is a lower bound. External numbers, segmentation")
+    print("         mAP and every ground-truth-mask result are unaffected.")
+else:
+    print("  [SKIP] segmentation_split_leakage.json not present")
+
+yolo_path = os.path.join(RES, "standalone_yolo_conf005.json")
+if os.path.exists(yolo_path):
+    sy = load(yolo_path)
+    check("standalone YOLO, internal, conf 0.05 (%)", sy["internal"]["acc"], 90.73, tol=0.05)
+    check("standalone YOLO, external, conf 0.05 (%)", sy["external"]["acc"], 48.90, tol=0.05)
+    check("standalone YOLO, external balanced (%)", sy["external"]["balanced_acc"], 50.30, tol=0.05)
+    check("standalone YOLO, external no-detections", sy["external"]["no_detection"], 3, tol=0)
+    print("         A 41.8-point internal-to-external gap is the signature of a model")
+    print("         being scored on its own training data, not a distribution shift.")
+    print("         An earlier draft printed 79.5/68.7/74.6 for this row; those values")
+    print("         reproduce under no aggregation rule and had no archived provenance.")
+else:
+    print("  [SKIP] standalone_yolo_conf005.json not present; run code/rerun_standalone_yolo.py")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)
