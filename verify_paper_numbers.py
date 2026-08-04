@@ -260,6 +260,118 @@ for arm, nm, wsd, wmin, wmax in [("A_classifier", "classifier", 1.74, 0.00, 3.25
 print("         Three seeds reported 0.75 and 1.02. Ten seeds give 1.74 and 2.22.")
 print("         Some three-seed subsets give exactly zero, purely by chance.")
 
+print("\n=== 13. MATCHED ARCHITECTURE POOLS FOR THE LEAKAGE CONTRAST (Section 4.2) ===")
+# The 3.06 -> 0.55 contrast spans different architecture pools. The matched
+# contrast, restricted to the eight architectures common to both analyses, is
+# the smaller figure the paper relies on.
+TIMM = {
+    "ConvNeXt-Large": "convnext_large", "ConvNeXt-Tiny": "convnext_tiny",
+    "DenseNet201": "densenet201", "EfficientNet-B0": "efficientnet_b0",
+    "MobileNetV3-Large": "mobilenetv3_large_100", "ResNet50": "resnet50",
+    "SWIN-Base": "swin_base_patch4_window7_224", "SWIN-Large": "swin_large_patch4_window7_224",
+    "SWIN-Small": "swin_small_patch4_window7_224", "SWIN-Tiny": "swin_tiny_patch4_window7_224",
+    "ViT-Base": "vit_base_patch16_224",
+}
+naive = {r["arch"]: r["delta_pp"] for r in leaky["per_architecture"]}
+pool8 = sorted({e["arch"] for e in conf})
+pool11 = sorted({e["arch"] for e in s42})
+check("architectures in the pooled leak-free analysis", len(pool8), 8, tol=0)
+d8 = [naive[TIMM[a]] for a in pool8]
+d11 = [naive[TIMM[a]] for a in pool11]
+check("naive-split effect, matched 8 architectures (pp)", float(np.mean(d8)), 2.07, tol=0.01)
+check("of those 8, how many appeared to improve", sum(1 for x in d8 if x > 0), 7, tol=0)
+check("naive-split effect, matched 11 architectures (pp)", float(np.mean(d11)), 2.89, tol=0.01)
+print("         Matched before/after contrast is 2.07 -> 0.55, not 3.06 -> 0.55.")
+
+print("\n=== 14. ALL 120 THREE-SEED SUBSETS OF THE TEN RUNS (Section 4.8) ===")
+# Computed within the ten runs, so seed count is isolated from the recipe change.
+def paired_stats(v):
+    m = float(np.mean(v)); se = stats.sem(v)
+    lo, hi = stats.t.interval(0.95, len(v) - 1, loc=m, scale=se)
+    return m, float(lo), float(hi), float(stats.ttest_1samp(v, 0).pvalue)
+
+for nm, k, wlo_est, whi_est, wpmin, wpmax, w_sig, whw_lo, whw_hi in [
+    ("internal", "int_acc", -0.98, 6.67, 0.0094, 1.00, 6, None, None),
+    ("external", "ext_acc", 0.21, 5.22, 0.0005, 0.86, 15, 0.45, 10.63),
+]:
+    d = np.array([A[s][k] - B[s][k] for s in common])
+    est, ps, hw = [], [], []
+    for c in itertools.combinations(range(10), 3):
+        m, lo, hi, p = paired_stats(d[list(c)])
+        est.append(m); ps.append(p); hw.append((hi - lo) / 2)
+    est, ps, hw = np.array(est), np.array(ps), np.array(hw)
+    check(f"{nm}: number of three-seed subsets", len(est), 120, tol=0)
+    check(f"{nm}: smallest subset estimate (pp)", float(est.min()), wlo_est, tol=0.02)
+    check(f"{nm}: largest subset estimate (pp)", float(est.max()), whi_est, tol=0.02)
+    check(f"{nm}: smallest subset p", float(ps.min()), wpmin, tol=0.002)
+    check(f"{nm}: largest subset p", float(ps.max()), wpmax, tol=0.02)
+    check(f"{nm}: subsets reaching p<0.05", int((ps < 0.05).sum()), w_sig, tol=0)
+    if whw_lo is not None:
+        check(f"{nm}: smallest CI half-width (pp)", float(hw.min()), whw_lo, tol=0.02)
+        check(f"{nm}: largest CI half-width (pp)", float(hw.max()), whw_hi, tol=0.02)
+print("         105 of 120 three-seed subsets would have missed the external effect.")
+print("         Some internal subsets place the pipeline ahead of the classifier.")
+
+print("\n=== 15. THE INTERVAL-NARROWING FACTOR (Section 4.5) ===")
+w3, w10 = 4.44 - 3.04, 4.98 - 0.29
+check("internal: 3-seed CI width (pp)", w3, 1.40, tol=0.01)
+check("internal: 10-seed CI width (pp)", w10, 4.69, tol=0.01)
+check("internal: narrowing factor (paper says about three)", w10 / w3, 3.35, tol=0.02)
+w3e, w10e = 10.31 + 3.83, 4.49 - 1.09
+check("external: widening factor (paper says about four)", w3e / w10e, 4.16, tol=0.02)
+
+print("\n=== 16. SKIN-TONE PROBE AND ITS NON-REPLICATION (Section 4.9) ===")
+sk_path = os.path.join(STA, "skin_tone_ITA_probe.json")
+if os.path.exists(sk_path):
+    sk = load(sk_path)
+    check("internal images with a usable ITA", sk["internal"]["n_used"], 194, tol=0)
+    check("external images with a usable ITA", sk["external"]["n_used"], 319, tol=0)
+    for setname, wp, wn_ok, wn_bad, wmed_ok, wmed_bad in [
+        ("internal", 0.0025, 60, 21, 38.4, 19.2),
+        ("external", 0.3482, 87, 52, 37.6, 39.2),
+    ]:
+        rows = sk[setname]["rows"]
+        ita = np.array([r["ita"] for r in rows])
+        cls = np.array([r["true"] for r in rows])
+        ok = np.array([r["clf_ok"] for r in rows])
+        m = cls == 0                      # first-degree only: the flagged subgroup
+        a, b = ita[m & (ok == 1)], ita[m & (ok == 0)]
+        check(f"{setname} class-0: correct predictions", len(a), wn_ok, tol=0)
+        check(f"{setname} class-0: errors", len(b), wn_bad, tol=0)
+        check(f"{setname} class-0: median ITA, correct", float(np.median(a)), wmed_ok, tol=0.1)
+        check(f"{setname} class-0: median ITA, errors", float(np.median(b)), wmed_bad, tol=0.1)
+        check(f"{setname} class-0: Mann-Whitney p",
+              float(stats.mannwhitneyu(a, b, alternative="two-sided").pvalue), wp, tol=0.002)
+    check("Bonferroni threshold over the 15 tests in the probe", 0.05 / 15, 0.0033, tol=0.0001)
+    print("         The internal subgroup effect survives Bonferroni (p=0.0025 < 0.0033).")
+    print("         The external cell is LARGER (139 vs 81 images) and finds nothing.")
+else:
+    print("  [SKIP] skin_tone_ITA_probe.json not present; run code/skin_tone_probe.py first")
+
+print("\n=== 17. SOURCE-CLUSTERED INTERVALS ON THE EXTERNAL SET (Section 3.6) ===")
+# 319 external images come from 175 source photographs, so an interval on N=319
+# is too narrow. The cluster bootstrap resamples sources, not images.
+ext_rows = load(os.path.join(RES, "preds_external.json"))
+def _sid(n):
+    return n.split("_jpg.rf.")[0] if "_jpg.rf." in n else n.rsplit(".", 1)[0]
+srcs = [_sid(r["img"]) for r in ext_rows]
+uniq = sorted(set(srcs))
+check("distinct source photographs in the external set", len(uniq), 175, tol=0)
+idx = {s: [] for s in uniq}
+for i, s in enumerate(srcs):
+    idx[s].append(i)
+rng = np.random.default_rng(42)
+for arm, wlo, whi in [("clf", 68.3, 80.1), ("pipe", 63.7, 75.7)]:
+    boot = []
+    for _ in range(20000):
+        pick = rng.choice(len(uniq), len(uniq), replace=True)
+        ii = [j for p in pick for j in idx[uniq[p]]]
+        boot.append(100 * np.mean([ext_rows[j][arm] == ext_rows[j]["true"] for j in ii]))
+    boot = np.array(boot)
+    check(f"{arm}: source-clustered CI lower", float(np.percentile(boot, 2.5)), wlo, tol=0.6)
+    check(f"{arm}: source-clustered CI upper", float(np.percentile(boot, 97.5)), whi, tol=0.6)
+print("         Clustering widens these intervals by roughly a fifth. Seed 42, 20k resamples.")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)
