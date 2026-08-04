@@ -1,0 +1,18 @@
+{
+ "internal": {
+  "n_correct": 60,
+  "n_wrong": 21,
+  "median_correct": 38.38670898780122,
+  "median_wrong": 19.19178418978472,
+  "p": 0.002503217225976037,
+  "rank_biserial": -0.446031746031746
+ },
+ "external": {
+  "n_correct": 87,
+  "n_wrong": 52,
+  "median_correct": 37.55386688648096,
+  "median_wrong": 39.19929090927057,
+  "p": 0.34823305716425357,
+  "rank_biserial": 0.0954907161803713
+ }
+}
