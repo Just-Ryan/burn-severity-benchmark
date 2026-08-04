@@ -9,8 +9,8 @@
 
 Dear Editors of the Journal of Machine Learning for Biomedical Imaging,
 
-We submit for your consideration "A leak-free, externally validated benchmark for burn severity
-assessment, and five protocol choices that changed its conclusions."
+We submit for your consideration "What a second look changed: five protocol audits of a deep
+learning benchmark for burn severity assessment."
 
 The paper reports a deployed two-stage burn-severity system — a YOLOv8x-seg localiser feeding a
 masked Swin classifier, served through a mobile application — together with a leak-free benchmark

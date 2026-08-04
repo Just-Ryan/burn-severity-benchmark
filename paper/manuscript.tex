@@ -38,14 +38,19 @@
 \datesubmitted{}
 \datepublished{}
 
-\ShortHeadings{A leak-free benchmark for burn severity assessment}{Altayeb, Alraddadi and Alrehaili}
+\ShortHeadings{Five protocol audits of a burn severity benchmark}{Altayeb, Alraddadi and Alrehaili}
 
-% Retitled for MELBA. The previous title, "A comparative study of deep learning
-% approaches for automated burn injury segmentation and severity classification",
-% enrolled the paper in the exact genre its own Section 2 criticises ("comparative
-% studies on a single split") and signalled none of its actual contribution.
-\title{A leak-free, externally validated benchmark for burn severity assessment,
-and five protocol choices that changed its conclusions}
+% Title history, kept because the reasons are substantive.
+%  1. "A comparative study of deep learning approaches for automated burn injury
+%     segmentation and severity classification" -- enrolled the paper in the exact
+%     genre its own Section 2 criticises, and signalled none of its contribution.
+%  2. "A leak-free, externally validated benchmark ..." -- dropped because
+%     Section 4.11 reports that our own pipeline leaked, so a title claiming
+%     "leak-free" contradicted the paper's most important self-correction.
+% The present title claims only what the paper demonstrates: that a second,
+% independent look changed the answer five times.
+\title{What a second look changed: five protocol audits of a deep learning
+benchmark for burn severity assessment}
 
 % Affiliation convention: you list the institution where the work was
 % PERFORMED, not where you happen to be today. This study originated as the
@@ -575,7 +580,7 @@ Several limitations qualify these results. The most serious is the one in Sectio
 
 \section{Conclusion}
 \label{Con}
-We studied a deployed two-stage burn-severity system through a leak-free, externally validated benchmark, and five routine protocol choices changed the answer. Splitting an augmented dataset at the file level manufactured a masking benefit that vanished under a source-grouped split. Grouping by source identifier still left 1.0 percent of the internal test set perceptually identical to training, one pair with conflicting labels. A three-seed protocol overstated the internal head-to-head margin, narrowed its interval by a factor of about three, and concealed the external margin entirely; any three of our ten replication runs would have reported a classifier standard deviation somewhere between 0.00 and 3.25 percentage points, and a pipeline one between 0.28 and 3.69. A single-dataset subgroup test produced a large, Bonferroni-surviving skin-tone association that reversed and vanished externally. And our corrected split reached only the classifiers: the segmentation stage kept the original split, putting 87.3 percent of the internal test set inside its training data, which inflates the arm that loses and so makes our internal margin a lower bound. Under the corrected protocol a plain classifier was the most accurate single system and beat the two-stage pipeline on external data, which is uncontaminated, in nine of ten seeds, so segmentation-first is justified here by localisation and interpretability rather than by accuracy; and the model did not transfer to clinical images and under-graded severity. The procedural lessons transfer beyond burns: datasets augmented before splitting must be partitioned by source image, or reported gains may be illusory; identifier grouping should be verified with a content-based check; three seeds neither estimate a variance nor support an interval; a single-dataset subgroup finding, a fairness finding included, is subject to the same replication failure as a single-dataset accuracy claim; and a correction applied to one stage of a pipeline must be propagated to every stage and then re-audited, because a pipeline is only as leak-free as its leakiest component. In-distribution accuracy must not be read as clinical usefulness. Future work needs multi-source, clinically labelled data with patient-level splits and domain adaptation, and should keep segmentation for localisation rather than as an accuracy lever.
+We studied a deployed two-stage burn-severity system through a source-grouped, externally validated benchmark, and five routine protocol choices changed the answer. Splitting an augmented dataset at the file level manufactured a masking benefit that vanished under a source-grouped split. Grouping by source identifier still left 1.0 percent of the internal test set perceptually identical to training, one pair with conflicting labels. A three-seed protocol overstated the internal head-to-head margin, narrowed its interval by a factor of about three, and concealed the external margin entirely; any three of our ten replication runs would have reported a classifier standard deviation somewhere between 0.00 and 3.25 percentage points, and a pipeline one between 0.28 and 3.69. A single-dataset subgroup test produced a large, Bonferroni-surviving skin-tone association that reversed and vanished externally. And our corrected split reached only the classifiers: the segmentation stage kept the original split, putting 87.3 percent of the internal test set inside its training data, which inflates the arm that loses and so makes our internal margin a lower bound. Under the corrected protocol a plain classifier was the most accurate single system and beat the two-stage pipeline on external data, which is uncontaminated, in nine of ten seeds, so segmentation-first is justified here by localisation and interpretability rather than by accuracy; and the model did not transfer to clinical images and under-graded severity. The procedural lessons transfer beyond burns: datasets augmented before splitting must be partitioned by source image, or reported gains may be illusory; identifier grouping should be verified with a content-based check; three seeds neither estimate a variance nor support an interval; a single-dataset subgroup finding, a fairness finding included, is subject to the same replication failure as a single-dataset accuracy claim; and a correction applied to one stage of a pipeline must be propagated to every stage and then re-audited, because a pipeline is only as leak-free as its leakiest component. In-distribution accuracy must not be read as clinical usefulness. Future work needs multi-source, clinically labelled data with patient-level splits and domain adaptation, and should keep segmentation for localisation rather than as an accuracy lever.
 
 % =====================================================================
 %  MELBA mandatory closing sections
