@@ -1,202 +1,140 @@
-# A comparative study of deep learning approaches for automated burn injury segmentation and severity classification
+# Deep learning for burn severity assessment: five evaluation choices that changed our conclusions
 
-Code, statistics, and reproducibility materials for the paper of the same name. This
-repository accompanies a study of deep learning for burn severity classification (first,
-second, and third degree) from photographs. Its central result is a cautionary one:
-**in-distribution accuracy is not evidence of clinical usefulness; leak-free external
-evaluation is.**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Data: CC BY 4.0](https://img.shields.io/badge/Data-CC%20BY%204.0-blue.svg)](LICENSE-DATA)
+[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-136%2F136%20passing-brightgreen.svg)](verify_paper_numbers.py)
 
-## Summary of findings
-
-We describe a deployed two-stage system (a YOLOv8x-seg localiser feeding a masked Swin
-transformer classifier, served through a Flutter and Flask mobile application) and build a
-leak-free, fair benchmark around it that gives every approach its best honest chance.
-
-**1. A data-leakage artifact manufactured an apparent benefit.**
-On a naive file-level split of the augmented dataset, masking appeared to help 20 of 21
-architectures (mean +3.06 percentage points). This is an artifact: because the source
-dataset augments each photograph into several near-duplicate copies, a file-level split
-placed copies of one photograph in both folds, leaking **80.5%** of the masked test set
-while the unmasked split leaked none.
-
-**2. On a leak-free split, masking gives no reliable benefit.**
-Grouping by the 1,370 unique source photographs (70/15/15, seed 42; validation/test
-deduplicated to one image per source → 206/205) collapses the effect to **+0.55 pp**
-pooled over seeds 0, 1, and 42 — not significant (Wilcoxon *p* = 0.32), and below the
-study's minimum detectable effect of ~3.64 pp at *N* = 205. Cropping gives ~0.0 pp.
-
-**3. A plain classifier is the most accurate single system.**
-Multi-seed head-to-head (seeds 0, 1, 2; mean ± SD) on the shared 205-image internal test
-set and a clean 319-image external set:
-
-| System | Internal (N=205) | External (N=319) |
-|---|---|---|
-| Standalone classifier (ConvNeXt-Large) | **82.6 ± 0.6** | **76.6 ± 1.3** (bal. 80.1 ± 1.5) |
-| Robust pipeline (localiser → Swin-Tiny) | 78.9 ± 0.8 | 73.4 ± 2.0 (bal. 77.9 ± 2.7) |
-| Standalone YOLOv8-seg (single seed, conf. 0.05) | 79.5 | 68.7 (bal. 74.6) |
-| *Oracle Swin-Tiny (ground-truth masks)* | *83.9* | *n/a* |
-| *Strict pipeline (conf. 0.25, no-detection = error)* | *79.0* | *54.2* |
-
-The classifier wins on both sets in all three seeds. Paired McNemar on the seed-42 models
-gives *p* = 0.87 internally and *p* = 0.18 externally — so we describe the advantage as
-**consistent across seeds rather than statistically significant in a single run**.
-
-<p align="center">
-  <img src="benchmark2-proof/figures/head_to_head.png" alt="Head-to-head accuracy on the internal and external test sets" width="720">
-</p>
-
-<sub><b>Head-to-head accuracy.</b> Error bars are the standard deviation across seeds 0, 1, 2
-for the classifier and the pipeline; the standalone YOLOv8-seg model is single-seed and shown
-without error bars. Differences fall within the cross-seed spread.</sub>
-
-**4. The model does not transfer to clinical images.**
-On the BIP_US clinical database (94 photographs) balanced accuracy is 30.5% / 35.0%
-(depending on the deep-dermal mapping) against a 50% chance level for that two-class probe,
-with systematic **under-grading** — the dangerous direction. On the web-sourced 319-image
-external set the decline is milder and the plain classifier remains most robust. A
-perceptual-hash check removed 118 training-identical images and 28% of sources (56/199)
-before that evaluation.
-
-<table>
-<tr>
-<td align="center"><img src="benchmark2-proof/figures/cm_true_pipeline.png" alt="Internal confusion matrix" width="380"></td>
-<td align="center"><img src="benchmark2-proof/figures/ext_cm_pipe.png" alt="External confusion matrix" width="380"></td>
-</tr>
-<tr>
-<td align="center"><sub>Internal test (N = 205)</sub></td>
-<td align="center"><sub>Clean external test (N = 319)</sub></td>
-</tr>
-</table>
-
-<sub><b>Confusion matrices for the robust two-stage pipeline</b> (representative seed). Internally,
-errors fall mainly between neighbouring degrees, with second degree the hardest class.
-Externally, accuracy drops and the more severe burns are frequently <b>under-graded</b> — the
-dangerous direction.</sub>
-
-**Segmentation quality:** single-class localiser test mask mAP50 **0.726** (mAP50-95 0.417);
-three-class standalone **0.603** (0.349).
-
-**Efficiency (A100, 640×640, batch 1):** localiser 15.4 ms, Swin-Tiny 23.7 ms,
-ConvNeXt-Large 25.8 ms, full pipeline 42.3 ms (~1.6× slower than the standalone classifier).
-
-**Conclusion.** Segmentation-first is not justified on accuracy grounds here; its value is
-localisation and interpretability. Datasets augmented before splitting must be partitioned
-by source image, or reported gains may be illusory.
-
-## Verify the paper's numbers in one command
-
-Every headline number in the article is recomputed from the raw data committed here — no GPU,
-no dataset download, no model weights required:
+Code, data and every raw result behind the paper. **Six times** in this project a conventional
+protocol and an independent second look gave different answers — and in every case the conventional
+protocol was the one we ran first. This repository exists so you can check that yourself instead of
+taking our word for it.
 
 ```bash
 pip install numpy scipy
-python verify_paper_numbers.py
+python verify_paper_numbers.py     # recomputes 136 published numbers from the raw data
 ```
 
-This checks **136 quantities** against what the manuscript prints: the leakage artifact and the
-matched-architecture-pool contrast (2.07 -> 0.55), the masking null (including the Wilcoxon and
-Mann-Whitney tests), the multi-seed and ten-seed head-to-head means, standard deviations and
-paired intervals, all 120 three-seed subsets of the ten runs, the interval-narrowing factors, the
-exact McNemar tests recomputed from per-image predictions, segmentation mAP, the oracle-mask upper
-bound, both pipeline variants, the timing table, the BIP_US balanced accuracy, the skin-tone (ITA)
-probe and its failure to replicate, and the source-clustered bootstrap intervals on the external
-set. **All 136 currently pass.**
+No GPU, no dataset download, no model weights, under a minute. Two of the checks exist
+specifically to catch us overstating our own results.
 
-Two of these checks exist specifically to catch us overstating our own results: check 13 confirms
-that the leakage contrast is 2.07 -> 0.55 on matched architecture pools rather than the larger
-3.06 -> 0.55, and check 15 confirms that the internal interval-narrowing factor is 3.35, not the
-"four times" an earlier draft claimed.
+---
 
-## Repository structure
+## The five audits
+
+Each row is a routine choice, what it appeared to show, and what a second analysis showed.
+
+| # | Routine choice | Appeared to show | After correction |
+|---|---|---|---|
+| 1 | Split augmented files at random | Masking helps: **+2.07 pp** (8 matched architectures; +3.06 across all 21) | **+0.55 pp**, 95% CI [−0.37, +1.47], Wilcoxon *p* = 0.32 |
+| 2 | Group by source ID and assume the folds are independent | The folds are independent | **2 of 205** test images are perceptually identical to a training image filed under a different ID; one pair carries conflicting labels |
+| 3 | Use three training seeds | Internal +3.74 [+3.04, +4.44], *p* = 0.002; external *p* = 0.19 | Ten seeds: internal +2.63 [+0.29, +4.98]; external **+2.79** [+1.09, +4.49], *p* = 0.005. Of all **120** three-seed subsets of those same ten runs, only **15** detect the external effect |
+| 4 | Test a subgroup on one dataset | Errors fall on darker skin: median ITA 19.2 vs 38.4, *p* = **0.0025**, survives Bonferroni | External replication *p* = 0.35, **effect reversed**, on a larger cell (139 vs 81 images) |
+| 5 | Correct the split for one stage, assume the pipeline is clean | The head-to-head is leak-free | **179 of 205** internal test images (87.3%) sat in the segmentation models' training folds. Retrained: standalone falls 90.7 → **78.0%** |
+
+A sixth surfaced during review: the internal head-to-head margin is significant on plain accuracy
+(*p* = 0.032) but **not** on balanced accuracy (+1.45, 95% CI [−0.74, +3.65], *p* = 0.17). The
+external margin survives both summaries.
+
+---
+
+## The finding that started it
+
+<img src="figures/png/fig_leakage.png" width="100%" alt="Data leakage mechanism and its consequence">
+
+The source collection augments each photograph into about 2.5 near-duplicate copies with distinct
+file names. Split those files at random and copies of one photograph land in both training and
+test. In our masked classification set **80.5%** of test images shared a source photograph with
+training; the separately partitioned unmasked set leaked none.
+
+Leakage did not inflate a score here — it manufactured a *comparative conclusion*, consistently
+across 20 of 21 architectures. **When a leak rate differs between the arms being compared,
+consistency across architectures is evidence for the confound rather than against it.**
+
+## The system under test
+
+<img src="figures/png/fig_system.png" width="100%" alt="Two-stage pipeline architecture">
+
+A YOLOv8x-seg localiser predicts a burn mask, the mask is multiplied into the image, and a Swin
+transformer grades the masked region. Served through Flask and Flutter. **It is a research and
+demonstration artifact, not a clinically validated device** — and as the external results show, it
+is not ready for any clinical role.
+
+## What the benchmark found
+
+<img src="figures/png/head_to_head.png" width="72%" alt="Head-to-head accuracy across systems">
+
+A plain classifier is the most accurate single system on both test sets. Segmentation-first is
+justified here by localisation and interpretability, **not** by accuracy.
+
+## Where it fails
+
+<img src="figures/png/cm_true_pipeline.png" width="48%" alt="Internal confusion matrix"> <img src="figures/png/ext_cm_pipe.png" width="48%" alt="External confusion matrix">
+
+On independent clinical images the model does not transfer, and it fails in the dangerous
+direction: it under-grades **28.3%** of the images that could be under-graded externally, against
+19.3% internally. Under-grading routes a severe burn toward conservative care.
+
+---
+
+## Layout
 
 ```
-apps/                            # the deployed system (source only) — see apps/README.md
-  flask-server/                  #   POST /analyze — YOLOv8x-seg → mask → Swin
-  flutter-app/                   #   cross-platform mobile client (Dart)
-  ios-native/                    #   SwiftUI client running the models on-device
+verify_paper_numbers.py        ← start here: 136 checks, no GPU, under a minute
+paper/                         manuscript source + PDF, bibliography, cover letter, submission guide
 code/
-  training/                      # see code/training/README.md
-    colab-benchmark2.ipynb       #   ⭐ the main experiment (A100), committed WITH outputs
-    build_clean_split.py         #   original leak-free, source-grouped split
-    build_clean_split_v2.py      #   split used for the final benchmarks (4 conditions)
-    build_clean_yolo_seg.py      #   leak-free YOLO segmentation dataset builder
-    kaggle-notebooks/            #   kernels pulled from Kaggle (source only — outputs live
-                                 #   in benchmark2-proof/results/)
-    newway-seqcode/              #   segmentation/masking preprocessing
-  pipeline/
-    train_yolov8_seg.py          # segmentation training
-    train_cnn_classifier.py      # classifier training
-    integrated_pipeline__yolov8seg_swin.py   # the deployed two-stage pipeline
-  evaluation/
-    external_validation_bipus.py # external (BIP_US) evaluation
-    *__evaluate_models.py        # per-stage evaluation
-  benchmark-webapps/             # the Flask demos used to compare approaches side by side
-benchmark2-proof/
-  results/                       # raw JSON for every reported number (multi-seed, external,
-                                 #   McNemar, timing, robust/strict pipeline, predictions)
-  figures/                       # confusion matrices, PR/F1 curves, head-to-head chart
-statistics/                      # Wilson CIs, McNemar, sign/Wilcoxon, power, raw JSON/CSV
-figures/                         # the four figures used in the article (vector PDF)
-docs/
-  DATASET.md                     # datasheet + leakage correction
-  MODEL_CARD.md                  # model card
-CITATION.cff                     # citation metadata (DOIs completed on publication)
+  skin_tone_probe.py           ITA fairness probe (audit 4)
+  build_seg_split_leakfree.py  rebuilds the segmentation split (audit 5) — refuses to emit a leaking dataset
+  rerun_standalone_yolo.py     re-scores the standalone model at conf 0.05
+  kaggle-notebooks/            the retraining runs, exactly as executed
+benchmark2-proof/results/      per-image predictions behind every table and figure
+statistics/                    raw result JSON for every reported analysis
+figures/                       figures as PDF, plus PNG renders for this page
+apps/                          the deployed Flask + Flutter system (source only)
+docs/                          supporting notes
 ```
 
-**Model weights and datasets are not in git.** Checkpoints are hosted on Kaggle and will be
-archived on Zenodo at publication; the datasets are linked under *Data availability* below.
-See [`.gitignore`](.gitignore) for what is deliberately excluded.
+## Trained weights
 
-> ⚠️ The applications in `apps/` are **research and demonstration artifacts, not clinically
-> validated devices**. The external validation below shows the model does not transfer to
-> independent clinical images and under-grades severity.
+Attached to the [`v1.0-melba` release](../../releases/tag/v1.0-melba) — each exceeds GitHub's
+100 MB per-file limit.
 
-## Reproducing the results
+| File | What it is |
+|---|---|
+| `yolov8x-seg_1class_LEAKFREE.pt` | Localiser, source-grouped split. Test mask mAP50 **0.695** |
+| `yolov8x-seg_3class_LEAKFREE.pt` | Standalone, source-grouped split. mAP50 0.566; **78.0%** on the 205 |
+| `yolov8x-seg_1class__best.pt` | The original localiser — **contaminated**, see audit 5 |
+| `yolov8x-seg_3class__best.pt` | The original standalone — scored **90.7%** on the same 205 images |
+| `swin-small_masked__best_cnn_mask.pth` | The classifier shipped in the mobile demonstration |
 
-1. **Environment.** Python 3.10+, PyTorch, `timm`, `ultralytics`, `scikit-learn`, `scipy`,
-   `imagehash`.
-2. **Data.** Download the primary dataset from Roboflow (below); request the BIP_US external
-   set from the University of Seville.
-3. **Build the leak-free split:** `python code/training/build_clean_split_v2.py` — groups
-   augmented copies by source photograph, keeps copies train-only, and deduplicates
-   validation/test to one image per source (seed 42).
-4. **Train** the segmenter and classifiers with the scripts in `code/`.
-5. **Evaluate and run statistics** with `code/evaluation/`; raw outputs for every reported
-   number are in `benchmark2-proof/results/`.
+We publish the **contaminated models alongside the corrected ones deliberately**, so the leak can
+be reproduced as readily as its correction.
 
-**Compute note.** Benchmark 1 (the masking ablation) ran on a Kaggle NVIDIA P100
-(PyTorch 2.5.1, CUDA 12.1) — on P100 you must pin `torch==2.5.1 torchvision==0.20.1` (cu121),
-since newer builds drop the sm_60 kernels. Benchmark 2 (segmentation, head-to-head,
-external evaluation, timing) ran on a Google Colab NVIDIA A100 (PyTorch 2.11, CUDA 12.8).
-This environment difference likely accounts for the retrained classifier accuracies being
-about two percentage points below the earlier seed-42 Kaggle run.
+> **Open experiment.** The benchmark's Swin-Tiny classifier weights were never archived. That is
+> the one thing blocking a re-score of the two-stage pipeline arm on the corrected localiser — the
+> pipeline's classifier trains on ground-truth masks and meets the localiser only at inference, and
+> the corrected masks for all 205 test images already exist. It is the single most valuable
+> experiment a reader could run against these artifacts.
 
-## Data availability
+## Data
 
-- **Primary dataset:** "skin burn wound classification" by Binus, Roboflow Universe,
-  CC BY 4.0 — https://universe.roboflow.com/binus-if3z9/skin-burn-wound-classification
-- **External validation:** BIP_US database, Biomedical Image Processing Group, University of
-  Seville (available for research on request).
-- **Second external set:** built from a public Roboflow burn collection and filtered with a
-  perceptual-hash (pHash/dHash) overlap check against the training data; the filtering code
-  and the resulting counts are documented here.
+| Source | Availability |
+|---|---|
+| Primary: Roboflow "skin burn wound classification" v31 | Public, CC BY 4.0. **Not redistributed here** |
+| External: a second Roboflow collection, pHash-screened | Split definition and contamination lists included |
+| BIP_US clinical database (Univ. Seville) | On request from its custodians. **No BIP_US image is redistributed** |
 
-## Model availability
+## Licence
 
-Trained checkpoints are hosted on Kaggle under user `justryantl` (1-class YOLOv8x-seg
-localiser, 3-class YOLOv8x-seg, and the classifiers). An archived release including model
-checkpoints will be minted on publication.
+Code **MIT** ([LICENSE](LICENSE)) · everything else — figures, predictions, statistics, split
+definitions, weights — **CC BY 4.0** ([LICENSE-DATA](LICENSE-DATA)).
 
-## Citation
+## Citing
 
-> DOI and full citation will be added upon publication.
+See [`CITATION.cff`](CITATION.cff).
 
-## License
+---
 
-Code is released under **AGPL-3.0** (see `LICENSE`), consistent with its dependency on
-Ultralytics YOLOv8; trained YOLO checkpoints inherit that license.
-
-## Acknowledgment
-
-We thank the Biomedical Image Processing Group of the University of Seville for the BIP_US
-database, and the Kaggle and Google Colab platforms for computational resources.
+*This work began as an undergraduate graduation project at the Faculty of Computer and Information
+Systems, Islamic University of Madinah. All three authors have since graduated; the analyses
+reported here were carried out independently, without institutional supervision, funding or
+compute.*

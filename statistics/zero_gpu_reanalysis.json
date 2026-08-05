@@ -1,0 +1,87 @@
+{
+ "note": "Zero-GPU re-analysis of already-stored per-image predictions, prompted by an independent audit. Every result here makes a published claim SMALLER or more qualified.",
+ "balanced_accuracy_ten_seed": {
+  "internal_plain": {
+   "mean": 2.634146341463412,
+   "lo": 0.28924536221866415,
+   "hi": 4.97904732070816,
+   "p": 0.031648615887966934,
+   "ahead": 7
+  },
+  "internal_balanced": {
+   "mean": 1.4525655223329665,
+   "lo": -0.7422591407864356,
+   "hi": 3.6473901854523687,
+   "p": 0.16858264031371128,
+   "ahead": 6
+  },
+  "external_plain": {
+   "mean": 2.7899686520376177,
+   "lo": 1.0937873076351028,
+   "hi": 4.486149996440132,
+   "p": 0.0047638768669040965,
+   "ahead": 9
+  },
+  "external_balanced": {
+   "mean": 1.9583579882147988,
+   "lo": 0.2638743414977933,
+   "hi": 3.6528416349318045,
+   "p": 0.028065993615898784,
+   "ahead": 8
+  }
+ },
+ "leak_magnitude_confound": {
+  "contaminated_train_images": 3081,
+  "leakfree_train_images": 2425,
+  "acc_all205": {
+   "contaminated": 90.73170731707317,
+   "leakfree": 78.04878048780488,
+   "gap": 12.682926829268297
+  },
+  "acc_seen179": {
+   "contaminated": 91.06145251396649,
+   "leakfree": 77.6536312849162,
+   "gap": 13.407821229050285,
+   "n": 179
+  },
+  "acc_control26": {
+   "contaminated": 88.46153846153847,
+   "leakfree": 80.76923076923077,
+   "gap": 7.692307692307693,
+   "n": 26,
+   "gap_ci": [
+    0.0,
+    19.23076923076924
+   ]
+  }
+ },
+ "undergrading_internal_vs_external": {
+  "internal": [
+   23,
+   119
+  ],
+  "external": [
+   51,
+   180
+  ],
+  "z": 1.7662450984498779,
+  "p": 0.07735473793078262,
+  "note": "unclustered, therefore optimistic"
+ },
+ "duplicate_sensitivity": {
+  "as_reported": {
+   "mean": 2.634146341463412,
+   "lo": 0.28924536221866415,
+   "hi": 4.97904732070816,
+   "p": 0.031648615887966934,
+   "ahead": 7
+  },
+  "worst_case_two_images_flipped": {
+   "mean": 1.658536585365851,
+   "lo": -0.686364393878897,
+   "hi": 4.003437564610599,
+   "p": 0.14406006775727495,
+   "ahead": 6
+  }
+ }
+}

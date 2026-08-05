@@ -3,15 +3,18 @@ message: >-
   If you use this software, its results, or the leak-free split it produces,
   please cite the accompanying article.
 title: >-
-  Code, statistics, and models for "A comparative study of deep learning
-  approaches for automated burn injury segmentation and severity classification"
+  Code, statistics, and models for "Deep learning for burn severity assessment:
+  five evaluation choices that changed our conclusions"
 abstract: >-
-  Reproducibility materials for a leak-free, externally validated benchmark of
-  deep learning for burn severity classification. Includes the source-grouped
-  split builder that removes an augmentation-induced data-leakage artifact, the
-  masking ablation, the head-to-head comparison of a standalone classifier
-  against a two-stage segmentation pipeline, two external validations, and the
-  raw JSON behind every reported number.
+  Reproducibility materials for a source-grouped, externally validated benchmark
+  of deep learning for burn severity classification, in which five conventional
+  evaluation choices each changed the answer. Includes the split builder that
+  removes an augmentation-induced leakage artifact, the masking ablation, a
+  ten-seed head-to-head of a standalone classifier against a two-stage
+  segmentation pipeline, a skin-tone probe that failed to replicate, two external
+  validations, the segmentation retraining that measured a leak the authors had
+  introduced themselves, and the raw JSON behind every reported number. A
+  verification script recomputes 136 published quantities from that raw data.
 type: software
 authors:
   - family-names: Altayeb
@@ -32,7 +35,7 @@ authors:
     affiliation: >-
       Faculty of Computer and Information Systems, Islamic University of
       Madinah, Madinah, Saudi Arabia
-license: AGPL-3.0-or-later
+license: MIT
 repository-code: "https://github.com/Just-Ryan/burn-severity-benchmark"
 keywords:
   - burn severity assessment
@@ -57,8 +60,8 @@ keywords:
 # preferred-citation:
 #   type: article
 #   title: >-
-#     A comparative study of deep learning approaches for automated burn injury
-#     segmentation and severity classification
+#     Deep learning for burn severity assessment: five evaluation choices that
+#     changed our conclusions
 #   authors:
 #     - family-names: Altayeb
 #       given-names: Ryan
@@ -69,10 +72,10 @@ keywords:
 #     - family-names: Alrehaili
 #       given-names: Mohannad
 #       orcid: "https://orcid.org/0009-0008-2491-185X"
-#   journal: "Turkish Journal of Electrical Engineering and Computer Sciences"
+#   journal: "Journal of Machine Learning for Biomedical Imaging"
 #   year: 20XX
 #   volume: XX
 #   issue: X
 #   start: XXX
 #   end: XXX
-#   doi: "10.55730/1300-0632.XXXX"
+#   doi: "10.59275/j.melba.XXXX-XXXX"
