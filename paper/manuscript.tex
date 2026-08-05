@@ -14,6 +14,26 @@
 % xcolor, hyperref, lineno, microtype. Only additions go here.
 \usepackage{amsfonts}
 
+% --- Float placement -------------------------------------------------------
+% In two-column mode LaTeX may only set a starred (full-width) float at the top
+% of a page, and with 11 tables and 5 figures competing it deferred every figure
+% past the bibliography: Figures 2-5 were being typeset on pages 22-25, after
+% the references. dblfloatfix repairs double-column float ordering and permits
+% bottom placement; the loosened fractions stop TeX from refusing a page that
+% is mostly float. Without this the figures do not appear near the text that
+% discusses them.
+\usepackage{dblfloatfix}
+\renewcommand{\topfraction}{0.90}
+\renewcommand{\bottomfraction}{0.75}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.70}
+\renewcommand{\dblfloatpagefraction}{0.70}
+\renewcommand{\dbltopfraction}{0.90}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\setcounter{dbltopnumber}{3}
+
 % Allow long URLs in the reference list to break across lines.
 \def\UrlBreaks{\do\/\do\-\do\.\do\_\do\?\do\=\do\&\do\#}
 \Urlmuskip=0mu plus 1mu\relax
@@ -38,7 +58,7 @@
 \datesubmitted{}
 \datepublished{}
 
-\ShortHeadings{Five protocol audits of a burn severity benchmark}{Altayeb, Alraddadi and Alrehaili}
+\ShortHeadings{Five evaluation choices that changed our conclusions}{Altayeb, Alraddadi and Alrehaili}
 
 % Title history, kept because the reasons are substantive.
 %  1. "A comparative study of deep learning approaches for automated burn injury
@@ -47,10 +67,14 @@
 %  2. "A leak-free, externally validated benchmark ..." -- dropped because
 %     Section 4.11 reports that our own pipeline leaked, so a title claiming
 %     "leak-free" contradicted the paper's most important self-correction.
-% The present title claims only what the paper demonstrates: that a second,
-% independent look changed the answer five times.
-\title{What a second look changed: five protocol audits of a deep learning
-benchmark for burn severity assessment}
+%  3. "What a second look changed: five protocol audits ..." -- dropped as too
+%     vague to survive a contents page: it names neither the domain nor the
+%     finding, and "protocol audit" is not standard terminology.
+% The present title puts the domain first, as a medical-imaging readership
+% expects, and states the contribution plainly in the second clause. It claims
+% only what the paper demonstrates.
+\title{Deep learning for burn severity assessment: five evaluation choices
+that changed our conclusions}
 
 % Affiliation convention: you list the institution where the work was
 % PERFORMED, not where you happen to be today. This study originated as the
@@ -605,7 +629,7 @@ This study used only publicly available, de-identified burn images together with
 We declare we don't have conflicts of interest. The authors have no financial, organizational, commercial or personal conflicts of interest to disclose, and have not recently collaborated with any member of the MELBA editorial board.}
 
 \data{%
-All data supporting the findings of this study are available. The primary burn dataset is the publicly available ``skin burn wound classification'' collection on Roboflow Universe \citep{roboflow}, released under a Creative Commons Attribution 4.0 licence. The BIP\_US clinical database is available for research from the Biomedical Image Processing Group of the University of Seville, on request to its custodians; we redistribute no BIP\_US image. Code, trained model weights, the leak-free split definition, the raw per-image predictions behind every table and figure, and the perceptual-hash contamination lists are available at \url{https://github.com/Just-Ryan/burn-severity-benchmark}. That repository includes \texttt{verify\_paper\_numbers.py}, a self-contained script that recomputes \textbf{136} published quantities from the committed raw data without a GPU, a dataset download or model weights, and reports each against the value printed here; all 136 pass. Two of the checks exist specifically to catch us overstating our own results, one confirming that the matched-architecture leakage contrast is the smaller $2.07 \rightarrow 0.55$ rather than $3.06 \rightarrow 0.55$, and one confirming that the internal interval-narrowing factor is 3.35 rather than the ``four times'' an earlier draft of this manuscript claimed. The repository also includes \texttt{skin\_tone\_probe.py}, which reproduces the ITA analysis of Section~\ref{Res:ita} from the test images and the released per-image predictions.}
+All data supporting the findings of this study are available. The primary burn dataset is the publicly available ``skin burn wound classification'' collection on Roboflow Universe \citep{roboflow}, released under a Creative Commons Attribution 4.0 licence. The BIP\_US clinical database is available for research from the Biomedical Image Processing Group of the University of Seville, on request to its custodians; we redistribute no BIP\_US image. Code, the leak-free split definition and its builder, the raw per-image predictions behind every table and figure, the perceptual-hash contamination lists, and the Kaggle notebooks that produced the segmentation retraining of Section~\ref{Res:segleak} are available at \url{https://github.com/Just-Ryan/burn-severity-benchmark}. Trained weights exceed the repository host's per-file limit and are attached to the tagged release there: both segmentation models retrained on the source-grouped split, both originals trained on the collection's distribution-supplied split, and the classifier shipped in the mobile demonstration. We publish the contaminated models alongside the corrected ones deliberately, so that the leak of Section~\ref{Res:segleak} can be reproduced as readily as its correction. The benchmark's Swin-Tiny classifier weights were not archived at the time and are not available; this is why the two-stage pipeline arm could not be re-evaluated on the corrected localiser. That repository includes \texttt{verify\_paper\_numbers.py}, a self-contained script that recomputes \textbf{136} published quantities from the committed raw data without a GPU, a dataset download or model weights, and reports each against the value printed here; all 136 pass. Two of the checks exist specifically to catch us overstating our own results, one confirming that the matched-architecture leakage contrast is the smaller $2.07 \rightarrow 0.55$ rather than $3.06 \rightarrow 0.55$, and one confirming that the internal interval-narrowing factor is 3.35 rather than the ``four times'' an earlier draft of this manuscript claimed. The repository also includes \texttt{skin\_tone\_probe.py}, which reproduces the ITA analysis of Section~\ref{Res:ita} from the test images and the released per-image predictions.}
 
 % ---------------------------------------------------------------------
 % melba.cls defines \doi{} as a *setter* for this paper's own DOI header
