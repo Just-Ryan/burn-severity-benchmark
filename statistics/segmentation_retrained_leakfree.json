@@ -1,0 +1,40 @@
+{
+ "note": "Segmentation models RETRAINED on the source-grouped leak-free split (Section 4.11). Same recipe as the originals: 100 epochs, 640px, batch 8, AdamW lr0=1e-3, seed 42, patience 20. The test fold is exactly the 205 classification test images, and no source photograph appears in two folds.",
+ "localiser_1class": {
+  "variant": "1class",
+  "train_hours": 5.34,
+  "split": "source-grouped leak-free",
+  "hit_time_cap": false,
+  "val_mask_map50": 0.6865607767579567,
+  "val_mask_map": 0.4094026368553916,
+  "test_mask_map50": 0.6946572317596437,
+  "test_mask_map": 0.38679344877106003
+ },
+ "standalone_3class": {
+  "variant": "3class",
+  "train_hours": 8.652,
+  "split": "source-grouped leak-free",
+  "hit_time_cap": false,
+  "val_mask_map50": 0.5899617381358958,
+  "val_mask_map": 0.35311434936543784,
+  "test_mask_map50": 0.5660504743262164,
+  "test_mask_map": 0.3432698299026245
+ },
+ "standalone_yolo_on_205_internal": {
+  "n": 205,
+  "correct": 160,
+  "acc": 78.04878048780488,
+  "balanced_acc": 77.66088347483696,
+  "no_detection": 1,
+  "conf": 0.05
+ },
+ "contaminated_comparison": {
+  "standalone_yolo_internal_contaminated": 90.7317,
+  "standalone_yolo_internal_leakfree": 78.04878048780488,
+  "leak_size_pp": 12.68
+ },
+ "localiser_detections_on_test": {
+  "n": 205,
+  "no_detection": 0
+ }
+}

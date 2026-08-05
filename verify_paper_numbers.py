@@ -409,6 +409,31 @@ if os.path.exists(yolo_path):
 else:
     print("  [SKIP] standalone_yolo_conf005.json not present; run code/rerun_standalone_yolo.py")
 
+print("\n=== 19. SEGMENTATION RETRAINED ON THE LEAK-FREE SPLIT (Section 4.11) ===")
+# Both YOLOv8x-seg models retrained from the public initialisation under the
+# ORIGINAL recipe, on the source-grouped split. Nothing changed but the partition.
+rt_path = os.path.join(STA, "segmentation_retrained_leakfree.json")
+if os.path.exists(rt_path):
+    rt = load(rt_path)
+    c = rt["contaminated_comparison"]
+    check("standalone YOLO, contaminated split (%)", c["standalone_yolo_internal_contaminated"], 90.73, tol=0.02)
+    check("standalone YOLO, leak-free split (%)", c["standalone_yolo_internal_leakfree"], 78.05, tol=0.02)
+    check("THE SIZE OF THE LEAK (pp)", c["leak_size_pp"], 12.68, tol=0.02)
+    sy = rt["standalone_yolo_on_205_internal"]
+    check("leak-free standalone: images scored", sy["n"], 205, tol=0)
+    check("leak-free standalone: correct", sy["correct"], 160, tol=0)
+    check("leak-free standalone: balanced accuracy (%)", sy["balanced_acc"], 77.66, tol=0.02)
+    loc = rt["localiser_1class"]
+    check("retrained localiser: test mask mAP50", loc["test_mask_map50"], 0.695, tol=0.002)
+    check("retrained 3-class: test mask mAP50", rt["standalone_3class"]["test_mask_map50"], 0.566, tol=0.002)
+    check("retrained localiser: images with no detection", rt["localiser_detections_on_test"]["no_detection"], 0, tol=0)
+    check("neither run hit the wall-clock cap", int(loc["hit_time_cap"]) + int(rt["standalone_3class"]["hit_time_cap"]), 0, tol=0)
+    print("         Only the partition changed. 90.73 -> 78.05 is the leak, measured.")
+    print("         The retrained localiser returns a region for all 205 images, so the")
+    print("         robust pipeline's full-frame fallback never fires internally.")
+else:
+    print("  [SKIP] segmentation_retrained_leakfree.json not present")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)

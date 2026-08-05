@@ -93,14 +93,14 @@ pip install numpy scipy
 python verify_paper_numbers.py
 ```
 
-This checks **126 quantities** against what the manuscript prints: the leakage artifact and the
+This checks **136 quantities** against what the manuscript prints: the leakage artifact and the
 matched-architecture-pool contrast (2.07 -> 0.55), the masking null (including the Wilcoxon and
 Mann-Whitney tests), the multi-seed and ten-seed head-to-head means, standard deviations and
 paired intervals, all 120 three-seed subsets of the ten runs, the interval-narrowing factors, the
 exact McNemar tests recomputed from per-image predictions, segmentation mAP, the oracle-mask upper
 bound, both pipeline variants, the timing table, the BIP_US balanced accuracy, the skin-tone (ITA)
 probe and its failure to replicate, and the source-clustered bootstrap intervals on the external
-set. **All 126 currently pass.**
+set. **All 136 currently pass.**
 
 Two of these checks exist specifically to catch us overstating our own results: check 13 confirms
 that the leakage contrast is 2.07 -> 0.55 on matched architecture pools rather than the larger

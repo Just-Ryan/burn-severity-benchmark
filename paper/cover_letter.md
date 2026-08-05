@@ -71,9 +71,12 @@ release we discovered that our source-grouped split had been built for the class
 propagated to the segmentation models, which kept the collection's original split. As a result
 179 of the 205 internal test images — 87.3 percent — sit in the segmentation models' training or
 validation folds. We could have retrained quietly and said nothing. Instead we quantified it: the
-standalone segmentation model scores 90.7 percent internally against 48.9 externally, a 41.8-point
-gap that is the signature of being scored on one's own training data. We then established, rather
-than assumed, what it does and does not touch. Segmentation mAP is clean (that split has zero
+standalone segmentation model scored 90.7 percent internally against 48.9 externally, a 41.8-point
+gap that is the signature of being scored on one's own training data. Then we measured the leak by
+removing it: we rebuilt both segmentation datasets on the classifiers' source-grouped split and
+retrained both models under the original recipe, changing nothing but the partition. On the same
+205 images the standalone model falls from 90.7 to **78.0 percent** — the leak was worth 12.7
+percentage points. We also established, rather than assumed, what it does and does not touch. Segmentation mAP is clean (that split has zero
 source overlap with training), the external set is clean (zero overlap), and Benchmark 1 uses
 ground-truth masks throughout. What it inflates is the internal pipeline arm — the arm that
 loses — so our headline internal margin is a lower bound, not an overstatement. We report it as
@@ -88,8 +91,8 @@ result.
 Every number in the paper can be recomputed. The repository at
 https://github.com/Just-Ryan/burn-severity-benchmark contains the code, the trained weights, the
 split definition, the raw per-image predictions behind every table and figure, and
-`verify_paper_numbers.py`, a self-contained script that recomputes **126 published quantities** from
-the committed raw data without a GPU, a dataset download, or model weights; all 126 pass. Two of
+`verify_paper_numbers.py`, a self-contained script that recomputes **136 published quantities** from
+the committed raw data without a GPU, a dataset download, or model weights; all 136 pass. Two of
 those checks exist specifically to catch us overstating our own results.
 
 **Use of generative AI.** As required by MELBA's policy, we state how GenAI was used. The authors
