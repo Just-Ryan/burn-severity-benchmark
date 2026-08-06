@@ -531,6 +531,30 @@ if os.path.exists(th_path):
 else:
     print("  [SKIP] threshold_selection_on_validation.json not present")
 
+print("\n=== 25. PIPELINE ARM RE-SCORED ON THE CORRECTED LOCALISER (Section 4.10) ===")
+pa_path = os.path.join(STA, "pipeline_arm_leakfree_localiser.json")
+if os.path.exists(pa_path):
+    pa = load(pa_path)
+    check("seeds re-scored", len(pa["seeds"]), 10, tol=0)
+    check("pipeline, contaminated localiser (%)", pa["pipeline_old_mean"], 80.98, tol=0.02)
+    check("pipeline, leak-free localiser (%)", pa["pipeline_new_mean"], 80.88, tol=0.02)
+    check("how much the leak moved the pipeline (pp)",
+          abs(pa["pipeline_old_mean"] - pa["pipeline_new_mean"]), 0.10, tol=0.02)
+    mo, mn = pa["margin_old"], pa["margin_new"]
+    check("margin, old localiser (pp)", mo["mean"], 2.63, tol=0.02)
+    check("margin, corrected localiser (pp)", mn["mean"], 2.73, tol=0.02)
+    check("margin, corrected: CI lower", mn["lo"], 0.64, tol=0.02)
+    check("margin, corrected: p", mn["p"], 0.016, tol=0.002)
+    check("margin, corrected: seeds ahead", mn["ahead"], 8, tol=0)
+    mb = pa["margin_new_balanced"]
+    check("margin, corrected, BALANCED (pp)", mb["mean"], 1.65, tol=0.02)
+    check("margin, corrected, balanced: p (still NOT significant)", mb["p"], 0.101, tol=0.003)
+    print("         A leak worth 12.7 pp to the standalone model was worth 0.10 pp to the")
+    print("         pipeline: contamination does not propagate uniformly through a pipeline.")
+    print("         The metric-dependence of Section 4.5 survives the correction.")
+else:
+    print("  [SKIP] pipeline_arm_leakfree_localiser.json not present")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)

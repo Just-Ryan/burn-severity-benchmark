@@ -1,0 +1,102 @@
+{
+ "note": "Pipeline arm re-scored with the LEAK-FREE localiser. Swin-Tiny retrained on ground-truth masked images under the ORIGINAL per-seed recipe; only the localiser that produced the test-time masks changed.",
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9
+ ],
+ "pipeline_old_mean": 80.97560975609755,
+ "pipeline_old_sd": 2.217590519835095,
+ "pipeline_new_mean": 80.8780487804878,
+ "pipeline_new_sd": 1.5043946024351706,
+ "margin_old": {
+  "mean": 2.634146341463412,
+  "lo": 0.28924536221866415,
+  "hi": 4.97904732070816,
+  "p": 0.031648615887966934,
+  "ahead": 7
+ },
+ "margin_new": {
+  "mean": 2.7317073170731687,
+  "lo": 0.6431558831574535,
+  "hi": 4.820258750988884,
+  "p": 0.015991338071337735,
+  "ahead": 8
+ },
+ "margin_new_balanced": {
+  "mean": 1.6460563553586867,
+  "lo": -0.39186931496886945,
+  "hi": 3.683982025686243,
+  "p": 0.10094804265466498,
+  "ahead": 7
+ },
+ "per_seed": [
+  {
+   "seed": 0,
+   "clf": 84.8780487804878,
+   "pipe_old": 82.92682926829268,
+   "pipe_new": 79.02439024390245
+  },
+  {
+   "seed": 1,
+   "clf": 82.92682926829268,
+   "pipe_old": 80.48780487804879,
+   "pipe_new": 80.0
+  },
+  {
+   "seed": 2,
+   "clf": 84.39024390243902,
+   "pipe_old": 79.02439024390245,
+   "pipe_new": 80.0
+  },
+  {
+   "seed": 3,
+   "clf": 82.92682926829268,
+   "pipe_old": 81.95121951219512,
+   "pipe_new": 81.46341463414635
+  },
+  {
+   "seed": 4,
+   "clf": 84.8780487804878,
+   "pipe_old": 77.5609756097561,
+   "pipe_new": 80.48780487804878
+  },
+  {
+   "seed": 5,
+   "clf": 80.97560975609757,
+   "pipe_old": 81.46341463414633,
+   "pipe_new": 80.97560975609755
+  },
+  {
+   "seed": 6,
+   "clf": 83.90243902439025,
+   "pipe_old": 84.39024390243902,
+   "pipe_new": 80.0
+  },
+  {
+   "seed": 7,
+   "clf": 82.92682926829268,
+   "pipe_old": 79.02439024390245,
+   "pipe_new": 82.92682926829268
+  },
+  {
+   "seed": 8,
+   "clf": 81.46341463414633,
+   "pipe_old": 83.41463414634146,
+   "pipe_new": 83.90243902439025
+  },
+  {
+   "seed": 9,
+   "clf": 86.82926829268293,
+   "pipe_old": 79.51219512195122,
+   "pipe_new": 80.0
+  }
+ ]
+}

@@ -1,8 +1,8 @@
-# Deep learning for burn severity assessment: six evaluation choices that changed our conclusions
+# Deep learning for burn severity assessment: seven evaluation choices that changed our conclusions
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Data: CC BY 4.0](https://img.shields.io/badge/Data-CC%20BY%204.0-blue.svg)](LICENSE-DATA)
-[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-173%2F173%20passing-brightgreen.svg)](verify_paper_numbers.py)
+[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-184%2F184%20passing-brightgreen.svg)](verify_paper_numbers.py)
 
 Code, data and every raw result behind the paper. **Seven times** in this project a conventional
 protocol and an independent second look gave different answers — and in every case the conventional
@@ -11,7 +11,7 @@ taking our word for it.
 
 ```bash
 pip install numpy scipy
-python verify_paper_numbers.py     # recomputes 173 published numbers from the raw data
+python verify_paper_numbers.py     # recomputes 184 published numbers from the raw data
 ```
 
 No GPU, no dataset download, no model weights, under a minute. Two of the checks exist
@@ -29,11 +29,13 @@ Each row is a routine choice, what it appeared to show, and what a second analys
 | 2 | Group by source ID and assume the folds are independent | The folds are independent | **2 of 205** test images are perceptually identical to a training image filed under a different ID; one pair carries conflicting labels |
 | 3 | Use three training seeds | Internal +3.74 [+3.04, +4.44], *p* = 0.002; external *p* = 0.19 | Ten seeds: internal +2.63 [+0.29, +4.98]; external **+2.79** [+1.09, +4.49], *p* = 0.005. Of all **120** three-seed subsets of those same ten runs, only **15** detect the external effect |
 | 4 | Test a subgroup on one dataset | Errors fall on darker skin: median ITA 19.2 vs 38.4, *p* = **0.0025**, survives Bonferroni | External replication *p* = 0.35, **effect reversed**, on a larger cell (139 vs 81 images) |
-| 5 | Correct the split for one stage, assume the pipeline is clean | The head-to-head is leak-free | **179 of 205** internal test images (87.3%) sat in the segmentation models' training *or validation* folds. Retrained: standalone falls 90.7 → **78.0%** internally — though that gap is confounded with a 21% smaller training set |
+| 5 | Correct the split for one stage, assume the pipeline is clean | The head-to-head is leak-free | **179 of 205** internal test images (87.3%) sat in the segmentation models' training *or validation* folds. Retrained: standalone falls 90.7 → **78.0%**. But re-scoring the *pipeline* on the corrected localiser moves it only 80.98 → 80.88% — the leak did not propagate to the arm that mattered |
 | 6 | Summarise accuracy the usual way | Classifier beats pipeline internally: **+2.63 pp**, *p* = 0.032 | On **balanced** accuracy the same ten runs give **+1.45 pp** [−0.74, +3.65], *p* = **0.17** — not established. Only the external margin survives both summaries |
 
-The sixth is the one we like least: which of two standard summaries you report decides whether the
-internal comparison holds at all.
+| 7 | Take the best architecture as the comparison arm | ConvNeXt-Large is the best Benchmark 1 condition, 84.88% | Best **on test**. On validation Swin-Tiny wins and scores 82.44%. The seed-42 margin falls +3.41 → +0.98 pp: honest selection removes **71%** of the internal margin |
+
+The seventh is the one we like least. We selected our own headline arm on the set we then scored it
+on, so **we report no internal effect estimate.** The external comparison is what the paper rests on.
 
 ---
 
@@ -80,7 +82,7 @@ that could be under-graded against 19.3% internally — a difference that is *no
 ## Layout
 
 ```
-verify_paper_numbers.py        ← start here: 173 checks, no GPU, under a minute
+verify_paper_numbers.py        ← start here: 184 checks, no GPU, under a minute
 paper/                         manuscript source + PDF, bibliography, cover letter, submission guide
 code/
   skin_tone_probe.py           ITA fairness probe (audit 4)
@@ -110,11 +112,10 @@ Attached to the [`v1.0-melba` release](../../releases/tag/v1.0-melba) — each e
 We publish the **contaminated models alongside the corrected ones deliberately**, so the leak can
 be reproduced as readily as its correction.
 
-> **Open experiment.** The benchmark's Swin-Tiny classifier weights were never archived. That is
-> the one thing blocking a re-score of the two-stage pipeline arm on the corrected localiser — the
-> pipeline's classifier trains on ground-truth masks and meets the localiser only at inference, and
-> the corrected masks for all 205 test images already exist. It is the single most valuable
-> experiment a reader could run against these artifacts.
+> **Closed.** The benchmark's original Swin-Tiny weights were never archived, so we retrained all
+> ten under the original per-seed recipe and re-scored the pipeline arm on the corrected localiser.
+> The effect is negligible (80.98 → 80.88%). Raw runs in
+> `statistics/pipeline_arm_leakfree_localiser.json`; the notebook is in `code/kaggle-notebooks/`.
 
 ## Data
 

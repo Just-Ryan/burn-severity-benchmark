@@ -9,7 +9,7 @@
 
 Dear Editors of the Journal of Machine Learning for Biomedical Imaging,
 
-We submit for your consideration "Deep learning for burn severity assessment: six evaluation
+We submit for your consideration "Deep learning for burn severity assessment: seven evaluation
 choices that changed our conclusions."
 
 The paper reports a deployed two-stage burn-severity system — a YOLOv8x-seg localiser feeding a
@@ -18,8 +18,8 @@ built to test whether that segmentation-first design is justified. Our answer is
 accuracy grounds. What we think makes the paper worth your reviewers' time is not that finding but
 what we hit on the way to it: **seven separate times, a conventional protocol and an independent
 second look gave different answers, and in every case the conventional protocol was the one we ran
-first.** Table 1 sets all seven side by side. The fifth we found in our own pipeline, after every
-other number was final.
+first.** Table 1 sets all seven side by side. The last two we found in our own work after every other
+number was final, and the seventh implicates our own headline.
 
 **1. A leakage artifact whose structure differs from the published cases.** Our original result was
 that masking the image to the burn improved accuracy by 3.06 percentage points across 20 of 21
@@ -51,7 +51,9 @@ from +0.21 to +5.22 externally and −0.98 to +6.67 internally — some subsets 
 ahead — and the estimated standard deviation ranges from 0.00 to 3.25 percentage points.
 
 **3. External validation that fails, reported as such.** On the independent BIP_US clinical
-database the system collapses toward chance and under-grades severity, the dangerous direction. On
+database the system assigns the mildest grade to 48 of 94 images — a class that database does not
+contain — so its below-chance balanced accuracy measures a systematic severity offset rather than
+an inability to rank depth. The direction is the harmful one either way. On
 a second external set of 319 images, screened by perceptual hashing that removed 118
 training-identical images, it under-graded 28.3 percent of
 the images that could be under-graded against 19.3 percent internally. Because those 319 images
@@ -75,13 +77,23 @@ standalone segmentation model scored 90.7 percent internally against 48.9 extern
 gap that is the signature of being scored on one's own training data. Then we measured the leak by
 removing it: we rebuilt both segmentation datasets on the classifiers' source-grouped split and
 retrained both models under the original recipe, changing nothing but the partition. On the same
-205 images the standalone model falls from 90.7 to **78.0 percent** — the leak was worth 12.7
-percentage points. We also established, rather than assumed, what it does and does not touch. Segmentation mAP is clean (that split has zero
-source overlap with training), the external set is clean (zero overlap), and Benchmark 1 uses
-ground-truth masks throughout. What it inflates is the internal pipeline arm — the arm that
-loses — so our headline internal margin is a lower bound, not an overstatement. We report it as
-the fifth audit because a paper arguing that leakage is easy to introduce and hard to see should
-say plainly when it introduced some and could not see it.
+205 images the standalone model falls from 90.7 to **78.0 percent**. We then retrained the
+pipeline's ten Swin-Tiny classifiers and re-scored that arm on the corrected localiser too — and
+found the effect negligible: 80.98 to 80.88 percent. A leak worth 12.7 points to one model was
+worth 0.10 to another, because in the pipeline the grading is done by a stage that was never
+contaminated. Contamination does not propagate uniformly through a pipeline. We report all of it,
+including our own wrong expectation, because a paper arguing that leakage is easy to introduce and
+hard to see should say plainly when it introduced some and could not see it.
+
+**6. The metric decides the internal result.** The internal margin holds on plain accuracy
+(+2.73, p = 0.016) but not on balanced accuracy (+1.65, p = 0.10). Only the external margin
+survives both summaries.
+
+**7. We selected our own headline arm on the test set.** ConvNeXt-Large was chosen as the best of
+eleven Benchmark 1 architectures — best *on test*. On validation Swin-Tiny wins, and scores 2.4
+points lower on test. Against the seed-42 pipeline the margin falls from +3.41 to +0.98: honest
+selection removes **71 percent** of the internal margin. We therefore report no internal effect
+estimate at all. This is the audit that costs us most, and it is in the paper because it is true.
 
 We are aware that this paper offers no new architecture, and we do not claim one. We submit it to
 MELBA because your stated scope includes empirical comparisons, because your reviewers are asked
@@ -91,8 +103,8 @@ result.
 Every number in the paper can be recomputed. The repository at
 https://github.com/Just-Ryan/burn-severity-benchmark contains the code, the trained weights, the
 split definition, the raw per-image predictions behind every table and figure, and
-`verify_paper_numbers.py`, a self-contained script that recomputes **173 published quantities** from
-the committed raw data without a GPU, a dataset download, or model weights; all 173 pass. Two of
+`verify_paper_numbers.py`, a self-contained script that recomputes **184 published quantities** from
+the committed raw data without a GPU, a dataset download, or model weights; all 184 pass. Two of
 those checks exist specifically to catch us overstating our own results.
 
 **Use of generative AI.** As required by MELBA's policy, we state how GenAI was used. The authors
