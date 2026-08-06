@@ -1,0 +1,78 @@
+{
+ "note": "Operating point chosen on the 206-image validation fold, never on test. One inference pass at conf 0.001; higher thresholds are filters on it.",
+ "sweep": [
+  {
+   "conf": 0.001,
+   "val_acc": 79.6116504854369,
+   "val_nodet": 0,
+   "test_acc": 79.51219512195122,
+   "test_nodet": 0
+  },
+  {
+   "conf": 0.005,
+   "val_acc": 82.03883495145631,
+   "val_nodet": 0,
+   "test_acc": 77.07317073170732,
+   "test_nodet": 0
+  },
+  {
+   "conf": 0.01,
+   "val_acc": 81.55339805825243,
+   "val_nodet": 0,
+   "test_acc": 78.53658536585365,
+   "test_nodet": 0
+  },
+  {
+   "conf": 0.025,
+   "val_acc": 80.58252427184466,
+   "val_nodet": 0,
+   "test_acc": 78.53658536585365,
+   "test_nodet": 1
+  },
+  {
+   "conf": 0.05,
+   "val_acc": 81.06796116504854,
+   "val_nodet": 0,
+   "test_acc": 78.04878048780488,
+   "test_nodet": 1
+  },
+  {
+   "conf": 0.1,
+   "val_acc": 80.09708737864078,
+   "val_nodet": 0,
+   "test_acc": 77.5609756097561,
+   "test_nodet": 4
+  },
+  {
+   "conf": 0.15,
+   "val_acc": 81.06796116504854,
+   "val_nodet": 2,
+   "test_acc": 77.5609756097561,
+   "test_nodet": 4
+  },
+  {
+   "conf": 0.25,
+   "val_acc": 80.09708737864078,
+   "val_nodet": 7,
+   "test_acc": 75.1219512195122,
+   "test_nodet": 9
+  },
+  {
+   "conf": 0.4,
+   "val_acc": 76.69902912621359,
+   "val_nodet": 21,
+   "test_acc": 72.6829268292683,
+   "test_nodet": 20
+  },
+  {
+   "conf": 0.5,
+   "val_acc": 72.81553398058253,
+   "val_nodet": 32,
+   "test_acc": 69.7560975609756,
+   "test_nodet": 32
+  }
+ ],
+ "validation_selected_conf": 0.005,
+ "test_acc_at_validation_selected": 77.07317073170732,
+ "test_acc_at_0.05": 78.04878048780488
+}

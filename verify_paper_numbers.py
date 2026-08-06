@@ -484,6 +484,53 @@ if os.path.exists(ext_path):
 else:
     print("  [SKIP] standalone_yolo_leakfree_external.json not present")
 
+print("\n=== 22. THE SEVENTH AUDIT: ARM SELECTED ON TEST (Section 4.12) ===")
+sel_path = os.path.join(STA, "arch_selection_check.json")
+if os.path.exists(sel_path):
+    sel = load(sel_path)
+    check("architectures in the unmasked pool", sel["n_architectures"], 11, tol=0)
+    check("pipeline, seed 42 (%)", sel["pipeline_seed42"], 81.46, tol=0.02)
+    check("test-selected arm accuracy (%)", sel["best_on_test"]["test"], 84.88, tol=0.02)
+    check("validation-selected arm accuracy (%)", sel["best_on_validation"]["test"], 82.44, tol=0.02)
+    check("margin, test-selected (pp)", sel["best_on_test"]["margin"], 3.41, tol=0.02)
+    check("margin, validation-selected (pp)", sel["best_on_validation"]["margin"], 0.98, tol=0.02)
+    lost = 100*(1 - sel["best_on_validation"]["margin"]/sel["best_on_test"]["margin"])
+    check("percent of the internal margin lost by honest selection", lost, 71.0, tol=1.0)
+    same = int(sel["best_on_validation"]["arch"] == sel["best_on_test"]["arch"])
+    check("validation and test pick the SAME architecture (0 = no)", same, 0, tol=0)
+    print("         The arm we reported was the best on the set we reported it on.")
+else:
+    print("  [SKIP] arch_selection_check.json not present")
+
+print("\n=== 23. SKIN-TONE SUBGROUP ACROSS ALL TEN SEEDS (Section 4.9) ===")
+sk_path = os.path.join(STA, "skin_tone_across_ten_seeds.json")
+if os.path.exists(sk_path):
+    sk = load(sk_path)
+    check("seeds tested", len(sk), 10, tol=0)
+    check("seeds reaching p<0.05", sum(1 for r in sk if r["p"] < 0.05), 3, tol=0)
+    check("seeds with the effect in the same direction", sum(1 for r in sk if r["rank_biserial"] < 0), 10, tol=0)
+    ps = sorted(r["p"] for r in sk)
+    check("smallest p across seeds", ps[0], 0.0253, tol=0.002)
+    check("largest p across seeds", ps[-1], 0.7183, tol=0.002)
+    print("         Significance is seed-dependent (3 of 10); direction is not (10 of 10).")
+    print("         The runs are not independent, so we report the consistency without testing it.")
+else:
+    print("  [SKIP] skin_tone_across_ten_seeds.json not present")
+
+print("\n=== 24. LOCALISER THRESHOLD CHOSEN ON VALIDATION, NOT TEST (Section 3.4) ===")
+th_path = os.path.join(STA, "threshold_selection_on_validation.json")
+if os.path.exists(th_path):
+    th = load(th_path)
+    check("validation-selected confidence", th["validation_selected_conf"], 0.005, tol=0.0001)
+    check("test accuracy at the validation-selected point (%)", th["test_acc_at_validation_selected"], 77.07, tol=0.02)
+    check("test accuracy at the reported 0.05 (%)", th["test_acc_at_0.05"], 78.05, tol=0.02)
+    best_test = max(r["test_acc"] for r in th["sweep"])
+    check("best test accuracy anywhere in the sweep (%)", best_test, 79.51, tol=0.02)
+    print("         0.05 is neither the validation optimum nor the test optimum, so the")
+    print("         reported operating point was not tuned on the test set.")
+else:
+    print("  [SKIP] threshold_selection_on_validation.json not present")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)

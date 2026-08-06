@@ -1,0 +1,74 @@
+{
+ "note": "The head-to-head classifier arm was chosen as the best Benchmark 1 unmasked architecture. That selection used TEST accuracy; on validation a different architecture wins. Reported as audit 7.",
+ "pipeline_seed42": 81.46341463414633,
+ "best_on_test": {
+  "arch": "ConvNeXt-Large",
+  "val": 84.46601941747572,
+  "test": 84.8780487804878,
+  "margin": 3.41463414634147
+ },
+ "best_on_validation": {
+  "arch": "SWIN-Tiny",
+  "val": 85.43689320388349,
+  "test": 82.4390243902439,
+  "margin": 0.975609756097569
+ },
+ "n_architectures": 11,
+ "ranked_by_validation": [
+  {
+   "arch": "SWIN-Tiny",
+   "val": 85.43689320388349,
+   "test": 82.4390243902439
+  },
+  {
+   "arch": "SWIN-Large",
+   "val": 84.9514563106796,
+   "test": 81.95121951219512
+  },
+  {
+   "arch": "SWIN-Small",
+   "val": 84.46601941747572,
+   "test": 80.48780487804879
+  },
+  {
+   "arch": "ConvNeXt-Large",
+   "val": 84.46601941747572,
+   "test": 84.8780487804878
+  },
+  {
+   "arch": "SWIN-Base",
+   "val": 84.46601941747572,
+   "test": 77.07317073170732
+  },
+  {
+   "arch": "ConvNeXt-Tiny",
+   "val": 83.00970873786407,
+   "test": 81.95121951219512
+  },
+  {
+   "arch": "ResNet50",
+   "val": 82.52427184466019,
+   "test": 80.97560975609757
+  },
+  {
+   "arch": "DenseNet201",
+   "val": 82.03883495145631,
+   "test": 81.95121951219512
+  },
+  {
+   "arch": "ViT-Base",
+   "val": 81.55339805825243,
+   "test": 78.53658536585367
+  },
+  {
+   "arch": "MobileNetV3-Large",
+   "val": 80.58252427184466,
+   "test": 80.97560975609757
+  },
+  {
+   "arch": "EfficientNet-B0",
+   "val": 79.12621359223301,
+   "test": 76.09756097560975
+  }
+ ]
+}

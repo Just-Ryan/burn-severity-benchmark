@@ -2,16 +2,16 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Data: CC BY 4.0](https://img.shields.io/badge/Data-CC%20BY%204.0-blue.svg)](LICENSE-DATA)
-[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-156%2F156%20passing-brightgreen.svg)](verify_paper_numbers.py)
+[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-173%2F173%20passing-brightgreen.svg)](verify_paper_numbers.py)
 
-Code, data and every raw result behind the paper. **Six times** in this project a conventional
+Code, data and every raw result behind the paper. **Seven times** in this project a conventional
 protocol and an independent second look gave different answers — and in every case the conventional
 protocol was the one we ran first. This repository exists so you can check that yourself instead of
 taking our word for it.
 
 ```bash
 pip install numpy scipy
-python verify_paper_numbers.py     # recomputes 156 published numbers from the raw data
+python verify_paper_numbers.py     # recomputes 173 published numbers from the raw data
 ```
 
 No GPU, no dataset download, no model weights, under a minute. Two of the checks exist
@@ -19,7 +19,7 @@ specifically to catch us overstating our own results.
 
 ---
 
-## The six audits
+## The seven audits
 
 Each row is a routine choice, what it appeared to show, and what a second analysis showed.
 
@@ -80,7 +80,7 @@ that could be under-graded against 19.3% internally — a difference that is *no
 ## Layout
 
 ```
-verify_paper_numbers.py        ← start here: 156 checks, no GPU, under a minute
+verify_paper_numbers.py        ← start here: 173 checks, no GPU, under a minute
 paper/                         manuscript source + PDF, bibliography, cover letter, submission guide
 code/
   skin_tone_probe.py           ITA fairness probe (audit 4)

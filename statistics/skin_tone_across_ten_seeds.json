@@ -1,0 +1,92 @@
+[
+ {
+  "seed": 0,
+  "n_correct": 75,
+  "n_wrong": 6,
+  "median_correct": 33.70631739436828,
+  "median_wrong": 35.344723279464006,
+  "p": 0.718337039622849,
+  "rank_biserial": -0.09333333333333327
+ },
+ {
+  "seed": 1,
+  "n_correct": 72,
+  "n_wrong": 9,
+  "median_correct": 37.337653679671355,
+  "median_wrong": 9.241317532351843,
+  "p": 0.04023789437132767,
+  "rank_biserial": -0.4228395061728396
+ },
+ {
+  "seed": 2,
+  "n_correct": 75,
+  "n_wrong": 6,
+  "median_correct": 34.97615114629359,
+  "median_wrong": 19.354727099412667,
+  "p": 0.3813024331012339,
+  "rank_biserial": -0.22222222222222232
+ },
+ {
+  "seed": 3,
+  "n_correct": 75,
+  "n_wrong": 6,
+  "median_correct": 34.97615114629359,
+  "median_wrong": 14.545612680021607,
+  "p": 0.30803545160640433,
+  "rank_biserial": -0.2577777777777779
+ },
+ {
+  "seed": 4,
+  "n_correct": 76,
+  "n_wrong": 5,
+  "median_correct": 35.809729651292514,
+  "median_wrong": -12.044097682244981,
+  "p": 0.025339873441139263,
+  "rank_biserial": -0.5894736842105264
+ },
+ {
+  "seed": 5,
+  "n_correct": 75,
+  "n_wrong": 6,
+  "median_correct": 36.64330815629145,
+  "median_wrong": -8.077663558912937,
+  "p": 0.06634491794385197,
+  "rank_biserial": -0.45333333333333337
+ },
+ {
+  "seed": 6,
+  "n_correct": 72,
+  "n_wrong": 9,
+  "median_correct": 34.34123427033093,
+  "median_wrong": 34.046138402636565,
+  "p": 0.28260328202168805,
+  "rank_biserial": -0.22222222222222232
+ },
+ {
+  "seed": 7,
+  "n_correct": 71,
+  "n_wrong": 10,
+  "median_correct": 38.031999203051264,
+  "median_wrong": 6.952316664270306,
+  "p": 0.039380766433963106,
+  "rank_biserial": -0.4056338028169013
+ },
+ {
+  "seed": 8,
+  "n_correct": 71,
+  "n_wrong": 10,
+  "median_correct": 38.031999203051264,
+  "median_wrong": 14.925891128073909,
+  "p": 0.12626737227393242,
+  "rank_biserial": -0.3014084507042254
+ },
+ {
+  "seed": 9,
+  "n_correct": 75,
+  "n_wrong": 6,
+  "median_correct": 34.97615114629359,
+  "median_wrong": 29.237023983245507,
+  "p": 0.718337039622849,
+  "rank_biserial": -0.09333333333333327
+ }
+]
