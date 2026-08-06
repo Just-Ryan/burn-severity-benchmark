@@ -1,4 +1,4 @@
-# Deep learning for burn severity assessment: five evaluation choices that changed our conclusions
+# Deep learning for burn severity assessment: six evaluation choices that changed our conclusions
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Data: CC BY 4.0](https://img.shields.io/badge/Data-CC%20BY%204.0-blue.svg)](LICENSE-DATA)
@@ -19,7 +19,7 @@ specifically to catch us overstating our own results.
 
 ---
 
-## The five audits
+## The six audits
 
 Each row is a routine choice, what it appeared to show, and what a second analysis showed.
 
@@ -29,11 +29,11 @@ Each row is a routine choice, what it appeared to show, and what a second analys
 | 2 | Group by source ID and assume the folds are independent | The folds are independent | **2 of 205** test images are perceptually identical to a training image filed under a different ID; one pair carries conflicting labels |
 | 3 | Use three training seeds | Internal +3.74 [+3.04, +4.44], *p* = 0.002; external *p* = 0.19 | Ten seeds: internal +2.63 [+0.29, +4.98]; external **+2.79** [+1.09, +4.49], *p* = 0.005. Of all **120** three-seed subsets of those same ten runs, only **15** detect the external effect |
 | 4 | Test a subgroup on one dataset | Errors fall on darker skin: median ITA 19.2 vs 38.4, *p* = **0.0025**, survives Bonferroni | External replication *p* = 0.35, **effect reversed**, on a larger cell (139 vs 81 images) |
-| 5 | Correct the split for one stage, assume the pipeline is clean | The head-to-head is leak-free | **179 of 205** internal test images (87.3%) sat in the segmentation models' training folds. Retrained: standalone falls 90.7 → **78.0%** |
+| 5 | Correct the split for one stage, assume the pipeline is clean | The head-to-head is leak-free | **179 of 205** internal test images (87.3%) sat in the segmentation models' training *or validation* folds. Retrained: standalone falls 90.7 → **78.0%** internally — though that gap is confounded with a 21% smaller training set |
+| 6 | Summarise accuracy the usual way | Classifier beats pipeline internally: **+2.63 pp**, *p* = 0.032 | On **balanced** accuracy the same ten runs give **+1.45 pp** [−0.74, +3.65], *p* = **0.17** — not established. Only the external margin survives both summaries |
 
-A sixth surfaced during review: the internal head-to-head margin is significant on plain accuracy
-(*p* = 0.032) but **not** on balanced accuracy (+1.45, 95% CI [−0.74, +3.65], *p* = 0.17). The
-external margin survives both summaries.
+The sixth is the one we like least: which of two standard summaries you report decides whether the
+internal comparison holds at all.
 
 ---
 
@@ -70,9 +70,10 @@ justified here by localisation and interpretability, **not** by accuracy.
 
 <img src="figures/png/cm_true_pipeline.png" width="48%" alt="Internal confusion matrix"> <img src="figures/png/ext_cm_pipe.png" width="48%" alt="External confusion matrix">
 
-On independent clinical images the model does not transfer, and it fails in the dangerous
-direction: it under-grades **28.3%** of the images that could be under-graded externally, against
-19.3% internally. Under-grading routes a severe burn toward conservative care.
+On the independent clinical database the model does not transfer at all. On a perceptual-hash-cleaned
+web-sourced external set it fails in the dangerous direction, under-grading **28.3%** of the images
+that could be under-graded against 19.3% internally — a difference that is *not* itself significant
+(*z* = 1.77, *p* = 0.08). Under-grading routes a severe burn toward conservative care.
 
 ---
 
@@ -101,9 +102,9 @@ Attached to the [`v1.0-melba` release](../../releases/tag/v1.0-melba) — each e
 | File | What it is |
 |---|---|
 | `yolov8x-seg_1class_LEAKFREE.pt` | Localiser, source-grouped split. Test mask mAP50 **0.695** |
-| `yolov8x-seg_3class_LEAKFREE.pt` | Standalone, source-grouped split. mAP50 0.566; **78.0%** on the 205 |
+| `yolov8x-seg_3class_LEAKFREE.pt` | Standalone, source-grouped split. mAP50 0.566; **78.0%** internal, **66.8%** external |
 | `yolov8x-seg_1class__best.pt` | The original localiser — **contaminated**, see audit 5 |
-| `yolov8x-seg_3class__best.pt` | The original standalone — scored **90.7%** on the same 205 images |
+| `yolov8x-seg_3class__best.pt` | The original standalone — **90.7%** internal but only **48.9%** external. That 41.8-point collapse against the retrained model's 11.2 is the leakage signature |
 | `swin-small_masked__best_cnn_mask.pth` | The classifier shipped in the mobile demonstration |
 
 We publish the **contaminated models alongside the corrected ones deliberately**, so the leak can
