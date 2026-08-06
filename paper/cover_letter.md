@@ -9,16 +9,16 @@
 
 Dear Editors of the Journal of Machine Learning for Biomedical Imaging,
 
-We submit for your consideration "Deep learning for burn severity assessment: five evaluation
+We submit for your consideration "Deep learning for burn severity assessment: six evaluation
 choices that changed our conclusions."
 
 The paper reports a deployed two-stage burn-severity system — a YOLOv8x-seg localiser feeding a
 masked Swin classifier, served through a mobile application — together with a leak-free benchmark
 built to test whether that segmentation-first design is justified. Our answer is that it is not, on
 accuracy grounds. What we think makes the paper worth your reviewers' time is not that finding but
-what we hit on the way to it: **five separate times, a conventional protocol and an independent
+what we hit on the way to it: **six separate times, a conventional protocol and an independent
 second look gave different answers, and in every case the conventional protocol was the one we ran
-first.** Table 1 sets all five side by side. The fifth we found in our own pipeline, after every
+first.** Table 1 sets all six side by side. The fifth we found in our own pipeline, after every
 other number was final.
 
 **1. A leakage artifact whose structure differs from the published cases.** Our original result was
@@ -91,8 +91,8 @@ result.
 Every number in the paper can be recomputed. The repository at
 https://github.com/Just-Ryan/burn-severity-benchmark contains the code, the trained weights, the
 split definition, the raw per-image predictions behind every table and figure, and
-`verify_paper_numbers.py`, a self-contained script that recomputes **136 published quantities** from
-the committed raw data without a GPU, a dataset download, or model weights; all 136 pass. Two of
+`verify_paper_numbers.py`, a self-contained script that recomputes **156 published quantities** from
+the committed raw data without a GPU, a dataset download, or model weights; all 156 pass. Two of
 those checks exist specifically to catch us overstating our own results.
 
 **Use of generative AI.** As required by MELBA's policy, we state how GenAI was used. The authors

@@ -434,6 +434,56 @@ if os.path.exists(rt_path):
 else:
     print("  [SKIP] segmentation_retrained_leakfree.json not present")
 
+print("\n=== 20. CORRECTIONS FROM THE ZERO-GPU RE-ANALYSIS (Sections 3.2, 4.5, 4.7, 4.10) ===")
+z_path = os.path.join(STA, "zero_gpu_reanalysis.json")
+if os.path.exists(z_path):
+    z = load(z_path)
+    ba = z["balanced_accuracy_ten_seed"]
+    check("internal margin, PLAIN accuracy (pp)", ba["internal_plain"]["mean"], 2.63, tol=0.02)
+    check("internal margin, BALANCED accuracy (pp)", ba["internal_balanced"]["mean"], 1.45, tol=0.02)
+    check("internal balanced: p (NOT significant)", ba["internal_balanced"]["p"], 0.169, tol=0.002)
+    check("internal balanced: seeds ahead", ba["internal_balanced"]["ahead"], 6, tol=0)
+    check("external margin, BALANCED accuracy (pp)", ba["external_balanced"]["mean"], 1.96, tol=0.02)
+    check("external balanced: p (significant)", ba["external_balanced"]["p"], 0.028, tol=0.002)
+    check("external balanced: seeds ahead", ba["external_balanced"]["ahead"], 8, tol=0)
+    print("         The internal margin is a property of PLAIN accuracy. Only the")
+    print("         external margin survives both summaries.")
+
+    lc = z["leak_magnitude_confound"]
+    check("contaminated model training images", lc["contaminated_train_images"], 3081, tol=0)
+    check("leak-free model training images", lc["leakfree_train_images"], 2425, tol=0)
+    check("gap on the 26 images NEITHER model saw (pp)", lc["acc_control26"]["gap"], 7.69, tol=0.02)
+    check("control subset size", lc["acc_control26"]["n"], 26, tol=0)
+    print("         The control gap is NOT zero, so 12.7 pp is not purely leakage.")
+
+    ug = z["undergrading_internal_vs_external"]
+    check("under-grading internal vs external: z", ug["z"], 1.766, tol=0.005)
+    check("under-grading internal vs external: p (NOT significant)", ug["p"], 0.0774, tol=0.002)
+
+    ds = z["duplicate_sensitivity"]
+    check("duplicate worst case, one-arm shift (pp)", ds["worst_case_two_images_flipped"]["mean"], 1.66, tol=0.02)
+    # the scenario the manuscript DESCRIBES moves both arms: a 4/205 swing
+    d = np.array([A[s2]["int_acc"] - B[s2]["int_acc"] for s2 in common]) - (4/205*100)
+    ciw = stats.t.interval(0.95, len(d)-1, loc=d.mean(), scale=stats.sem(d))
+    check("duplicate worst case, BOTH arms (pp)", float(d.mean()), 0.68, tol=0.02)
+    check("  its CI lower bound (must be < 0)", float(ciw[0]), -1.66, tol=0.02)
+    check("  its p", float(stats.ttest_1samp(d, 0).pvalue), 0.527, tol=0.005)
+else:
+    print("  [SKIP] zero_gpu_reanalysis.json not present")
+
+print("\n=== 21. RETRAINED STANDALONE MODEL, EXTERNAL SET (Table 5) ===")
+ext_path = os.path.join(RES, "standalone_yolo_leakfree_external.json")
+if os.path.exists(ext_path):
+    e = load(ext_path)
+    check("retrained standalone, external accuracy (%)", e["acc"], 66.77, tol=0.02)
+    check("retrained standalone, external balanced (%)", e["balanced_acc"], 66.97, tol=0.02)
+    check("retrained standalone, external no-detections", e["no_detection"], 0, tol=0)
+    print("         Contaminated model on the SAME set: 48.90% (balanced 50.30).")
+    print("         Internal-to-external drop: contaminated 41.8 pp, retrained 11.2 pp.")
+    print("         That excess is the leakage signature.")
+else:
+    print("  [SKIP] standalone_yolo_leakfree_external.json not present")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)
