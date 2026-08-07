@@ -135,6 +135,14 @@ be reproduced as readily as its correction.
 Code **MIT** ([LICENSE](LICENSE)) · everything else — figures, predictions, statistics, split
 definitions, weights — **CC BY 4.0** ([LICENSE-DATA](LICENSE-DATA)).
 
+## The full story
+
+[`docs/PROJECT_COMPLETE_REPORT.md`](docs/PROJECT_COMPLETE_REPORT.md) is a ~10,000-word technical
+account of the whole project: the idea and why we expected masking to help, the system, the data,
+the literature, every experiment in the order it was run, the seven evaluation choices that changed
+our answers, the reproducibility infrastructure, the publication process, and an honest post-mortem
+of what we would do differently.
+
 ## Citing
 
 See [`CITATION.cff`](CITATION.cff).
