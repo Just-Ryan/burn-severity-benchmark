@@ -695,6 +695,38 @@ if os.path.exists(prov_path):
 else:
     print("  [SKIP] external_set_provenance.json not present")
 
+# ------------------------------------ 30. the regime was selected on test (audit 7, again)
+print("\n30. Which regime validation would have chosen")
+print("   Section 4.5's parity claim rests on regime B, which is best on TEST.")
+print("   These checks exist to stop that selection being quietly dropped again.")
+
+raw_reg = os.path.join(RES, "pipeline_regimes_10seed_raw.json")
+if os.path.exists(raw_reg) and os.path.exists(os.path.join(STA, "h2h_10seed_paired.json")):
+    rr = load(raw_reg)
+    byarm = defaultdict(list)
+    for r in rr:
+        byarm[r["arm"]].append(r)
+    val = {k: float(np.mean([x["val"] for x in v])) for k, v in byarm.items()}
+    check("regime C validation accuracy (%)", val["C_matched_dilated"], 84.37, tol=0.02)
+    check("regime B validation accuracy (%)", val["B_matched_hard"], 83.45, tol=0.02)
+    check("regime A validation accuracy (%)", val["A_gt_train_pred_test"], 83.35, tol=0.02)
+    best_val = max(val, key=val.get)
+    check("validation picks C, not the reported B", 1.0 if best_val == "C_matched_dilated" else 0.0, 1.0, tol=0)
+
+    h2 = load(os.path.join(STA, "h2h_10seed_paired.json"))
+    clf = sorted((r for r in h2 if "classifier" in r["arm"]), key=lambda r: r["seed"])
+    ce = np.array([r["ext_acc"] for r in clf])
+    cc = np.array([r["ext_acc"] for r in sorted(byarm["C_matched_dilated"], key=lambda r: r["seed"])])
+    d = ce - cc
+    pc = float(stats.ttest_rel(ce, cc).pvalue)
+    check("classifier vs regime C, external (pp)", float(d.mean()), 2.57, tol=0.02)
+    check("classifier vs regime C, external p", pc, 0.0077, tol=0.0005)
+    print("         Against the validation-selected regime the external difference IS")
+    print("         resolved. The 'indistinguishable on both sets' reading held only")
+    print("         under a configuration chosen on the test sets. Section 4.5 says so.")
+else:
+    print("  [SKIP] pipeline_regimes_10seed_raw.json not present")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)
