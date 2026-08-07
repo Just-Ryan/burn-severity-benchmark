@@ -1,17 +1,21 @@
-# Deep learning for burn severity assessment: seven evaluation choices that changed our conclusions
+# Segmentation-guided burn severity classification: a leakage-controlled, externally validated evaluation
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Data: CC BY 4.0](https://img.shields.io/badge/Data-CC%20BY%204.0-blue.svg)](LICENSE-DATA)
-[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-184%2F184%20passing-brightgreen.svg)](verify_paper_numbers.py)
+[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-200%2F200%20passing-brightgreen.svg)](verify_paper_numbers.py)
 
-Code, data and every raw result behind the paper. **Seven times** in this project a conventional
-protocol and an independent second look gave different answers — and in every case the conventional
-protocol was the one we ran first. This repository exists so you can check that yourself instead of
-taking our word for it.
+Code, data and every raw result behind the paper.
+
+**The question.** A burn photograph contains the wound and a great deal besides: unburned skin,
+dressings, bedding, the room. A classifier trained on whole images may read the setting rather than
+the injury — and in a web-sourced collection the setting correlates with severity for reasons that
+have nothing to do with tissue. The obvious remedy is to segment the burn and grade only what
+remains. That design is standard elsewhere in medical imaging but had never been tested for burns
+against the simpler alternative it is meant to improve on. This repository is the test.
 
 ```bash
 pip install numpy scipy
-python verify_paper_numbers.py     # recomputes 184 published numbers from the raw data
+python verify_paper_numbers.py     # recomputes 200 published numbers from the raw data
 ```
 
 No GPU, no dataset download, no model weights, under a minute. Two of the checks exist
@@ -19,9 +23,10 @@ specifically to catch us overstating our own results.
 
 ---
 
-## The seven audits
+## How much the evaluation protocol decides the answer
 
-Each row is a routine choice, what it appeared to show, and what a second analysis showed.
+Seven evaluation choices, each conventional in this literature, each of which changed the answer
+we obtained. Reported because a reader cannot judge the result without them.
 
 | # | Routine choice | Appeared to show | After correction |
 |---|---|---|---|
@@ -34,7 +39,7 @@ Each row is a routine choice, what it appeared to show, and what a second analys
 
 | 7 | Take the best architecture as the comparison arm | ConvNeXt-Large is the best Benchmark 1 condition, 84.88% | Best **on test**. On validation Swin-Tiny wins and scores 82.44%. The seed-42 margin falls +3.41 → +0.98 pp: honest selection removes **71%** of the internal margin |
 
-The seventh is the one we like least. We selected our own headline arm on the set we then scored it
+The seventh is the one that costs most: we selected the comparison arm on the set we then scored it
 on, so **we report no internal effect estimate.** The external comparison is what the paper rests on.
 
 ---
@@ -82,7 +87,7 @@ that could be under-graded against 19.3% internally — a difference that is *no
 ## Layout
 
 ```
-verify_paper_numbers.py        ← start here: 184 checks, no GPU, under a minute
+verify_paper_numbers.py        ← start here: 200 checks, no GPU, under a minute
 paper/                         manuscript source + PDF, bibliography, cover letter, submission guide
 code/
   skin_tone_probe.py           ITA fairness probe (audit 4)

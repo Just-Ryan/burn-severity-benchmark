@@ -9,17 +9,20 @@
 
 Dear Editors of the Journal of Machine Learning for Biomedical Imaging,
 
-We submit for your consideration "Deep learning for burn severity assessment: seven evaluation
-choices that changed our conclusions."
+We submit for your consideration "Segmentation-guided burn severity classification: a
+leakage-controlled, externally validated evaluation."
 
-The paper reports a deployed two-stage burn-severity system — a YOLOv8x-seg localiser feeding a
-masked Swin classifier, served through a mobile application — together with a leak-free benchmark
-built to test whether that segmentation-first design is justified. Our answer is that it is not, on
-accuracy grounds. What we think makes the paper worth your reviewers' time is not that finding but
-what we hit on the way to it: **seven separate times, a conventional protocol and an independent
-second look gave different answers, and in every case the conventional protocol was the one we ran
-first.** Table 1 sets all seven side by side. The last two we found in our own work after every other
-number was final, and the seventh implicates our own headline.
+A burn photograph contains the wound and a great deal besides: unburned skin, dressings, bedding,
+the room. A classifier trained on whole images is free to read the setting rather than the injury,
+and in a web-sourced collection the setting correlates with severity for reasons unrelated to
+tissue. The obvious remedy is to segment the burn and grade only what remains. That design is
+standard elsewhere in medical imaging — dual-stage frameworks localise a region of interest before
+classifying it — but for burns it had not been evaluated against the simpler alternative it is
+meant to improve on.
+
+We built the system to find out: a YOLOv8x-seg localiser feeding a masked Swin classifier, served
+through a Flutter and Flask mobile application. We then built a benchmark to test it honestly, and
+that honest test is the substance of the paper. Three things may interest your readership.
 
 **1. A leakage artifact whose structure differs from the published cases.** Our original result was
 that masking the image to the burn improved accuracy by 3.06 percentage points across 20 of 21
@@ -103,8 +106,8 @@ result.
 Every number in the paper can be recomputed. The repository at
 https://github.com/Just-Ryan/burn-severity-benchmark contains the code, the trained weights, the
 split definition, the raw per-image predictions behind every table and figure, and
-`verify_paper_numbers.py`, a self-contained script that recomputes **184 published quantities** from
-the committed raw data without a GPU, a dataset download, or model weights; all 184 pass. Two of
+`verify_paper_numbers.py`, a self-contained script that recomputes **200 published quantities** from
+the committed raw data without a GPU, a dataset download, or model weights; all 200 pass. Two of
 those checks exist specifically to catch us overstating our own results.
 
 **Use of generative AI.** As required by MELBA's policy, we state how GenAI was used. The authors

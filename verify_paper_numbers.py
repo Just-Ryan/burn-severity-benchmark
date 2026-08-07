@@ -555,6 +555,46 @@ if os.path.exists(pa_path):
 else:
     print("  [SKIP] pipeline_arm_leakfree_localiser.json not present")
 
+print("\n=== 26. THE PIPELINE IN ITS BEST CONFIGURATION (Section 4.6) ===")
+rg_path = os.path.join(STA, "pipeline_regimes_10seed.json")
+if os.path.exists(rg_path):
+    rg = load(rg_path); R = rg["regimes"]
+    kA = [k for k in R if k.startswith("A_")][0]
+    kB = [k for k in R if k.startswith("B_")][0]
+    kC = [k for k in R if k.startswith("C_")][0]
+    check("regime A internal (published config)", R[kA]["internal_mean"], 81.27, tol=0.02)
+    check("regime B internal (mask source matched)", R[kB]["internal_mean"], 83.32, tol=0.02)
+    check("regime C internal (matched + dilated)", R[kC]["internal_mean"], 83.27, tol=0.02)
+    check("standalone classifier internal", rg["baseline"]["internal"], 83.61, tol=0.02)
+    check("regime A external", R[kA]["external_mean"], 76.33, tol=0.02)
+    check("regime B external", R[kB]["external_mean"], 76.02, tol=0.02)
+    check("regime C external", R[kC]["external_mean"], 75.24, tol=0.02)
+    check("matching the mask source is worth (pp, internal)",
+          R[kB]["internal_mean"] - R[kA]["internal_mean"], 2.05, tol=0.03)
+    for k, nm in ((kA, "A"), (kB, "B"), (kC, "C")):
+        check(f"regime {nm}: seeds run", len(R[k]["internal"]), 10, tol=0)
+    # paired tests against the classifier arm
+    h = load(os.path.join(STA, "h2h_10seed_paired.json"))
+    C10 = {x["seed"]: x for x in h if x["arm"].startswith("A")}
+    for k, nm, wi, wp in ((kA, "A", -2.34, 0.025), (kB, "B", -0.29, 0.651)):
+        d = np.array([R[k]["internal"][s] - C10[s]["int_acc"] for s in range(10)])
+        check(f"regime {nm}: paired internal difference (pp)", float(d.mean()), wi, tol=0.02)
+        check(f"regime {nm}: paired internal p", float(stats.ttest_1samp(d, 0).pvalue), wp, tol=0.003)
+    print("         Regime B is a statistical TIE with the standalone classifier on")
+    print("         BOTH sets. The published configuration understated the pipeline")
+    print("         by about two points through a train/test mask mismatch.")
+
+    bc_path = os.path.join(STA, "pipeline_best_chance.json")
+    if os.path.exists(bc_path):
+        bc = load(bc_path)
+        kc3 = [k for k in bc["arms"] if k.startswith("C_")][0]
+        check("three-seed pilot put regime C at", bc["arms"][kc3]["mean"], 83.90, tol=0.02)
+        print("         The three-seed pilot put regime C ahead of the classifier at 83.90.")
+        print("         Ten seeds put it at 83.27, behind. Another three-seed result that")
+        print("         did not survive -- and it was the one we wanted.")
+else:
+    print("  [SKIP] pipeline_regimes_10seed.json not present")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)

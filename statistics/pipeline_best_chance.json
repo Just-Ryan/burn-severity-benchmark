@@ -1,0 +1,47 @@
+{
+ "note": "Pipeline given four mask regimes. A is the published configuration (classifier trained on ground-truth masks, tested on predicted masks). B, C and D match the training mask source to the test mask source.",
+ "baseline_standalone_10seed": 83.61,
+ "published_pipeline_10seed": 80.88,
+ "arms": {
+  "A_gt_train__pred_test  (published)": {
+   "mean": 82.11382113821139,
+   "sd": 1.4902685186848303,
+   "balanced": 81.91009392559779,
+   "accs": [
+    82.4390243902439,
+    83.41463414634147,
+    80.48780487804878
+   ]
+  },
+  "B_pred_train__pred_test (matched)": {
+   "mean": 82.92682926829268,
+   "sd": 2.581220791282527,
+   "balanced": 82.37049341700505,
+   "accs": [
+    83.90243902439025,
+    80.0,
+    84.8780487804878
+   ]
+  },
+  "C_dilated_matched": {
+   "mean": 83.90243902439025,
+   "sd": 1.4634146341463392,
+   "balanced": 83.00110741971207,
+   "accs": [
+    82.4390243902439,
+    85.36585365853658,
+    83.90243902439025
+   ]
+  },
+  "D_soft_matched": {
+   "mean": 82.11382113821139,
+   "sd": 1.4902685186848303,
+   "balanced": 81.93521594684385,
+   "accs": [
+    82.4390243902439,
+    83.41463414634147,
+    80.48780487804878
+   ]
+  }
+ }
+}
