@@ -1,0 +1,33 @@
+{
+ "note": "Provenance of the clean external set, recomputed from the raw Roboflow export. Explains the 1,371 -> 319 reduction that Section 3.6 describes.",
+ "collection": {
+  "workspace": "pfa-ybpb2",
+  "project": "skin-burn-ankzs",
+  "version": 1,
+  "licence": "CC BY 4.0",
+  "exported": "2024-05-22",
+  "url": "https://universe.roboflow.com/pfa-ybpb2/skin-burn-ankzs/dataset/1"
+ },
+ "raw": {
+  "images": 1371,
+  "sources": 199,
+  "images_per_source_mean": 6.89,
+  "images_per_source_max": 18,
+  "multi_degree_images": 207
+ },
+ "retained": {
+  "images": 319,
+  "sources": 175,
+  "images_per_source_mean": 1.82,
+  "images_per_source_max": 4,
+  "class_counts": {
+   "0": 139,
+   "1": 157,
+   "2": 23
+  }
+ },
+ "hash_screen": {
+  "removed_images": 118,
+  "affected_sources": 56
+ }
+}

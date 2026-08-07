@@ -668,6 +668,33 @@ if os.path.exists(log_path) and os.path.exists(reg_path):
 else:
     print("  [SKIP] archived kernel stdout not present")
 
+# ------------------------------------------- 29. provenance of the clean external set
+print("\n29. Where the clean external set came from")
+print("   Section 3.6 says the second collection goes from 1,371 images to 319.")
+print("   These pin the chain so a reader need not do the subtraction themselves.")
+
+prov_path = os.path.join(STA, "external_set_provenance.json")
+if os.path.exists(prov_path):
+    pv = load(prov_path)
+    check("raw collection images", pv["raw"]["images"], 1371, tol=0)
+    check("raw collection source photographs", pv["raw"]["sources"], 199, tol=0)
+    check("raw images per source (mean)", pv["raw"]["images_per_source_mean"], 6.89, tol=0.01)
+    check("retained evaluation images", pv["retained"]["images"], 319, tol=0)
+    check("retained source photographs", pv["retained"]["sources"], 175, tol=0)
+    check("retained images per source (mean)", pv["retained"]["images_per_source_mean"], 1.82, tol=0.01)
+    print("         6.89 images per source down to 1.82 is the step that accounts for")
+    print("         most of the 1,371 -> 319 reduction: the collection augments its own")
+    print("         images, and we collapse those copies exactly as we do for training.")
+    ext_rows = load(os.path.join(RES, "preds_external.json"))
+    counts = {}
+    for r in ext_rows:
+        counts[r["true"]] = counts.get(r["true"], 0) + 1
+    check("external class counts, first degree", counts.get(0, 0), 139, tol=0)
+    check("external class counts, second degree", counts.get(1, 0), 157, tol=0)
+    check("external class counts, third degree", counts.get(2, 0), 23, tol=0)
+else:
+    print("  [SKIP] external_set_provenance.json not present")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)
