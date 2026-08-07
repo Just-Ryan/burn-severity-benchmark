@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Data: CC BY 4.0](https://img.shields.io/badge/Data-CC%20BY%204.0-blue.svg)](LICENSE-DATA)
-[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-204%2F204%20passing-brightgreen.svg)](verify_paper_numbers.py)
+[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-205%2F205%20passing-brightgreen.svg)](verify_paper_numbers.py)
 
 Code, data and every raw result behind the paper.
 
@@ -20,7 +20,7 @@ against the simpler alternative it is meant to improve on. This repository is th
 
 ```bash
 pip install numpy scipy
-python verify_paper_numbers.py     # recomputes 204 published numbers from the raw data
+python verify_paper_numbers.py     # recomputes 205 published numbers from the raw data
 ```
 
 No GPU, no dataset download, no model weights, under a minute. Two of the checks exist
@@ -104,7 +104,7 @@ that could be under-graded against 19.3% internally — a difference that is *no
 ## Layout
 
 ```
-verify_paper_numbers.py        ← start here: 204 checks, no GPU, under a minute
+verify_paper_numbers.py        ← start here: 205 checks, no GPU, under a minute
 paper/                         manuscript source + PDF, bibliography, cover letter, submission guide
 code/
   skin_tone_probe.py           ITA fairness probe (audit 4)

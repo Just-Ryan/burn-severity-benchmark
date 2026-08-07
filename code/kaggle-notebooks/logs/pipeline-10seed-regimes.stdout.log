@@ -1,0 +1,94 @@
+# Raw stdout of the Kaggle kernel that produced Table 5 and Figure 4
+# (pipeline-10seed-regimes.ipynb). Every per-seed value below is checked
+# against statistics/pipeline_regimes_10seed.json by verify_paper_numbers.py.
+
+GPU: Tesla P100-PCIE-16GB, 6.0
+compute capability 6.0 is Pascal: pinning torch 2.5.1 + cu121
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 780.4/780.4 MB 2.4 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 780.4/780.4 MB 2.4 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.3/7.3 MB 104.3 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.3/7.3 MB 104.3 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.7/23.7 MB 78.5 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.7/23.7 MB 78.5 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 823.6/823.6 kB 50.1 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 823.6/823.6 kB 50.1 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.1/14.1 MB 95.6 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.1/14.1 MB 95.6 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 664.8/664.8 MB 2.8 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 664.8/664.8 MB 2.8 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 410.6/410.6 MB 3.6 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 410.6/410.6 MB 3.6 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 121.6/121.6 MB 6.7 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 121.6/121.6 MB 6.7 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 56.5/56.5 MB 35.1 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 56.5/56.5 MB 35.1 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 124.2/124.2 MB 15.5 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 124.2/124.2 MB 15.5 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 196.0/196.0 MB 3.0 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 196.0/196.0 MB 3.0 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 188.7/188.7 MB 10.0 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 188.7/188.7 MB 10.0 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 99.1/99.1 kB 59.1 kB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 99.1/99.1 kB 59.1 kB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 209.6/209.6 MB 9.0 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 209.6/209.6 MB 9.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.2/6.2 MB 71.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.2/6.2 MB 71.0 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.4/48.4 kB 4.2 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.4/48.4 kB 4.2 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 898.5/898.5 kB 26.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.3/2.3 MB 85.6 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 898.5/898.5 kB 26.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.3/2.3 MB 85.6 MB/s eta 0:00:00
+torch 2.5.1+cu121 | arch ['sm_50', 'sm_60', 'sm_70', 'sm_75', 'sm_80', 'sm_86', 'sm_90']
+CUDA smoke PASSED 332.624
+Creating new Ultralytics Settings v0.0.6 file ✅ 
+View Ultralytics Settings with 'yolo settings' or at '/root/.config/Ultralytics/settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/quickstart/#ultralytics-settings.
+unmasked: /kaggle/input/datasets/justryantl/burn-clean-4cond/unmasked 
+ground-truth masked: /kaggle/input/datasets/justryantl/burn-clean-4cond/masked 
+external: /kaggle/input/datasets/justryantl/burn-external-test-clean/images 
+localiser: /kaggle/input/datasets/justryantl/burn-localiser-leakfree/yolov8x-seg_1class_LEAKFREE.pt
+  internal 600 (0.5 min)
+  internal 1200 (1.0 min)
+  internal 1800 (1.5 min)
+  internal 2400 (2.0 min)
+external labels: 319
+generated internal=2836 external=319 in 2.8 min
+  A_gt_train_pred_test   seed 0: int  82.44  ext  76.80  (4.7m)
+  A_gt_train_pred_test   seed 1: int  83.41  ext  75.86  (5.8m)
+  A_gt_train_pred_test   seed 2: int  80.49  ext  75.86  (3.1m)
+  A_gt_train_pred_test   seed 3: int  83.90  ext  78.68  (3.9m)
+  A_gt_train_pred_test   seed 4: int  82.44  ext  77.74  (6.2m)
+  A_gt_train_pred_test   seed 5: int  81.46  ext  74.29  (4.7m)
+  A_gt_train_pred_test   seed 6: int  80.00  ext  75.24  (3.5m)
+  A_gt_train_pred_test   seed 7: int  80.00  ext  76.18  (3.5m)
+  A_gt_train_pred_test   seed 8: int  80.00  ext  76.49  (3.5m)
+  A_gt_train_pred_test   seed 9: int  78.54  ext  76.18  (3.9m)
+  B_matched_hard         seed 0: int  83.90  ext  73.04  (8.4m)
+  B_matched_hard         seed 1: int  80.00  ext  77.12  (4.6m)
+  B_matched_hard         seed 2: int  84.88  ext  77.43  (3.5m)
+  B_matched_hard         seed 3: int  82.44  ext  77.12  (5.8m)
+  B_matched_hard         seed 4: int  84.39  ext  76.18  (10.8m)
+  B_matched_hard         seed 5: int  83.90  ext  77.43  (3.1m)
+  B_matched_hard         seed 6: int  84.88  ext  72.73  (7.3m)
+  B_matched_hard         seed 7: int  81.95  ext  74.92  (4.6m)
+  B_matched_hard         seed 8: int  83.41  ext  77.12  (6.5m)
+  B_matched_hard         seed 9: int  83.41  ext  77.12  (3.8m)
+  C_matched_dilated      seed 0: int  82.44  ext  77.12  (7.3m)
+  C_matched_dilated      seed 1: int  85.37  ext  74.61  (8.4m)
+  C_matched_dilated      seed 2: int  83.90  ext  72.41  (5.0m)
+  C_matched_dilated      seed 3: int  77.56  ext  72.73  (6.1m)
+  C_matched_dilated      seed 4: int  85.85  ext  78.06  (9.9m)
+  C_matched_dilated      seed 5: int  82.93  ext  73.04  (6.9m)
+  C_matched_dilated      seed 6: int  85.37  ext  79.00  (3.9m)
+  C_matched_dilated      seed 7: int  82.93  ext  74.61  (5.0m)
+  C_matched_dilated      seed 8: int  81.95  ext  73.35  (5.8m)
+  C_matched_dilated      seed 9: int  84.39  ext  77.43  (8.4m)
+
+=== TEN-SEED SUMMARY ===
+  A_gt_train_pred_test   internal  81.27 +- 1.74   external  76.33 +- 1.23
+  B_matched_hard         internal  83.32 +- 1.50   external  76.02 +- 1.82
+  C_matched_dilated      internal  83.27 +- 2.41   external  75.24 +- 2.45
+
+  BASELINE standalone ConvNeXt-Large, ten seeds: internal 83.61 +- 1.74, external 77.81 +- 2.29

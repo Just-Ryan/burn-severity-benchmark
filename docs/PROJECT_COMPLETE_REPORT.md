@@ -5,7 +5,7 @@
 **Origin:** Undergraduate graduation project, Faculty of Computer and Information Systems, Islamic University of Madinah
 **Status at time of writing:** manuscript prepared for the *Journal of Machine Learning for Biomedical Imaging* (MELBA)
 **Repository:** https://github.com/Just-Ryan/burn-severity-benchmark (public, MIT / CC BY 4.0)
-**Verification:** `verify_paper_numbers.py` — 204 published quantities recomputed from raw data, all passing
+**Verification:** `verify_paper_numbers.py` — 205 published quantities recomputed from raw data, all passing
 
 ---
 
@@ -599,7 +599,7 @@ Everything above is checkable, and we built the infrastructure to make checking 
 
 ## 16.1 The verification script
 
-`verify_paper_numbers.py` recomputes **204 published quantities** from committed raw data — no GPU, no dataset download, no model weights, under a minute:
+`verify_paper_numbers.py` recomputes **205 published quantities** from committed raw data — no GPU, no dataset download, no model weights, under a minute:
 
 ```bash
 pip install numpy scipy
@@ -736,7 +736,7 @@ The order matters, because several findings are only intelligible as consequence
 
 **Phase 10 — Preparation.** Manuscript restructured to lead with the method. Repository made public under MIT with CC BY 4.0 data. Verification extended to 200 checks.
 
-**Phase 11 — Repositioning after external review.** The paper was retitled from *Segmentation-guided burn severity classification* to *A methodological evaluation of segmentation-guided burn severity classification: when leakage changes the conclusion*, because the methodological result is the transferable one. Four figure changes followed. Figure 3 was rebuilt on ten seeds — it had been plotting three-seed error bars, the very protocol Section 4.9 argues against, and its caption still carried the discredited +3.74 internal margin. A new Figure 4 plots the published pipeline against its best configuration. Figure 1 was extended upward to show the data and training path, so the source-grouped split now appears in a figure. Figure 5's example images were replaced: the third-degree panel had been an identifiable facial burn and the second-degree panel carried case-report annotation letters. Three new sections were added — *Why segmentation did not win* (the mechanism behind the null), *What this generalises to*, and *What we learned* — plus an expanded *Future work*. Verification grew to 204 checks, four of which pin claims that only a figure makes. One false statement was caught and removed in the process: the Data Availability statement still said the pipeline arm could not be re-evaluated because the Swin-Tiny weights were unarchived, which Phase 9 had already made untrue.
+**Phase 11 — Repositioning after external review.** The paper was retitled from *Segmentation-guided burn severity classification* to *A methodological evaluation of segmentation-guided burn severity classification: when leakage changes the conclusion*, because the methodological result is the transferable one. Four figure changes followed. Figure 3 was rebuilt on ten seeds — it had been plotting three-seed error bars, the very protocol Section 4.9 argues against, and its caption still carried the discredited +3.74 internal margin. A new Figure 4 plots the published pipeline against its best configuration. Figure 1 was extended upward to show the data and training path, so the source-grouped split now appears in a figure. Figure 5's example images were replaced: the third-degree panel had been an identifiable facial burn and the second-degree panel carried case-report annotation letters. Three new sections were added — *Why segmentation did not win* (the mechanism behind the null), *What this generalises to*, and *What we learned* — plus an expanded *Future work*. Verification grew to 205 checks: four pin claims that only a figure makes, and one checks the ten-seed regime JSON against the archived stdout of the Kaggle run that produced it, seed by seed. One false statement was caught and removed in the process: the Data Availability statement still said the pipeline arm could not be re-evaluated because the Swin-Tiny weights were unarchived, which Phase 9 had already made untrue.
 
 ---
 
@@ -798,7 +798,7 @@ Not archived, and its absence is disclosed: the benchmark's original Swin-Tiny c
 ```
 $ python verify_paper_numbers.py
 ...
-  204/204 checks passed
+  205/205 checks passed
 ```
 
 Every quantity in this document and in the manuscript is recomputed from raw data committed to the repository. Any reader can run it in under a minute, and any reader who finds a discrepancy has found a real error.

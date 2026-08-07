@@ -635,6 +635,39 @@ if os.path.exists(pi_path):
     print("         The pipeline under-grades that image and the plain classifier")
     print("         does not. Masking, not grading, is what fails there.")
 
+# ------------------------------------------- 28. provenance: JSON vs the raw kernel log
+print("\n28. Provenance of the ten-seed regime results")
+print("   statistics/pipeline_regimes_10seed.json is a transcription of a Kaggle run.")
+print("   This checks it against that run's archived stdout, seed by seed, so the")
+print("   summary tables cannot have drifted from the machine that produced them.")
+
+log_path = os.path.join(HERE, "code", "kaggle-notebooks", "logs",
+                        "pipeline-10seed-regimes.stdout.log")
+if os.path.exists(log_path) and os.path.exists(reg_path):
+    import re as _re
+    with open(log_path) as fh:
+        log_txt = fh.read()
+    pat = _re.compile(r"(A_gt_train_pred_test|B_matched_hard|C_matched_dilated)"
+                      r"\s+seed (\d+): int\s+([\d.]+)\s+ext\s+([\d.]+)")
+    from_log = {}
+    for m in pat.finditer(log_txt):
+        from_log.setdefault(m.group(1), {})[int(m.group(2))] = (float(m.group(3)),
+                                                                float(m.group(4)))
+    rg_all = load(reg_path)["regimes"]
+    matched = total = 0
+    for reg_name, vals in rg_all.items():
+        for s in range(len(vals["internal"])):
+            for key, i in (("internal", 0), ("external", 1)):
+                total += 1
+                logged = from_log.get(reg_name, {}).get(s)
+                if logged is not None and abs(round(vals[key][s], 2) - logged[i]) <= 0.005:
+                    matched += 1
+    check("per-seed values matching the kernel log", matched, total, tol=0)
+    print(f"         All {total} values the JSON holds appear in the archived stdout of")
+    print("         the run that produced them, to the 2 dp the kernel printed.")
+else:
+    print("  [SKIP] archived kernel stdout not present")
+
 # ---------------------------------------------------------------- summary
 print("\n" + "=" * 78)
 n_ok, n = sum(results), len(results)
