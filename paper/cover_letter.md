@@ -9,8 +9,8 @@
 
 Dear Editors of the Journal of Machine Learning for Biomedical Imaging,
 
-We submit for your consideration "Segmentation-guided burn severity classification: a
-leakage-controlled, externally validated evaluation."
+We submit for your consideration "A methodological evaluation of segmentation-guided burn severity
+classification: when leakage changes the conclusion."
 
 A burn photograph contains the wound and a great deal besides: unburned skin, dressings, bedding,
 the room. A classifier trained on whole images is free to read the setting rather than the injury,
@@ -106,8 +106,8 @@ result.
 Every number in the paper can be recomputed. The repository at
 https://github.com/Just-Ryan/burn-severity-benchmark contains the code, the trained weights, the
 split definition, the raw per-image predictions behind every table and figure, and
-`verify_paper_numbers.py`, a self-contained script that recomputes **200 published quantities** from
-the committed raw data without a GPU, a dataset download, or model weights; all 200 pass. Two of
+`verify_paper_numbers.py`, a self-contained script that recomputes **204 published quantities** from
+the committed raw data without a GPU, a dataset download, or model weights; all 204 pass. Two of
 those checks exist specifically to catch us overstating our own results.
 
 **Use of generative AI.** As required by MELBA's policy, we state how GenAI was used. The authors

@@ -1,10 +1,15 @@
-# Segmentation-guided burn severity classification: a leakage-controlled, externally validated evaluation
+# A methodological evaluation of segmentation-guided burn severity classification: when leakage changes the conclusion
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Data: CC BY 4.0](https://img.shields.io/badge/Data-CC%20BY%204.0-blue.svg)](LICENSE-DATA)
-[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-200%2F200%20passing-brightgreen.svg)](verify_paper_numbers.py)
+[![verify_paper_numbers.py](https://img.shields.io/badge/verify__paper__numbers.py-204%2F204%20passing-brightgreen.svg)](verify_paper_numbers.py)
 
 Code, data and every raw result behind the paper.
+
+> **The finding in one line: leakage here did not inflate a score, it changed the conclusion.**
+> The two arms of our comparison had been partitioned separately, so 80.5% of the test set leaked
+> in one and none in the other. That did not raise a number — it manufactured a design
+> recommendation, consistently across 20 of 21 architectures.
 
 **The question.** A burn photograph contains the wound and a great deal besides: unburned skin,
 dressings, bedding, the room. A classifier trained on whole images may read the setting rather than
@@ -15,7 +20,7 @@ against the simpler alternative it is meant to improve on. This repository is th
 
 ```bash
 pip install numpy scipy
-python verify_paper_numbers.py     # recomputes 200 published numbers from the raw data
+python verify_paper_numbers.py     # recomputes 204 published numbers from the raw data
 ```
 
 No GPU, no dataset download, no model weights, under a minute. Two of the checks exist
@@ -59,19 +64,31 @@ consistency across architectures is evidence for the confound rather than agains
 
 ## The system under test
 
-<img src="figures/png/fig_system.png" width="100%" alt="Two-stage pipeline architecture">
+<img src="figures/png/fig_system.png" width="100%" alt="From dataset to prediction">
 
-A YOLOv8x-seg localiser predicts a burn mask, the mask is multiplied into the image, and a Swin
-transformer grades the masked region. Served through Flask and Flutter. **It is a research and
-demonstration artifact, not a clinically validated device** — and as the external results show, it
+The 1,370 source photographs are partitioned **once, by photograph rather than by file**, and that
+one partition defines the folds for both models. At inference a YOLOv8x-seg localiser predicts a
+burn mask, the mask is multiplied into the image, and a Swin transformer grades what remains.
+Served through Flask and Flutter. **It is a research and demonstration artifact, not a clinically
+validated device** — and as the external results show, it
 is not ready for any clinical role.
 
 ## What the benchmark found
 
-<img src="figures/png/head_to_head.png" width="72%" alt="Head-to-head accuracy across systems">
+<img src="figures/png/head_to_head.png" width="100%" alt="Ten-seed head-to-head on both test sets">
 
-A plain classifier is the most accurate single system on both test sets. Segmentation-first is
-justified here by localisation and interpretability, **not** by accuracy.
+Ten training runs per arm, each seed joined to itself across the two arms. A plain classifier leads
+on both test sets. But the runs overlap, and internally three of ten seeds cross — which is why this
+plots ten seeds and not the three our original protocol used.
+
+## Old pipeline vs. new pipeline
+
+<img src="figures/png/fig_regimes.png" width="100%" alt="Published pipeline against its best configuration">
+
+The published pipeline trained its classifier on ground-truth masks and then showed it *predicted*
+masks at test time. Repairing that mismatch is worth **+2.05 pp** internally and closes the internal
+gap entirely. Externally it closes nothing. Segmentation-first reaches **parity, not advantage** —
+and runs two models to get there.
 
 ## Where it fails
 
@@ -87,12 +104,15 @@ that could be under-graded against 19.3% internally — a difference that is *no
 ## Layout
 
 ```
-verify_paper_numbers.py        ← start here: 200 checks, no GPU, under a minute
+verify_paper_numbers.py        ← start here: 204 checks, no GPU, under a minute
 paper/                         manuscript source + PDF, bibliography, cover letter, submission guide
 code/
   skin_tone_probe.py           ITA fairness probe (audit 4)
   build_seg_split_leakfree.py  rebuilds the segmentation split (audit 5) — refuses to emit a leaking dataset
   rerun_standalone_yolo.py     re-scores the standalone model at conf 0.05
+  make_fig_h2h.py              regenerates the ten-seed head-to-head figure
+  make_fig_regimes.py          regenerates the published-vs-best-configuration figure
+  make_fig_qualitative.py      regenerates the qualitative panel (needs weights)
   kaggle-notebooks/            the retraining runs, exactly as executed
 benchmark2-proof/results/      per-image predictions behind every table and figure
 statistics/                    raw result JSON for every reported analysis

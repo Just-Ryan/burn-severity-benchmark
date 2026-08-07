@@ -3,11 +3,12 @@ message: >-
   If you use this software, its results, or the leak-free split it produces,
   please cite the accompanying article.
 title: >-
-  Code, statistics, and models for "Deep learning for burn severity assessment:
-  five evaluation choices that changed our conclusions"
+  Code, statistics, and models for "A methodological evaluation of
+  segmentation-guided burn severity classification: when leakage changed the
+  conclusion"
 abstract: >-
   Reproducibility materials for a source-grouped, externally validated benchmark
-  of deep learning for burn severity classification, in which five conventional
+  of deep learning for burn severity classification, in which seven conventional
   evaluation choices each changed the answer. Includes the split builder that
   removes an augmentation-induced leakage artifact, the masking ablation, a
   ten-seed head-to-head of a standalone classifier against a two-stage
@@ -60,8 +61,8 @@ keywords:
 # preferred-citation:
 #   type: article
 #   title: >-
-#     Deep learning for burn severity assessment: five evaluation choices that
-#     changed our conclusions
+#     A methodological evaluation of segmentation-guided burn severity
+#     classification: when leakage changes the conclusion
 #   authors:
 #     - family-names: Altayeb
 #       given-names: Ryan
