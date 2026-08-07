@@ -9,8 +9,8 @@
 
 Dear Editors of the Journal of Machine Learning for Biomedical Imaging,
 
-We submit for your consideration "A methodological evaluation of segmentation-guided burn severity
-classification: when leakage changes the conclusion."
+We submit for your consideration "When Leakage Changes the Conclusion: A Methodological Evaluation of
+Segmentation-Guided Burn Severity Classification."
 
 A burn photograph contains the wound and a great deal besides: unburned skin, dressings, bedding,
 the room. A classifier trained on whole images is free to read the setting rather than the injury,

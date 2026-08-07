@@ -3,9 +3,9 @@ message: >-
   If you use this software, its results, or the leak-free split it produces,
   please cite the accompanying article.
 title: >-
-  Code, statistics, and models for "A methodological evaluation of
-  segmentation-guided burn severity classification: when leakage changed the
-  conclusion"
+  Code, statistics, and models for "When Leakage Changes the Conclusion: A
+  Methodological Evaluation of Segmentation-Guided Burn Severity
+  Classification"
 abstract: >-
   Reproducibility materials for a source-grouped, externally validated benchmark
   of deep learning for burn severity classification, in which seven conventional
@@ -61,8 +61,8 @@ keywords:
 # preferred-citation:
 #   type: article
 #   title: >-
-#     A methodological evaluation of segmentation-guided burn severity
-#     classification: when leakage changes the conclusion
+#     When Leakage Changes the Conclusion: A Methodological Evaluation of
+#     Segmentation-Guided Burn Severity Classification
 #   authors:
 #     - family-names: Altayeb
 #       given-names: Ryan

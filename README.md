@@ -1,4 +1,4 @@
-# A methodological evaluation of segmentation-guided burn severity classification: when leakage changes the conclusion
+# When Leakage Changes the Conclusion: A Methodological Evaluation of Segmentation-Guided Burn Severity Classification
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Data: CC BY 4.0](https://img.shields.io/badge/Data-CC%20BY%204.0-blue.svg)](LICENSE-DATA)
