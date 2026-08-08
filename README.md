@@ -156,9 +156,22 @@ be reproduced as readily as its correction.
 
 | Source | Availability |
 |---|---|
-| Primary: Roboflow "skin burn wound classification" v31 | Public, CC BY 4.0. **Not redistributed here** |
+| Primary: Roboflow "skin burn wound classification" v31 | Public, CC BY 4.0. **No source photograph is redistributed here** |
 | External: a second Roboflow collection, pHash-screened | Split definition and contamination lists included |
 | BIP_US clinical database (Univ. Seville) | On request from its custodians. **No BIP_US image is redistributed** |
+
+> **On patient images.** This repository deliberately contains **no source photographs**. Earlier
+> revisions included Ultralytics validation mosaics (`val_batch*.jpg`) written automatically during
+> segmentation training; those tile the underlying dataset images, some of which show identifiable
+> faces. They have been deleted and purged from the Git history, and the release was recreated from
+> the cleaned tree. The primary collection is CC BY 4.0, so redistribution would have been
+> *permitted* — but a licence permitting redistribution is not a reason to republish identifiable
+> medical photographs, and those files contributed nothing to reproducing any result. Everything
+> needed to reproduce the paper (weights, code, per-image predictions, statistics, split
+> definitions) is here; the images themselves come from the sources cited above.
+>
+> If you cloned or forked this repository before this change, please delete your copy of those
+> files.
 
 ## Licence
 
