@@ -17,7 +17,7 @@ The account is deliberately structured around a single narrative arc, because th
 
 The short version of the conclusion, stated up front so nothing below reads as a reveal:
 
-> Segmentation-guided classification **achieves parity** with a plain classifier on burn severity, not advantage. Its apparent early superiority was an artifact of data leakage. Its apparent later inferiority was substantially an artifact of testing it in a configuration it was never trained for. Corrected on both counts, the two systems are statistically indistinguishable on both an internal and an external test set — and the pipeline runs two models to achieve that.
+> Segmentation-guided classification reaches **internal parity at best** with a plain classifier, never advantage. Its apparent early superiority was an artifact of data leakage. Its apparent later inferiority was substantially an artifact of testing it in a configuration it was never trained for. Corrected on both counts, the internal difference is no longer resolvable — but the **external** claim does not survive: the configuration that made the two look equal externally was itself selected on the test sets, and against the configuration validation would have chosen the plain classifier is still ahead externally (+2.57 pp, *p* = 0.008). The pipeline runs two models to reach internal parity.
 
 Sections 1–6 cover the idea, the system, and the data. Sections 7–14 cover every experiment in the order it was run. Section 15 covers the methodological findings, which are the part of this work most likely to matter to people outside burn imaging. Sections 16–19 cover reproducibility, the publication process, and an honest post-mortem.
 
@@ -517,9 +517,11 @@ Three configurations, **ten seeds each**, against the same standalone classifier
 The consequence for the head-to-head is substantial:
 
 > Against the **published** configuration, the classifier leads internally by 2.34 points (*p* = 0.025).
-> Against the pipeline's **best** configuration, the two systems are **statistically indistinguishable** — internally −0.29 (*p* = 0.65), externally −1.79 (*p* = 0.11). Neither difference is resolved at ten seeds on either set.
+> Against the pipeline's best-**on-test** configuration (regime B), the two systems are not statistically distinguishable — internally −0.29 (*p* = 0.65), externally −1.79 (*p* = 0.11).
+>
+> **But regime B was selected on test.** Validation ranks C first (84.37 vs 83.45 vs 83.35), and against regime C the external difference **is** resolved: +2.57 pp, 95% CI [+0.87, +4.27], *p* = 0.008. The external half of the parity claim is therefore withdrawn. Internal parity holds under either regime (*p* = 0.65 / 0.67).
 
-Two readings are available and we prefer the conservative one. The generous reading: segmentation-guided classification *matches* a plain classifier once tested fairly, and the earlier deficit was largely an artifact. The conservative reading: **a tie is not a win** — the pipeline attains parity while running two models at 1.6× the latency, and parity does not justify that cost on accuracy grounds.
+The conservative reading is the one the evidence now supports: **a tie is not a win, and externally it is not even a tie.** Internally the pipeline reaches parity while running two models at 1.6× the latency, which does not justify the cost on accuracy grounds. Externally, once the configuration is chosen on validation rather than on test, the plain classifier is simply ahead.
 
 Both readings agree on the fact: the published configuration understated the design by about two points, and no configuration we tried beats the simpler alternative.
 
@@ -699,14 +701,15 @@ An honest list, because it is the most useful thing a reader can take from this.
 |---|---|
 | Masking helps **only** with perfect masks, and only slightly | +0.55 pp, 95% CI [−0.37, +1.47], oracle upper bound |
 | The published pipeline configuration **understated** the design | Matching mask source: **+2.05 pp**, *p* = 0.041 |
-| Corrected, pipeline and classifier are **indistinguishable** | Internal −0.29 (*p* = 0.65); external −1.79 (*p* = 0.11) |
+| Corrected, the two are indistinguishable **internally** | Internal −0.29 (*p* = 0.65 for B, 0.67 for C) |
+| Externally the classifier is **ahead** once the regime is chosen on validation | +2.57 pp, 95% CI [+0.87, +4.27], *p* = 0.008 (regime C) |
 | The pipeline costs 1.6× latency for that parity | 42.3 ms vs 25.8 ms |
 | Segmentation quality is the binding constraint | Localiser mask mAP50 0.695 |
 | The model **does not transfer** to clinical images | Severity scale offset; 51% of BIP_US images graded first degree |
 | Under-grading is the dangerous direction, present on both sets | 19.3% internal, 28.3% external (*z* = 1.77, *p* = 0.08) |
 | No usable evidence on skin-tone fairness in either direction | Internal *p* = 0.0025 → external *p* = 0.35, reversed |
 
-**Conclusion.** Segmentation-guided classification attains **parity** with a plain classifier, not advantage. Its value is localisation and interpretability — the system returns *where* the burn is, and a clean region a clinician can inspect — and that value now costs nothing in accuracy, but it is not the property the design was adopted for.
+**Conclusion.** Segmentation-guided classification attains **internal parity at best** with a plain classifier, never advantage, and externally the classifier remains ahead under honest configuration selection. Its value is localisation and interpretability — the system returns *where* the burn is, and a clean region a clinician can inspect — but that is not the property the design was adopted for, and it is not free.
 
 **The methodological contribution**, which we consider the more transferable output: seven conventional evaluation choices, each of which changed an answer we had already obtained, each measured against its corrected baseline on the same data. None is specific to burns.
 
@@ -789,7 +792,7 @@ Not archived, and its absence is disclosed: the benchmark's original Swin-Tiny c
 | 8 | Segmentation-split leak audit | 205 test images | 87.3% contaminated |
 | 9 | Segmentation retraining | 2 × YOLOv8x-seg, 100 epochs | 12.7 pp leak measured |
 | 10 | Pipeline arm re-score | 10 × Swin-Tiny | Leak worth 0.10 pp |
-| 11 | Mask-regime experiment | 3 regimes × 10 seeds | **+2.05 pp; parity** |
+| 11 | Mask-regime experiment | 3 regimes × 10 seeds | **+2.05 pp; internal parity only** |
 | 12 | Threshold sweep on validation | 10 thresholds | 0.05 not tuned on test |
 | 13 | Architecture-selection audit | 11 architectures | 71% of margin |
 

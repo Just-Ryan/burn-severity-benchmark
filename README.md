@@ -87,8 +87,18 @@ plots ten seeds and not the three our original protocol used.
 
 The published pipeline trained its classifier on ground-truth masks and then showed it *predicted*
 masks at test time. Repairing that mismatch is worth **+2.05 pp** internally and closes the internal
-gap entirely. Externally it closes nothing. Segmentation-first reaches **parity, not advantage** —
-and runs two models to get there.
+gap. Externally it closes nothing.
+
+> **Corrected during final audit.** Regime B is the best configuration *on test*. Ranked on
+> **validation** — the honest basis — the order reverses: C 84.37, B 83.45, A 83.35. Against the
+> validation-selected regime C the external difference from the classifier **is** resolved
+> (**+2.57 pp**, 95% CI [+0.87, +4.27], *p* = 0.008), where against test-selected B it is not
+> (*p* = 0.11). So we **withdraw the external parity claim**. Internal parity survives either
+> choice (*p* = 0.65 for B, 0.67 for C). This was our own audit #7 committed in the section that
+> answers it — see `verify_paper_numbers.py` checks 30.
+
+Segmentation-first reaches **internal parity at best, never advantage** — and runs two models to
+get there.
 
 ## Where it fails
 
