@@ -98,6 +98,22 @@ points lower on test. Against the seed-42 pipeline the margin falls from +3.41 t
 selection removes **71 percent** of the internal margin. We therefore report no internal effect
 estimate at all. This is the audit that costs us most, and it is in the paper because it is true.
 
+**8. We then did the same thing again, and found it only at the very end.** The paper's end-to-end
+conclusion rested on the pipeline's "best configuration", regime B of three. Regime B is the best
+**on test**. Ranked on validation, which is the honest basis, the order reverses: regime C leads at
+84.37 percent against B's 83.45 and A's 83.35. That matters, because against the validation-selected
+regime C the external difference from the plain classifier **is** resolved — 2.57 percentage points,
+95 percent interval +0.87 to +4.27, *p* = 0.008 — where against test-selected regime B it is not
+(*p* = 0.11). An earlier version of this manuscript therefore claimed the two systems were
+statistically indistinguishable on **both** test sets. That claim held only under a configuration we
+had chosen on the sets we then scored it on. We have withdrawn the external half of it. Internal
+parity survives either choice (*p* = 0.65 for B, 0.67 for C), and the corrected statement is that
+segmentation-guided classification reaches internal parity at best and never advantage, while the
+plain classifier remains ahead externally. We found this while auditing our own manuscript against
+the released raw data, after Section 4.13 had already been written to condemn exactly this error.
+The two validation rankings and the regime C result are pinned by the verification script so the
+selection cannot be lost again.
+
 We are aware that this paper offers no new architecture, and we do not claim one. We submit it to
 MELBA because your stated scope includes empirical comparisons, because your reviewers are asked
 explicitly to assess reproducibility, and because this readership is the one that can act on the
@@ -106,8 +122,8 @@ result.
 Every number in the paper can be recomputed. The repository at
 https://github.com/Just-Ryan/burn-severity-benchmark contains the code, the trained weights, the
 split definition, the raw per-image predictions behind every table and figure, and
-`verify_paper_numbers.py`, a self-contained script that recomputes **205 published quantities** from
-the committed raw data without a GPU, a dataset download, or model weights; all 205 pass. Two of
+`verify_paper_numbers.py`, a self-contained script that recomputes **220 published quantities** from
+the committed raw data without a GPU, a dataset download, or model weights; all 220 pass. Two of
 those checks exist specifically to catch us overstating our own results.
 
 **Use of generative AI.** As required by MELBA's policy, we state how GenAI was used. The authors
