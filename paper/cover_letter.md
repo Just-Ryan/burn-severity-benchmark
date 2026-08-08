@@ -79,7 +79,7 @@ validation folds. We could have retrained quietly and said nothing. Instead we q
 standalone segmentation model scored 90.7 percent internally against 48.9 externally, a 41.8-point
 gap that is the signature of being scored on one's own training data. Then we measured the leak by
 removing it: we rebuilt both segmentation datasets on the classifiers' source-grouped split and
-retrained both models under the original recipe, changing nothing but the partition. On the same
+retrained both models. We had described that retraining as changing nothing but the partition; reading the original checkpoints' embedded training arguments during the final audit showed otherwise, and the manuscript now says so. The originals ran at seed 0 with patience 50, and the localiser used a learning rate of $10^{-4}$ and was continued from an earlier checkpoint rather than the public weights, so the retraining differs in seed, patience, and for the localiser in learning rate and initialisation as well as in the split. On the same
 205 images the standalone model falls from 90.7 to **78.0 percent**. We then retrained the
 pipeline's ten Swin-Tiny classifiers and re-scored that arm on the corrected localiser too — and
 found the effect negligible: 80.98 to 80.88 percent. A leak worth 12.7 points to one model was
