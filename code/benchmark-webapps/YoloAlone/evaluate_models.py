@@ -60,15 +60,15 @@ def evaluate_system(system, test_folders):
 
 def main():
     # Initialize the standalone YOLO system
-    yolo_path = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/Yolo_Dataset/resultsYoloV8x/best.pt'
+    yolo_path = '<PROJECT_ROOT>/code/dataset/Yolo_Dataset/resultsYoloV8x/best.pt'
     standalone_system = StandaloneYOLO(yolo_path)
     
     # Define test folders
     test_folders = [
-        '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset/First',
-        '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset/Second',
-        '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset/Third',
-        '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset/NoBurn'
+        '<PROJECT_ROOT>/code/TestingCompare/TestingDataset/First',
+        '<PROJECT_ROOT>/code/TestingCompare/TestingDataset/Second',
+        '<PROJECT_ROOT>/code/TestingCompare/TestingDataset/Third',
+        '<PROJECT_ROOT>/code/TestingCompare/TestingDataset/NoBurn'
     ]
     
     # Evaluate the system

@@ -121,8 +121,8 @@ class BurnImageOrganizer:
 
 def main():
     # Set paths
-    input_dir = Path('/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/Seqmentation-Dataset/BIAC.v31i.yolov8_3Class')
-    output_dir = Path('/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/CNN-DatasetNM')
+    input_dir = Path('<PROJECT_ROOT>/code/dataset/New-Way/Seqmentation-Dataset/BIAC.v31i.yolov8_3Class')
+    output_dir = Path('<PROJECT_ROOT>/code/dataset/New-Way/CNN-DatasetNM')
     
     # Initialize and run organizer
     organizer = BurnImageOrganizer(input_dir, output_dir)

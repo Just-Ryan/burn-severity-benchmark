@@ -140,7 +140,7 @@ nc: 3"""
         print("\nDataset organization completed!")
 
 if __name__ == "__main__":
-    dataset_path = "/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/Yolo_Dataset/Yolo_Only_Dataset"
+    dataset_path = "<PROJECT_ROOT>/code/dataset/Yolo_Dataset/Yolo_Only_Dataset"
     
     splitter = DatasetSplitter(dataset_path)
     splitter.process()

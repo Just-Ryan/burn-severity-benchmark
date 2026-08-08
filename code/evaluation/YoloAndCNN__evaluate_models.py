@@ -4,7 +4,7 @@ import torch
 from ultralytics import YOLO
 
 # Load the YOLOv8 model
-model = YOLO('/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/Seqmentation-Dataset/results1Class/best.pt')
+model = YOLO('<PROJECT_ROOT>/code/dataset/New-Way/Seqmentation-Dataset/results1Class/best.pt')
 
 
 # Create example input

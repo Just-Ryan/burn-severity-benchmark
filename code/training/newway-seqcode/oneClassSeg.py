@@ -100,8 +100,8 @@ class LabelRemapper:
 
 def main():
     # Set paths
-    input_dir = Path('/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/Seqmentation-Dataset/BIAC.v31i.yolov8_3Class')
-    output_dir = Path('/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/Seqmentation-Dataset/BIAC.v31i.yolov8_1Class')
+    input_dir = Path('<PROJECT_ROOT>/code/dataset/New-Way/Seqmentation-Dataset/BIAC.v31i.yolov8_3Class')
+    output_dir = Path('<PROJECT_ROOT>/code/dataset/New-Way/Seqmentation-Dataset/BIAC.v31i.yolov8_1Class')
     
     # Initialize remapper
     remapper = LabelRemapper(input_dir, output_dir)

@@ -16,8 +16,8 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Load YOLOv5 model
-YOLO_PATH = "/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/YoloAlone/best.pt"
-YOLOV5_DIR = "/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/YoloAlone/yolov5"
+YOLO_PATH = "<PROJECT_ROOT>/code/TestingCompare/YoloAlone/best.pt"
+YOLOV5_DIR = "<PROJECT_ROOT>/code/TestingCompare/YoloAlone/yolov5"
 model = torch.hub.load(YOLOV5_DIR, 'custom', path=YOLO_PATH, source='local')
 model.conf = 0.25  # confidence threshold
 model.iou = 0.45   # NMS IoU threshold

@@ -365,9 +365,9 @@ def print_results(results):
 
 def main():
     # Model paths
-    yolo_path = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/Seqmentation-Dataset/results1Class/best.pt'
-    cnn_path = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/CNN-DatasetM/cnn_compressed_fp16.pth'
-    test_dir = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset2'
+    yolo_path = '<PROJECT_ROOT>/code/dataset/New-Way/Seqmentation-Dataset/results1Class/best.pt'
+    cnn_path = '<PROJECT_ROOT>/code/dataset/New-Way/CNN-DatasetM/cnn_compressed_fp16.pth'
+    test_dir = '<PROJECT_ROOT>/code/TestingCompare/TestingDataset2'
     
     # Initialize analyzer
     analyzer = IntegratedBurnAnalyzer(yolo_path, cnn_path)

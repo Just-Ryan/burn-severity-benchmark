@@ -82,9 +82,9 @@ class DatasetSplitter:
 
 def main():
     # Input directory containing the three class folders: Degree1, Degree2, Degree3
-    input_dir = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/CNN-DatasetM'
+    input_dir = '<PROJECT_ROOT>/code/dataset/New-Way/CNN-DatasetM'
     # Output directory for the organized dataset with train, valid, and test splits
-    output_dir = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/CNN-DatasetM'
+    output_dir = '<PROJECT_ROOT>/code/dataset/New-Way/CNN-DatasetM'
     
     splitter = DatasetSplitter(input_dir, output_dir)
     splitter.organize_dataset()

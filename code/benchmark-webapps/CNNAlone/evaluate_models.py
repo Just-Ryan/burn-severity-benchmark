@@ -134,12 +134,12 @@ def main():
     print(f"TensorFlow version: {tf.__version__}")
     print(f"Eager execution: {tf.executing_eagerly()}")
     
-    cnn_path = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/CNN_Dataset/MobileNetresults/burn_classification_model.keras'
+    cnn_path = '<PROJECT_ROOT>/code/dataset/CNN_Dataset/MobileNetresults/burn_classification_model.keras'
     test_folders = [
-        '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset/First',
-        '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset/Second',
-        '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset/Third',
-        '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset/NoBurn'
+        '<PROJECT_ROOT>/code/TestingCompare/TestingDataset/First',
+        '<PROJECT_ROOT>/code/TestingCompare/TestingDataset/Second',
+        '<PROJECT_ROOT>/code/TestingCompare/TestingDataset/Third',
+        '<PROJECT_ROOT>/code/TestingCompare/TestingDataset/NoBurn'
     ]
     
     print("\nVerifying paths...")

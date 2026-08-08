@@ -5,7 +5,7 @@
 **Origin:** Undergraduate graduation project, Faculty of Computer and Information Systems, Islamic University of Madinah
 **Status at time of writing:** manuscript prepared for the *Journal of Machine Learning for Biomedical Imaging* (MELBA)
 **Repository:** https://github.com/Just-Ryan/burn-severity-benchmark (public, MIT / CC BY 4.0)
-**Verification:** `verify_paper_numbers.py` — 205 published quantities recomputed from raw data, all passing
+**Verification:** `verify_paper_numbers.py` — 220 published quantities recomputed from raw data, all passing
 
 ---
 
@@ -601,7 +601,7 @@ Everything above is checkable, and we built the infrastructure to make checking 
 
 ## 16.1 The verification script
 
-`verify_paper_numbers.py` recomputes **205 published quantities** from committed raw data — no GPU, no dataset download, no model weights, under a minute:
+`verify_paper_numbers.py` recomputes **220 published quantities** from committed raw data — no GPU, no dataset download, no model weights, under a minute:
 
 ```bash
 pip install numpy scipy
@@ -801,7 +801,7 @@ Not archived, and its absence is disclosed: the benchmark's original Swin-Tiny c
 ```
 $ python verify_paper_numbers.py
 ...
-  205/205 checks passed
+  220/220 checks passed
 ```
 
 Every quantity in this document and in the manuscript is recomputed from raw data committed to the repository. Any reader can run it in under a minute, and any reader who finds a discrepancy has found a real error.

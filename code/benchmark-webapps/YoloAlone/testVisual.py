@@ -107,7 +107,7 @@ try:
     # Load YOLOv5 model using local path
     print("Loading model...")
     model = torch.hub.load('./yolov5', 'custom', 
-                         path='/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/YoloAlone/best.pt',
+                         path='<PROJECT_ROOT>/code/TestingCompare/YoloAlone/best.pt',
                          source='local')
     
     # Set up model parameters
@@ -115,7 +115,7 @@ try:
     model.iou = 0.45   # NMS IoU threshold
     
     # Set the path to test images
-    test_dir = "/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/Yolo_Dataset/Yolo_Only_Dataset/test/images"
+    test_dir = "<PROJECT_ROOT>/code/dataset/Yolo_Dataset/Yolo_Only_Dataset/test/images"
     
     # Verify paths exist
     if not os.path.exists(test_dir):

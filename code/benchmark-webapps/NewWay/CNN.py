@@ -254,8 +254,8 @@ def print_results(results):
 
 def main():
     # Model and data paths - these will need to be updated with your actual paths
-    model_path = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/CNN-DatasetNM/best_cnn_full.pth'
-    test_dir = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset2'
+    model_path = '<PROJECT_ROOT>/code/dataset/New-Way/CNN-DatasetNM/best_cnn_full.pth'
+    test_dir = '<PROJECT_ROOT>/code/TestingCompare/TestingDataset2'
     
     # Initialize classifier
     classifier = BurnClassifier(model_path)

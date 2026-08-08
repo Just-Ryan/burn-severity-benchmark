@@ -260,8 +260,8 @@ def print_results(results):
 
 def main():
     # Model and data paths - these will need to be updated with your actual paths
-    model_path = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/Seqmentation-Dataset/results3Class/runs/segment/train/weights/best.pt'
-    test_dir = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/TestingDataset'
+    model_path = '<PROJECT_ROOT>/code/dataset/New-Way/Seqmentation-Dataset/results3Class/runs/segment/train/weights/best.pt'
+    test_dir = '<PROJECT_ROOT>/code/TestingCompare/TestingDataset'
     
     # Initialize benchmark
     benchmark = YOLOSegmentationBenchmark(model_path)

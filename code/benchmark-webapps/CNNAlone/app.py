@@ -48,7 +48,7 @@ class BurnCNN(nn.Module):
         return x
 
 # Load the PyTorch model
-MODEL_PATH = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/CNN-DatasetNM/best_cnn_full.pth'
+MODEL_PATH = '<PROJECT_ROOT>/code/dataset/New-Way/CNN-DatasetNM/best_cnn_full.pth'
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 print(f"Loading model from {MODEL_PATH}")

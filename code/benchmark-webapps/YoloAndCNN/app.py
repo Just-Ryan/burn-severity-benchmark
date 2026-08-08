@@ -301,8 +301,8 @@ burn_analyzer = None
 def initialize_models():
     global burn_analyzer
     # Update these paths to match your environment
-    yolo_path = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/Seqmentation-Dataset/results1Class/best.pt'
-    cnn_path = '/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/CNN-DatasetM/cnn_compressed_fp16.pth'
+    yolo_path = '<PROJECT_ROOT>/code/dataset/New-Way/Seqmentation-Dataset/results1Class/best.pt'
+    cnn_path = '<PROJECT_ROOT>/code/dataset/New-Way/CNN-DatasetM/cnn_compressed_fp16.pth'
     
     burn_analyzer = IntegratedBurnAnalyzer(yolo_path, cnn_path)
     print("Models initialized successfully")

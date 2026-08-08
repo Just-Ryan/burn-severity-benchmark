@@ -15,7 +15,7 @@ abstract: >-
   segmentation pipeline, a skin-tone probe that failed to replicate, two external
   validations, the segmentation retraining that measured a leak the authors had
   introduced themselves, and the raw JSON behind every reported number. A
-  verification script recomputes 136 published quantities from that raw data.
+  verification script recomputes 220 published quantities from that raw data.
 type: software
 authors:
   - family-names: Altayeb

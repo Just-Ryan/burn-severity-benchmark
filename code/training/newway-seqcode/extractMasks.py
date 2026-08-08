@@ -139,8 +139,8 @@ class MaskGenerator:
 
 def main():
     # Set paths
-    base_dir = Path('/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/Seqmentation-Dataset/BIAC.v31i.yolov8')
-    output_dir = Path('/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/New-Way/CNN-DatasetM')
+    base_dir = Path('<PROJECT_ROOT>/code/dataset/New-Way/Seqmentation-Dataset/BIAC.v31i.yolov8')
+    output_dir = Path('<PROJECT_ROOT>/code/dataset/New-Way/CNN-DatasetM')
     
     # Initialize mask generator
     generator = MaskGenerator(base_dir, output_dir)

@@ -166,8 +166,8 @@ class YOLOBurnEvaluator:
 
 def main():
     # Paths
-    model_path = "/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/TestingCompare/YoloAndCNN/best.pt"
-    dataset_path = "/Users/ryanmacbook/Downloads/مشروع تخرج ١/code/dataset/Yolo_Dataset/processed_dataset"
+    model_path = "<PROJECT_ROOT>/code/TestingCompare/YoloAndCNN/best.pt"
+    dataset_path = "<PROJECT_ROOT>/code/dataset/Yolo_Dataset/processed_dataset"
     
     # Create evaluator
     try:
