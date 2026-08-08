@@ -21,8 +21,24 @@ https://raw.githubusercontent.com/Just-Ryan/burn-severity-benchmark/4de60be/benc
 ```
 
 Ask GitHub Support to garbage-collect unreachable objects on the repository, citing removal of
-identifiable patient photographs, and reference commits `4de60be` and `cbc8fc5`. There are **zero
-forks** and **zero release-asset downloads**, so nothing else needs chasing.
+identifiable patient photographs. There are **zero forks** and **zero release-asset downloads**, so
+nothing else needs chasing.
+
+The history was rewritten twice on 7 August — once to purge the patient images, once to correct
+commit authorship. Reference these orphaned commits, all of which still return 200 from the API:
+
+```
+4de60be   cbc8fc5   cc5548e   ad4e9db   ba71b80
+```
+
+Two things live in that orphaned history: the patient-image mosaics, and an unrelated
+`dev@meraki.sa` author identity that was this machine's default git config. Both should go. Suggested
+wording:
+
+> Our repository contained validation artifacts with identifiable patient photographs from a medical
+> dataset, and eleven commits carrying an unrelated author email. Both were removed and the history
+> rewritten, but the pre-rewrite objects remain reachable by direct commit SHA. Please garbage-collect
+> the unreachable objects. Affected SHAs: 4de60be, cbc8fc5, cc5548e, ad4e9db, ba71b80.
 
 Re-check when they confirm — the URL above should return 404:
 
